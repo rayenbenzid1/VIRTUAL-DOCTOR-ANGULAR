@@ -1,0 +1,83 @@
+.register-container {
+  width: 420px;
+  margin: auto;
+  padding: 40px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+
+.header-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.circle {
+  width: 60px;
+  height: 60px;
+  background: #3d7eff;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
+
+h2 {
+  text-align: center;
+  margin: 0;
+}
+
+.account-type {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e4e6eb;
+  background: #f7f8fa;
+}
+
+.password {
+  position: relative;
+}
+
+.eye {
+  position: absolute;
+  right: 12px;
+  top: 11px;
+  cursor: pointer;
+}
+
+.terms {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.submit {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #6ea5ff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-link {
+  margin-top: 12px;
+  text-align: center;
+}

@@ -1,0 +1,78 @@
+<div class="register-container">
+
+  <div class="header-icon">
+    <div class="circle">
+      <span>❤</span>
+    </div>
+  </div>
+
+  <h2>Créer un compte</h2>
+  <p>Rejoignez nous aujourd'hui</p>
+
+  <!-- Type de compte -->
+  <div class="account-type">
+    <label>
+      <input type="radio"
+             name="role"
+             [checked]="role() === 'PATIENT'"
+             (change)="role.set('PATIENT')" />
+      Patient
+    </label>
+
+    <label>
+      <input type="radio"
+             name="role"
+             [checked]="role() === 'MEDECIN'"
+             (change)="role.set('MEDECIN')" />
+      Médecin
+    </label>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+
+    <div class="field">
+      <input formControlName="firstName" placeholder="Prénom" />
+    </div>
+
+    <div class="field">
+      <input formControlName="lastName" placeholder="Nom" />
+    </div>
+
+    <div class="field">
+      <input formControlName="email" placeholder="Email" type="email" />
+    </div>
+
+    <div class="field">
+      <input formControlName="phone" placeholder="Téléphone" />
+    </div>
+
+    <div class="field password">
+      <input [type]="hidePassword() ? 'password' : 'text'"
+             formControlName="password"
+             placeholder="Mot de passe" />
+      <span class="eye" (click)="hidePassword.set(!hidePassword())">👁</span>
+    </div>
+
+    <div class="field password">
+      <input [type]="hideConfirmPassword() ? 'password' : 'text'"
+             formControlName="confirmPassword"
+             placeholder="Confirmer mot de passe" />
+      <span class="eye" (click)="hideConfirmPassword.set(!hideConfirmPassword())">👁</span>
+    </div>
+
+    <label class="terms">
+      <input type="checkbox" formControlName="acceptTerms" />
+      J'accepte les conditions d'utilisation
+    </label>
+
+    <button type="submit" class="submit" [disabled]="loading()">
+      S'inscrire
+    </button>
+
+    <div class="login-link">
+      Vous avez déjà un compte ?
+      <a routerLink="/login">Se connecter</a>
+    </div>
+
+  </form>
+</div>
