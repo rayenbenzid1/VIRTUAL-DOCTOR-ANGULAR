@@ -1,0 +1,131 @@
+<div class="dashboard-container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <button class="back-btn" (click)="logout()">
+        <span>←</span>
+      </button>
+      <div class="header-title">
+        <span class="icon">🏥</span>
+        <h1>Health Dashboard</h1>
+      </div>
+      <button class="profile-btn">
+        <span>👤</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+
+    <!-- Loading State -->
+    <div class="loading-section" *ngIf="loading()">
+      <div class="loading-spinner"></div>
+      <p>En attente des données...</p>
+    </div>
+
+    <!-- Refresh Button -->
+    <button class="refresh-btn" (click)="refresh()" [disabled]="loading()">
+      <span class="refresh-icon">🔄</span>
+      <span>Actualiser</span>
+    </button>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="action-card analyze" (click)="analyze()">
+        <div class="action-icon">
+          <span>📸</span>
+          <span class="pulse-dot"></span>
+        </div>
+        <span class="action-text">Analyser</span>
+      </button>
+
+      <button class="action-card consult" (click)="consult()">
+        <div class="action-icon">
+          <span>🩺</span>
+        </div>
+        <span class="action-text">Consulter</span>
+      </button>
+    </div>
+
+    <!-- Daily Summary -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">📊</span>
+        <h2>Résumé du Jour</h2>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card"
+             *ngFor="let metric of dailyMetrics()"
+             [style.background-color]="metric.color">
+          <div class="metric-icon">{{ metric.icon }}</div>
+          <div class="metric-label">{{ metric.label }}</div>
+          <div class="metric-value">{{ metric.value }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Physical Activities -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🏋️</span>
+        <h2>Activités Physiques</h2>
+      </div>
+      <div class="info-card">
+        <p class="info-text">Aucun exercice aujourd'hui</p>
+      </div>
+    </div>
+
+    <!-- Vital Signs -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🩺</span>
+        <h2>Signes Vitaux</h2>
+      </div>
+
+      <div class="vitals-scroll">
+        <div class="vital-card"
+             *ngFor="let vital of vitalSigns()"
+             [style.background-color]="vital.color">
+          <div class="vital-icon">{{ vital.icon }}</div>
+          <div class="vital-label">{{ vital.label }}</div>
+          <div class="vital-value">{{ vital.value }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Summary -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">📋</span>
+        <h2>Résumé des Données</h2>
+      </div>
+      <div class="info-card">
+        <p class="info-text">En attente des données...</p>
+      </div>
+    </div>
+
+    <!-- 3D Avatar -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🧍</span>
+        <h2>Avatar 3D - État de Santé</h2>
+      </div>
+      <div class="avatar-container">
+        <div class="avatar-placeholder">
+          <div class="avatar-body">
+            <div class="body-part heart"></div>
+            <div class="body-part lungs-left"></div>
+            <div class="body-part lungs-right"></div>
+            <div class="body-part stomach"></div>
+          </div>
+          <p class="avatar-text">Visualisation 3D de votre état de santé</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

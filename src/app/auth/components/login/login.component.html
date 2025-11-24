@@ -16,7 +16,12 @@
       type="email"
       formControlName="email"
       placeholder="votre@email.com"
+      autocomplete="email"
     />
+    <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
+         class="error-message">
+      Email invalide
+    </div>
 
     <p class="hint">
       Utilisez "patient@...", "doctor@..." ou "admin@..." pour accéder aux différents portails
@@ -29,14 +34,19 @@
         [type]="hidePassword() ? 'password' : 'text'"
         formControlName="password"
         placeholder="••••••••"
+        autocomplete="current-password"
       />
       <span class="eye" (click)="hidePassword.set(!hidePassword())">👁</span>
+    </div>
+    <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched"
+         class="error-message">
+      Mot de passe requis
     </div>
 
     <a class="forgot" routerLink="/forgot-password">Mot de passe oublié ?</a>
 
     <button class="submit" type="submit" [disabled]="loading()">
-      Se connecter
+      {{ loading() ? 'Connexion...' : 'Se connecter' }}
     </button>
 
     <div class="bottom-link">

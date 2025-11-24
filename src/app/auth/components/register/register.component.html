@@ -7,66 +7,124 @@
   </div>
 
   <h2>Créer un compte</h2>
-  <p>Rejoignez nous aujourd'hui</p>
+  <p class="subtitle">Rejoignez nous aujourd'hui</p>
 
   <!-- Type de compte -->
   <div class="account-type">
-    <label>
+    <label class="radio-label">
       <input type="radio"
              name="role"
              [checked]="role() === 'PATIENT'"
              (change)="role.set('PATIENT')" />
-      Patient
+      <span>Patient</span>
     </label>
 
-    <label>
+    <label class="radio-label">
       <input type="radio"
              name="role"
              [checked]="role() === 'MEDECIN'"
              (change)="role.set('MEDECIN')" />
-      Médecin
+      <span>Médecin</span>
     </label>
   </div>
 
   <form [formGroup]="form" (ngSubmit)="submit()">
 
     <div class="field">
-      <input formControlName="firstName" placeholder="Prénom" />
+      <label>Prénom</label>
+      <input
+        formControlName="firstName"
+        placeholder="Entrez votre prénom"
+        type="text"
+        autocomplete="given-name" />
+      <div *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched"
+           class="error-message">
+        Prénom requis
+      </div>
     </div>
 
     <div class="field">
-      <input formControlName="lastName" placeholder="Nom" />
+      <label>Nom</label>
+      <input
+        formControlName="lastName"
+        placeholder="Entrez votre nom"
+        type="text"
+        autocomplete="family-name" />
+      <div *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched"
+           class="error-message">
+        Nom requis
+      </div>
     </div>
 
     <div class="field">
-      <input formControlName="email" placeholder="Email" type="email" />
+      <label>Email</label>
+      <input
+        formControlName="email"
+        placeholder="votre@email.com"
+        type="email"
+        autocomplete="email" />
+      <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
+           class="error-message">
+        Email valide requis
+      </div>
     </div>
 
     <div class="field">
-      <input formControlName="phone" placeholder="Téléphone" />
+      <label>Téléphone</label>
+      <input
+        formControlName="phone"
+        placeholder="+216 XX XXX XXX"
+        type="tel"
+        autocomplete="tel" />
+      <div *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched"
+           class="error-message">
+        Téléphone requis
+      </div>
     </div>
 
-    <div class="field password">
-      <input [type]="hidePassword() ? 'password' : 'text'"
-             formControlName="password"
-             placeholder="Mot de passe" />
-      <span class="eye" (click)="hidePassword.set(!hidePassword())">👁</span>
+    <div class="field">
+      <label>Mot de passe</label>
+      <div class="password-wrapper">
+        <input
+          [type]="hidePassword() ? 'password' : 'text'"
+          formControlName="password"
+          placeholder="Minimum 6 caractères"
+          autocomplete="new-password" />
+        <span class="eye-icon" (click)="togglePassword()">
+          {{ hidePassword() ? '👁️' : '👁️‍🗨️' }}
+        </span>
+      </div>
+      <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched"
+           class="error-message">
+        Mot de passe requis (min. 6 caractères)
+      </div>
     </div>
 
-    <div class="field password">
-      <input [type]="hideConfirmPassword() ? 'password' : 'text'"
-             formControlName="confirmPassword"
-             placeholder="Confirmer mot de passe" />
-      <span class="eye" (click)="hideConfirmPassword.set(!hideConfirmPassword())">👁</span>
+    <div class="field">
+      <label>Confirmer le mot de passe</label>
+      <div class="password-wrapper">
+        <input
+          [type]="hideConfirmPassword() ? 'password' : 'text'"
+          formControlName="confirmPassword"
+          placeholder="Confirmez votre mot de passe"
+          autocomplete="new-password" />
+        <span class="eye-icon" (click)="toggleConfirmPassword()">
+          {{ hideConfirmPassword() ? '👁️' : '👁️‍🗨️' }}
+        </span>
+      </div>
+      <div *ngIf="form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched"
+           class="error-message">
+        Confirmation requise
+      </div>
     </div>
 
-    <label class="terms">
+    <label class="terms-label">
       <input type="checkbox" formControlName="acceptTerms" />
-      J'accepte les conditions d'utilisation
+      <span>J'accepte les conditions d'utilisation</span>
     </label>
 
     <button type="submit" class="submit" [disabled]="loading()">
-      S'inscrire
+      {{ loading() ? 'Inscription en cours...' : "S'inscrire" }}
     </button>
 
     <div class="login-link">
