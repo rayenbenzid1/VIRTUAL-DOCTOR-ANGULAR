@@ -14,16 +14,16 @@
     <label class="radio-label">
       <input type="radio"
              name="role"
-             [checked]="role() === 'PATIENT'"
-             (change)="role.set('PATIENT')" />
+             [checked]="role() === 'USER'"
+             (change)="role.set('USER')" />
       <span>Patient</span>
     </label>
 
     <label class="radio-label">
       <input type="radio"
              name="role"
-             [checked]="role() === 'MEDECIN'"
-             (change)="role.set('MEDECIN')" />
+             [checked]="role() === 'DOCTOR'"
+             (change)="role.set('DOCTOR')" />
       <span>Médecin</span>
     </label>
   </div>
