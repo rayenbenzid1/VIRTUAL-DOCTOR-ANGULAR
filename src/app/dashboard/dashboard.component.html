@@ -3,15 +3,49 @@
   <!-- Header -->
   <div class="header">
     <div class="header-content">
-      <button class="back-btn" (click)="logout()">
-        <span>←</span>
-      </button>
       <div class="header-title">
         <span class="icon">🏥</span>
-        <h1>Health Dashboard</h1>
+        <div class="header-text">
+          <h1>Health Dashboard</h1>
+          <p class="header-welcome" *ngIf="!loading()">Bienvenue de retour, <span class="user-name">{{ userName() }}</span></p>
+        </div>
       </div>
-      <button class="profile-btn">
-        <span>👤</span>
+
+      <!-- Profile Dropdown -->
+      <div class="profile-dropdown">
+        <button class="profile-btn" (click)="toggleDropdown()">
+          <span>👤</span>
+        </button>
+        <div class="dropdown-menu" [class.show]="showDropdown()">
+          <button class="dropdown-item" (click)="editProfile()">
+            <span class="dropdown-icon">✏️</span>
+            <span>Modifier le profil</span>
+          </button>
+          <button class="dropdown-item logout" (click)="logout()">
+            <span class="dropdown-icon">🚪</span>
+            <span>Déconnexion</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+      <button class="nav-item" [class.active]="activeTab() === 'analyse'" (click)="setActiveTab('analyse')">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Analyse</span>
+      </button>
+      <button class="nav-item" [class.active]="activeTab() === 'alerte'" (click)="setActiveTab('alerte')">
+        <span class="nav-icon">🔔</span>
+        <span class="nav-label">Alerte</span>
+      </button>
+      <button class="nav-item" [class.active]="activeTab() === 'progression'" (click)="setActiveTab('progression')">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label">Progression</span>
+      </button>
+      <button class="nav-item" [class.active]="activeTab() === 'buts'" (click)="setActiveTab('buts')">
+        <span class="nav-icon">🎯</span>
+        <span class="nav-label">Buts</span>
       </button>
     </div>
   </div>
@@ -19,20 +53,19 @@
   <!-- Main Content -->
   <div class="main-content">
 
+
+
     <!-- Loading State -->
     <div class="loading-section" *ngIf="loading()">
       <div class="loading-spinner"></div>
-      <p>En attente des données...</p>
+      <p>Chargement de vos données de santé...</p>
     </div>
 
     <!-- Refresh Button -->
-    <button class="refresh-btn" (click)="refresh()" [disabled]="loading()">
-      <span class="refresh-icon">🔄</span>
-      <span>Actualiser</span>
-    </button>
+
 
     <!-- Action Buttons -->
-    <div class="action-buttons">
+    <div class="action-buttons" *ngIf="!loading()">
       <button class="action-card analyze" (click)="analyze()">
         <div class="action-icon">
           <span>📸</span>
@@ -50,7 +83,7 @@
     </div>
 
     <!-- Daily Summary -->
-    <div class="section">
+    <div class="section" *ngIf="!loading()">
       <div class="section-header">
         <span class="section-icon">📊</span>
         <h2>Résumé du Jour</h2>
@@ -68,18 +101,18 @@
     </div>
 
     <!-- Physical Activities -->
-    <div class="section">
+    <div class="section" *ngIf="!loading()">
       <div class="section-header">
         <span class="section-icon">🏋️</span>
         <h2>Activités Physiques</h2>
       </div>
       <div class="info-card">
-        <p class="info-text">Aucun exercice aujourd'hui</p>
+        <p class="info-text">Aucun exercice enregistré aujourd'hui</p>
       </div>
     </div>
 
     <!-- Vital Signs -->
-    <div class="section">
+    <div class="section" *ngIf="!loading()">
       <div class="section-header">
         <span class="section-icon">🩺</span>
         <h2>Signes Vitaux</h2>
@@ -97,18 +130,18 @@
     </div>
 
     <!-- Data Summary -->
-    <div class="section">
+    <div class="section" *ngIf="!loading()">
       <div class="section-header">
         <span class="section-icon">📋</span>
         <h2>Résumé des Données</h2>
       </div>
       <div class="info-card">
-        <p class="info-text">En attente des données...</p>
+        <p class="info-text">En attente de synchronisation avec vos appareils...</p>
       </div>
     </div>
 
     <!-- 3D Avatar -->
-    <div class="section">
+    <div class="section" *ngIf="!loading()">
       <div class="section-header">
         <span class="section-icon">🧍</span>
         <h2>Avatar 3D - État de Santé</h2>
@@ -121,7 +154,7 @@
             <div class="body-part lungs-right"></div>
             <div class="body-part stomach"></div>
           </div>
-          <p class="avatar-text">Visualisation 3D de votre état de santé</p>
+          <p class="avatar-text">Visualisation 3D de votre état de santé général</p>
         </div>
       </div>
     </div>

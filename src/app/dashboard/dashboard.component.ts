@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -28,6 +28,8 @@ export class DashboardComponent {
 
   loading = signal(true);
   userName = signal('');
+  showDropdown = signal(false);
+  activeTab = signal('analyse');
 
   dailyMetrics = signal<HealthMetric[]>([
     { id: 'steps', icon: '👣', label: 'Pas', value: '0', color: '#e8f5e9' },
@@ -62,22 +64,47 @@ export class DashboardComponent {
     }, 1500);
   }
 
-  refresh() {
-    this.loading.set(true);
-    setTimeout(() => {
-      this.loading.set(false);
-    }, 1000);
+  // Fermer le dropdown si on clique ailleurs
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.profile-dropdown')) {
+      this.showDropdown.set(false);
+    }
+  }
+
+  toggleDropdown() {
+    this.showDropdown.set(!this.showDropdown());
+  }
+
+  setActiveTab(tab: string) {
+    this.activeTab.set(tab);
+    console.log('Navigation vers:', tab);
+    // Naviguer vers la page appropriée
+    // this.router.navigate([`/${tab}`]);
+  }
+
+  editProfile() {
+    this.showDropdown.set(false);
+    console.log('Modifier le profil');
+    // Naviguer vers la page de modification du profil
+    // this.router.navigate(['/profile/edit']);
   }
 
   analyze() {
     console.log('Analyser clicked');
+    // Naviguer vers la page d'analyse
+    // this.router.navigate(['/analyze']);
   }
 
   consult() {
     console.log('Consulter clicked');
+    // Naviguer vers la page de consultation
+    // this.router.navigate(['/consult']);
   }
 
   logout() {
+    this.showDropdown.set(false);
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
