@@ -1,0 +1,479 @@
+<div class="dashboard-container">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <div class="welcome-section">
+                <h1 class="greeting">{{ greeting() }}, Dr. {{ doctorName() }}</h1>
+                <p class="current-date">{{ currentTime() | date:'EEEE, MMMM d, yyyy' }}</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-icon" title="Notifications">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="notification-badge">3</span>
+                </button>
+                <button class="btn-icon" title="Settings" (click)="openProfileSettings()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6m6-12v6m0 6v6M6 1v6m0 6v6"></path>
+                    </svg>
+                </button>
+                <button class="btn-logout" (click)="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+    <div class="loading-container">
+        <div class="spinner"></div>
+        <p>Loading dashboard...</p>
+    </div>
+    }
+
+    <!-- Main Content -->
+    @if (!isLoading()) {
+    <div class="dashboard-content">
+        <!-- Stats Cards -->
+        <section class="stats-grid">
+            <div class="stat-card primary">
+                <div class="stat-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-value">{{ stats().totalPatients }}</h3>
+                    <p class="stat-label">Total Patients</p>
+                </div>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-value">{{ stats().todayAppointments }}</h3>
+                    <p class="stat-label">Today's Appointments</p>
+                </div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-value">{{ stats().pendingConsultations }}</h3>
+                    <p class="stat-label">Pending Consultations</p>
+                </div>
+            </div>
+
+            <div class="stat-card info">
+                <div class="stat-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-value">{{ completionRate() }}%</h3>
+                    <p class="stat-label">Completion Rate</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabs Navigation -->
+        <nav class="tabs-nav">
+            <button class="tab-btn" [class.active]="selectedTab() === 'overview'" (click)="selectTab('overview')">
+                Overview
+            </button>
+            <button class="tab-btn" [class.active]="selectedTab() === 'appointments'"
+                (click)="selectTab('appointments')">
+                Appointments
+            </button>
+            <button class="tab-btn" [class.active]="selectedTab() === 'patients'" (click)="selectTab('patients')">
+                Recent Patients
+            </button>
+        </nav>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Overview Tab -->
+            @if (selectedTab() === 'overview') {
+            <div class="overview-grid">
+                <!-- Upcoming Appointments -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Upcoming Appointments</h2>
+                        <span class="badge">{{ upcomingAppointments().length }}</span>
+                    </div>
+                    <div class="card-body">
+                        @if (upcomingAppointments().length > 0) {
+                        <div class="appointments-list">
+                            @for (appointment of upcomingAppointments(); track appointment.id) {
+                            <div class="appointment-item">
+                                <div class="appointment-time">
+                                    <span class="time-val">{{ appointment.time }}</span>
+                                </div>
+                                <div class="appointment-details">
+                                    <h4>{{ appointment.patientName }}</h4>
+                                    <p>{{ appointment.type }}</p>
+                                    <span class="status-label status-{{ appointment.status.toLowerCase() }}">
+                                        {{ appointment.status }}
+                                    </span>
+                                    @if (appointment.status === 'CANCELLED' || appointment.status === 'REJECTED') {
+                                    <div class="cancellation-info">
+                                        @if (appointment.cancelledBy) {
+                                        <span class="cancelled-by">by {{ appointment.cancelledBy }}</span>
+                                        }
+                                        @if (appointment.cancellationReason || appointment.doctorResponseReason) {
+                                        <p class="cancellation-reason"
+                                            [title]="appointment.cancellationReason || appointment.doctorResponseReason">
+                                            "{{ (appointment.cancellationReason || appointment.doctorResponseReason) }}"
+                                        </p>
+                                        }
+                                    </div>
+                                    }
+                                </div>
+                                <div class="appointment-actions">
+                                    @if (appointment.status === 'PENDING') {
+                                    <button class="btn-sm btn-accept" (click)="acceptAppointment(appointment.id)"
+                                        title="Accept">
+                                        ✓
+                                    </button>
+                                    <button class="btn-sm btn-reject" (click)="rejectAppointment(appointment.id)"
+                                        title="Reject">
+                                        ✗
+                                    </button>
+                                    }
+                                    @if (appointment.status === 'ACCEPTED') {
+                                    <button class="btn-sm btn-complete" (click)="completeAppointment(appointment.id)">
+                                        Complete
+                                    </button>
+                                    <button class="btn-sm btn-cancel" (click)="cancelAppointment(appointment.id)">
+                                        Cancel
+                                    </button>
+                                    }
+                                    <button class="btn-sm btn-info" (click)="viewPatientInfo(appointment.patientId)"
+                                        title="Patient Info">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                        } @else {
+                        <div class="empty-state">
+                            <p>No upcoming appointments</p>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Recent Patients -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Recent Patients</h2>
+                    </div>
+                    <div class="card-body">
+                        @if (recentPatients().length > 0) {
+                        <div class="patients-list">
+                            @for (patient of recentPatients().slice(0, 5); track patient.id) {
+                            <div class="patient-item" (click)="viewPatientInfo(patient.id)">
+                                <div class="patient-avatar">
+                                    {{ patient.name.charAt(0) }}
+                                </div>
+                                <div class="patient-info">
+                                    <h4>{{ patient.name }}</h4>
+                                    <p>{{ patient.condition }}</p>
+                                    <span class="last-visit">Last visit: {{ patient.lastVisit | date:'MMM d, yyyy'
+                                        }}</span>
+                                </div>
+                                <a class="link-primary">View Details</a>
+                            </div>
+                            }
+                        </div>
+                        } @else {
+                        <div class="empty-state">
+                            <p>No recent patients</p>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            }
+
+            <!-- Appointments Tab -->
+            @if (selectedTab() === 'appointments') {
+            <div class="card">
+                <div class="card-header">
+                    <h2>All Appointments</h2>
+                </div>
+                <div class="card-body">
+                    @if (appointments().length > 0) {
+                    <div class="appointments-table">
+                        @for (appointment of appointments(); track appointment.id) {
+                        <div class="table-row">
+                            <div class="col-time">{{ appointment.time }}</div>
+                            <div class="col-patient">{{ appointment.patientName }}</div>
+                            <div class="col-type">{{ appointment.type }}</div>
+                            <div class="col-status">
+                                <span class="status-badge" [class]="appointment.status.toLowerCase()">
+                                    {{ appointment.status }}
+                                </span>
+                                @if (appointment.status === 'CANCELLED' || appointment.status === 'REJECTED') {
+                                <div class="cancellation-info-sm">
+                                    @if (appointment.cancelledBy) {
+                                    <div class="cancelled-by-sm">by {{ appointment.cancelledBy }}</div>
+                                    }
+                                    @if (appointment.cancellationReason || appointment.doctorResponseReason) {
+                                    <div class="cancellation-reason-sm"
+                                        [title]="appointment.cancellationReason || appointment.doctorResponseReason">
+                                        {{ (appointment.cancellationReason || appointment.doctorResponseReason) |
+                                        slice:0:30 }}{{ (appointment.cancellationReason ||
+                                        appointment.doctorResponseReason)?.length! > 30 ? '...' : '' }}
+                                    </div>
+                                    }
+                                </div>
+                                }
+                            </div>
+                            <div class="col-actions">
+                                @if (appointment.status === 'PENDING') {
+                                <button class="btn-sm btn-accept"
+                                    (click)="acceptAppointment(appointment.id)">Accept</button>
+                                <button class="btn-sm btn-reject"
+                                    (click)="rejectAppointment(appointment.id)">Reject</button>
+                                }
+                                @if (appointment.status === 'ACCEPTED') {
+                                <button class="btn-sm btn-complete"
+                                    (click)="completeAppointment(appointment.id)">Complete</button>
+                                <button class="btn-sm btn-cancel"
+                                    (click)="cancelAppointment(appointment.id)">Cancel</button>
+                                }
+                                <button class="btn-sm btn-info"
+                                    (click)="viewPatientInfo(appointment.patientId)">Info</button>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    } @else {
+                    <div class="empty-state">
+                        <p>No appointments found</p>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+
+            <!-- Patients Tab -->
+            @if (selectedTab() === 'patients') {
+            <div class="card">
+                <div class="card-header">
+                    <h2>Recent Patients</h2>
+                </div>
+                <div class="card-body">
+                    @if (recentPatients().length > 0) {
+                    <div class="patients-grid">
+                        @for (patient of recentPatients(); track patient.id) {
+                        <div class="patient-card" (click)="viewPatientInfo(patient.id)">
+                            <div class="patient-card-avatar">
+                                {{ patient.name.charAt(0) }}
+                            </div>
+                            <h3>{{ patient.name }}</h3>
+                            <p class="patient-age">{{ patient.age }} years old</p>
+                            <div class="patient-condition">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                                </svg>
+                                <span>{{ patient.condition }}</span>
+                            </div>
+                            <div class="patient-last-visit">
+                                Last visit: {{ patient.lastVisit | date:'MMM d, yyyy' }}
+                            </div>
+                            <button class="btn-outline">View Profile</button>
+                        </div>
+                        }
+                    </div>
+                    } @else {
+                    <div class="empty-state">
+                        <p>No patients found</p>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    }
+
+    <!-- Patient Info Modal -->
+    @if (showPatientInfo()) {
+    <div class="modal-overlay" (click)="closePatientInfo()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Patient Information</h2>
+                <button class="btn-close" (click)="closePatientInfo()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            @if (loadingPatientInfo()) {
+            <div class="modal-loading">
+                <div class="spinner"></div>
+                <p>Loading patient information...</p>
+            </div>
+            } @else if (selectedPatient()) {
+            <div class="modal-body">
+                <div class="patient-profile">
+                    <div class="patient-profile-avatar">
+                        {{ selectedPatient()!.name.charAt(0) }}
+                    </div>
+                    <h3>{{ selectedPatient()!.name }}</h3>
+                    <p class="patient-email">{{ selectedPatient()!.email }}</p>
+                </div>
+
+                <div class="patient-details">
+                    <div class="detail-section">
+                        <h4>Personal Information</h4>
+                        <div class="detail-grid">
+                            @if (selectedPatient()!.age) {
+                            <div class="detail-item">
+                                <span class="detail-label">Age:</span>
+                                <span class="detail-value">{{ selectedPatient()!.age }} years</span>
+                            </div>
+                            }
+                            @if (selectedPatient()!.gender) {
+                            <div class="detail-item">
+                                <span class="detail-label">Gender:</span>
+                                <span class="detail-value">{{ selectedPatient()!.gender }}</span>
+                            </div>
+                            }
+                            @if (selectedPatient()!.phone) {
+                            <div class="detail-item">
+                                <span class="detail-label">Phone:</span>
+                                <span class="detail-value">{{ selectedPatient()!.phone }}</span>
+                            </div>
+                            }
+                            @if (selectedPatient()!.address) {
+                            <div class="detail-item">
+                                <span class="detail-label">Address:</span>
+                                <span class="detail-value">{{ selectedPatient()!.address }}</span>
+                            </div>
+                            }
+                        </div>
+                    </div>
+
+                    @if (selectedPatient()!.condition) {
+                    <div class="detail-section">
+                        <h4>Current Condition</h4>
+                        <p class="condition-badge">{{ selectedPatient()!.condition }}</p>
+                    </div>
+                    }
+
+                    @if (selectedPatient()!.medicalHistory && selectedPatient()!.medicalHistory!.length > 0) {
+                    <div class="detail-section">
+                        <h4>Medical History</h4>
+                        <ul class="info-list">
+                            @for (history of selectedPatient()!.medicalHistory; track $index) {
+                            <li>{{ history }}</li>
+                            }
+                        </ul>
+                    </div>
+                    }
+
+                    @if (selectedPatient()!.allergies && selectedPatient()!.allergies!.length > 0) {
+                    <div class="detail-section">
+                        <h4>Allergies</h4>
+                        <ul class="info-list allergies">
+                            @for (allergy of selectedPatient()!.allergies; track $index) {
+                            <li>{{ allergy }}</li>
+                            }
+                        </ul>
+                    </div>
+                    }
+
+                    @if (selectedPatient()!.currentMedications && selectedPatient()!.currentMedications!.length > 0) {
+                    <div class="detail-section">
+                        <h4>Current Medications</h4>
+                        <ul class="info-list medications">
+                            @for (medication of selectedPatient()!.currentMedications; track $index) {
+                            <li>{{ medication }}</li>
+                            }
+                        </ul>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    }
+
+    <!-- Profile Settings Modal -->
+    @if (showProfileModal()) {
+    <div class="modal-overlay" (click)="closeProfileSettings()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Update Profile</h2>
+                <button class="btn-close" (click)="closeProfileSettings()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form (submit)="updateProfile($event)">
+                    <div class="patient-profile">
+                        <div class="patient-profile-avatar">
+                            Dr
+                        </div>
+                        <p class="patient-email">Update your personal information</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" class="form-control" [value]="doctorName()" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="form-control" value="doctor@example.com" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Specialization</label>
+                        <input type="text" class="form-control" value="General Medicine" disabled>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" (click)="closeProfileSettings()">Cancel</button>
+                        <button type="submit" class="btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    }
+</div>

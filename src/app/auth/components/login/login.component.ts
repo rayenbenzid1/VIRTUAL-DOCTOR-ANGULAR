@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthApiService } from '../../services/auth.api';
+import { DoctorAuthApiService } from '../../services/doctor-auth.api';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -22,8 +23,9 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private authApi: AuthApiService,
+    private doctorAuthApi: DoctorAuthApiService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -37,14 +39,28 @@ export class LoginComponent {
 
     this.loading.set(true);
 
-    this.authApi.login(this.form.value).subscribe({
+    const email = this.form.value.email;
+    const isDoctor = email.endsWith('@doctor.com');
+
+    // Choose the appropriate authentication method based on email domain
+    const authMethod = isDoctor
+      ? this.doctorAuthApi.login(this.form.value)
+      : this.authApi.login(this.form.value);
+
+    authMethod.subscribe({
       next: (res) => {
         localStorage.setItem('accessToken', res.accessToken);
         localStorage.setItem('refreshToken', res.refreshToken);
         localStorage.setItem('user', JSON.stringify(res.user));
 
         this.loading.set(false);
-        this.router.navigate(['/dashboard']);
+
+
+        if (isDoctor) {
+          this.router.navigate(['/doctor/dashboard']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
       },
       error: () => {
         this.loading.set(false);

@@ -11,7 +11,7 @@ const API_URL = `${environment.BASE_URL}/auth-service/api/v1/auth`;
 })
 export class AuthApiService {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(data: {
     email: string;
