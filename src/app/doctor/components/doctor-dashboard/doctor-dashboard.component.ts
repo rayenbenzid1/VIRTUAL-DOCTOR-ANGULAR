@@ -1,5 +1,9 @@
 import { Component, signal, computed, effect, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DashboardStatsComponent } from '../dashboard-stats/dashboard-stats.component';
+import { DashboardAppointmentsComponent, Appointment } from '../dashboard-appointments/dashboard-appointments.component';
+import { DashboardPatientsComponent } from '../dashboard-patients/dashboard-patients.component';
+import { PatientDetailsModalComponent } from '../patient-details-modal/patient-details-modal.component';
 
 import { DoctorAuthApiService } from '../../../auth/services/doctor-auth.api';
 import {
@@ -14,23 +18,6 @@ interface DashboardStats {
     todayAppointments: number;
     pendingConsultations: number;
     completedToday: number;
-}
-
-interface Appointment {
-    id: string;
-    patientId: string;
-    patientName: string;
-    patientEmail?: string;
-    time: string;
-    date: string;
-    type: string;
-    status: string;
-    notes?: string;
-    appointmentDateTime?: string;
-    cancelledBy?: string;
-    cancellationReason?: string;
-    doctorResponseReason?: string;
-    availableHoursSuggestion?: string;
 }
 
 interface Patient {
@@ -56,7 +43,7 @@ interface Patient {
 @Component({
     selector: 'app-doctor-dashboard',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, DashboardStatsComponent, DashboardAppointmentsComponent, DashboardPatientsComponent, PatientDetailsModalComponent],
     templateUrl: './doctor-dashboard.component.html',
     styleUrls: ['./doctor-dashboard.component.css']
 })
@@ -81,6 +68,7 @@ export class DoctorDashboardComponent implements OnDestroy {
     // Modals
     showPatientInfo = signal(false);
     selectedPatient = signal<Patient | null>(null);
+    selectedAppointmentContext = signal<Appointment | null>(null);
     loadingPatientInfo = signal(false);
     currentUser = signal<any>(null);
     showProfileModal = signal(false);
@@ -183,7 +171,7 @@ export class DoctorDashboardComponent implements OnDestroy {
     private async loadStatsFromAPI() {
         try {
             console.log('🔄 Loading stats from API...');
-            const stats = await this.appointmentApi.getDoctorStats().toPromise();
+            const stats = await this.appointmentApi.getDashboardStats().toPromise();
             console.log('📊 Stats response:', stats);
 
             if (stats) {
@@ -220,6 +208,7 @@ export class DoctorDashboardComponent implements OnDestroy {
                         patientId: apt.patientId,
                         patientName: apt.patientName,
                         patientEmail: apt.patientEmail,
+                        patientPhone: apt.patientPhone,
                         time: appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                         date: appointmentDate.toISOString().split('T')[0],
                         type: apt.appointmentType,
@@ -229,7 +218,11 @@ export class DoctorDashboardComponent implements OnDestroy {
                         cancelledBy: apt.cancelledBy,
                         cancellationReason: apt.cancellationReason,
                         doctorResponseReason: apt.doctorResponseReason,
-                        availableHoursSuggestion: apt.availableHoursSuggestion
+                        availableHoursSuggestion: apt.availableHoursSuggestion,
+                        reason: apt.reason,
+                        diagnosis: apt.diagnosis,
+                        prescription: apt.prescription,
+                        doctorNotes: apt.doctorNotes
                     };
                 });
 
@@ -246,7 +239,7 @@ export class DoctorDashboardComponent implements OnDestroy {
     private async loadPatientsFromAPI() {
         try {
             console.log('🔄 Loading patients from API...');
-            const patients = await this.appointmentApi.getDoctorPatients().toPromise();
+            const patients = await this.appointmentApi.getMyPatients().toPromise();
             console.log('👥 Patients response:', patients);
 
             if (patients && patients.length > 0) {
@@ -275,13 +268,13 @@ export class DoctorDashboardComponent implements OnDestroy {
         }
     }
 
-    // Appointment Actions
+    // Actions
     async acceptAppointment(appointmentId: string) {
         try {
             const updatedAppointment = await this.appointmentApi.acceptAppointment(appointmentId).toPromise();
             if (updatedAppointment) {
                 console.log('✅ Appointment accepted:', updatedAppointment);
-                this.updateAppointmentStatus(appointmentId, 'SCHEDULED');
+                this.updateAppointmentStatus(appointmentId, 'ACCEPTED');
                 this.updateStatsAfterAction('accept');
                 alert('Appointment accepted successfully!');
             }
@@ -376,37 +369,36 @@ export class DoctorDashboardComponent implements OnDestroy {
     }
 
     // Patient Info
-    async viewPatientInfo(patientId: string) {
+    viewPatientInfo(patientId: string, appointmentContext?: Appointment) {
         this.loadingPatientInfo.set(true);
         this.showPatientInfo.set(true);
+        this.selectedAppointmentContext.set(appointmentContext || null);
 
-        try {
-            const patientInfo = await this.appointmentApi.getPatientInfo(patientId).toPromise();
-            if (patientInfo) {
+        // Try to find patient in recent patients list
+        const patient = this.recentPatients().find(p => p.id === patientId);
+
+        if (patient) {
+            // Merge appointment details if available (especially phone which might be missing in patient list)
+            if (appointmentContext?.patientPhone && !patient.phone) {
                 this.selectedPatient.set({
-                    id: patientInfo.id,
-                    name: patientInfo.name || `${patientInfo.firstName} ${patientInfo.lastName}`,
-                    email: patientInfo.email,
-                    age: patientInfo.age,
-                    phone: patientInfo.phone,
-                    gender: patientInfo.gender,
-                    address: patientInfo.address,
-                    medicalHistory: patientInfo.medicalHistory,
-                    allergies: patientInfo.allergies,
-                    currentMedications: patientInfo.currentMedications
+                    ...patient,
+                    phone: appointmentContext.patientPhone
                 });
             } else {
-                const patient = this.recentPatients().find(p => p.id === patientId);
-                if (patient) {
-                    this.selectedPatient.set(patient);
-                }
-            }
-        } catch (error) {
-            console.error('Error loading patient details:', error);
-            const patient = this.recentPatients().find(p => p.id === patientId);
-            if (patient) {
                 this.selectedPatient.set(patient);
             }
+        } else if (appointmentContext) {
+            // Fallback to appointment data if patient not found in list
+            this.selectedPatient.set({
+                id: appointmentContext.patientId,
+                name: appointmentContext.patientName,
+                email: appointmentContext.patientEmail || '',
+                phone: appointmentContext.patientPhone,
+                condition: 'Unknown',
+                totalAppointments: 0,
+                completedAppointments: 0,
+                cancelledAppointments: 0
+            });
         }
 
         this.loadingPatientInfo.set(false);
@@ -415,6 +407,7 @@ export class DoctorDashboardComponent implements OnDestroy {
     closePatientInfo() {
         this.showPatientInfo.set(false);
         this.selectedPatient.set(null);
+        this.selectedAppointmentContext.set(null);
     }
 
     // Tab Navigation

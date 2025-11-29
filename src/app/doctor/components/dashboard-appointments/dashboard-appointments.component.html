@@ -1,0 +1,107 @@
+<!-- List View (Upcoming Appointments) -->
+@if (viewType === 'list') {
+<div class="card">
+    <div class="card-header">
+        <h2>Upcoming Appointments</h2>
+        <span class="badge">{{ appointments.length }}</span>
+    </div>
+    <div class="card-body">
+        @if (appointments.length > 0) {
+        <div class="appointments-list">
+            @for (appointment of appointments; track appointment.id) {
+            <div class="appointment-item">
+                <div class="appointment-time">
+                    <span class="date-val">{{ appointment.date | date:'MMM d' }}</span>
+                    <span class="time-val">{{ appointment.time }}</span>
+                </div>
+                <div class="appointment-details">
+                    <h4>{{ appointment.patientName }}</h4>
+                    <p>{{ appointment.type }}</p>
+                    <span class="status-label status-{{ appointment.status.toLowerCase() }}">
+                        {{ appointment.status }}
+                    </span>
+                </div>
+                <div class="appointment-actions">
+                    @if (appointment.status === 'PENDING') {
+                    <button class="btn-sm btn-accept" (click)="onAccept(appointment.id)" title="Accept">
+                        ✓
+                    </button>
+                    <button class="btn-sm btn-reject" (click)="onReject(appointment.id)" title="Reject">
+                        ✗
+                    </button>
+                    }
+                    @if (appointment.status === 'ACCEPTED' || appointment.status === 'SCHEDULED') {
+                    <button class="btn-sm btn-complete" (click)="onComplete(appointment.id)">
+                        Complete
+                    </button>
+                    <button class="btn-sm btn-cancel" (click)="onCancel(appointment.id)">
+                        Cancel
+                    </button>
+                    }
+                    <button class="btn-sm btn-info" (click)="onViewInfo(appointment.patientId, appointment)"
+                        title="Patient Info">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            }
+        </div>
+        } @else {
+        <div class="empty-state">
+            <p>No upcoming appointments</p>
+        </div>
+        }
+    </div>
+</div>
+}
+
+<!-- Table View (All Appointments) -->
+@if (viewType === 'table') {
+<div class="card">
+    <div class="card-header">
+        <h2>All Appointments</h2>
+    </div>
+    <div class="card-body">
+        @if (appointments.length > 0) {
+        <div class="appointments-table">
+            @for (appointment of appointments; track appointment.id) {
+            <div class="table-row">
+                <div class="col-time">
+                    <span class="date-val">{{ appointment.date | date:'MMM d' }}</span>
+                    <span class="time-val">{{ appointment.time }}</span>
+                </div>
+                <div class="col-patient">{{ appointment.patientName }}</div>
+                <div class="col-type">{{ appointment.type }}</div>
+                <div class="col-status">
+                    <span class="status-badge" [class]="appointment.status.toLowerCase()">
+                        {{ appointment.status }}
+                    </span>
+                </div>
+                <div class="col-actions">
+                    @if (appointment.status === 'PENDING') {
+                    <button class="btn-sm btn-accept" (click)="onAccept(appointment.id)">Accept</button>
+                    <button class="btn-sm btn-reject" (click)="onReject(appointment.id)">Reject</button>
+                    }
+                    @if (appointment.status === 'ACCEPTED' || appointment.status === 'SCHEDULED') {
+                    <button class="btn-sm btn-complete" (click)="onComplete(appointment.id)">Complete</button>
+                    <button class="btn-sm btn-cancel" (click)="onCancel(appointment.id)">Cancel</button>
+                    }
+                    <button class="btn-sm btn-info"
+                        (click)="onViewInfo(appointment.patientId, appointment)">Info</button>
+                </div>
+            </div>
+            }
+        </div>
+        } @else {
+        <div class="empty-state">
+            <p>No appointments found</p>
+        </div>
+        }
+    </div>
+</div>
+}

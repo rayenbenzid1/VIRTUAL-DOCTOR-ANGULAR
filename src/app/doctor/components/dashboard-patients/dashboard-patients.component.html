@@ -1,0 +1,70 @@
+<!-- List View (Recent Patients in Overview) -->
+@if (viewType === 'list') {
+<div class="card">
+    <div class="card-header">
+        <h2>Recent Patients</h2>
+    </div>
+    <div class="card-body">
+        @if (patients.length > 0) {
+        <div class="patients-list">
+            @for (patient of patients.slice(0, 5); track patient.id) {
+            <div class="patient-item" (click)="onViewInfo(patient.id)">
+                <div class="patient-avatar">
+                    {{ patient.name.charAt(0) }}
+                </div>
+                <div class="patient-info">
+                    <h4>{{ patient.name }}</h4>
+                    <p>{{ patient.condition }}</p>
+                    <span class="last-visit">Last visit: {{ patient.lastVisit | date:'MMM d, yyyy'
+                        }}</span>
+                </div>
+                <a class="link-primary">View Details</a>
+            </div>
+            }
+        </div>
+        } @else {
+        <div class="empty-state">
+            <p>No recent patients</p>
+        </div>
+        }
+    </div>
+</div>
+}
+
+<!-- Grid View (Patients Tab) -->
+@if (viewType === 'grid') {
+<div class="card">
+    <div class="card-header">
+        <h2>Recent Patients</h2>
+    </div>
+    <div class="card-body">
+        @if (patients.length > 0) {
+        <div class="patients-grid">
+            @for (patient of patients; track patient.id) {
+            <div class="patient-card" (click)="onViewInfo(patient.id)">
+                <div class="patient-card-avatar">
+                    {{ patient.name.charAt(0) }}
+                </div>
+                <h3>{{ patient.name }}</h3>
+                <p class="patient-age">{{ patient.age }} years old</p>
+                <div class="patient-condition">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                    <span>{{ patient.condition }}</span>
+                </div>
+                <div class="patient-last-visit">
+                    Last visit: {{ patient.lastVisit | date:'MMM d, yyyy' }}
+                </div>
+                <button class="btn-outline">View Profile</button>
+            </div>
+            }
+        </div>
+        } @else {
+        <div class="empty-state">
+            <p>No patients found</p>
+        </div>
+        }
+    </div>
+</div>
+}

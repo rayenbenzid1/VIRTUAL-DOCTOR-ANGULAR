@@ -63,20 +63,12 @@ export interface DoctorStatsResponse {
     generatedAt: string;
 }
 
-export interface AcceptAppointmentRequest {
-    appointmentId: string;
-    doctorId: string;
-}
-
-export interface RejectAppointmentRequest {
-    appointmentId: string;
-    doctorId: string;
+export interface AppointmentResponseRequest {
     reason?: string;
     availableHours?: string;
 }
 
 export interface CompleteAppointmentRequest {
-    appointmentId: string;
     diagnosis: string;
     prescription: string;
     notes: string;
@@ -104,54 +96,55 @@ export class AppointmentApiService {
     }
 
     // Get doctor's patients
-    getDoctorPatients(): Observable<PatientInfoResponse[]> {
+    getMyPatients(): Observable<PatientInfoResponse[]> {
         return this.http.get<PatientInfoResponse[]>(`${BASE_URL}/doctor-activation-service/api/doctors/appointments/patients`);
     }
 
-    // Get doctor stats
-    getDoctorStats(): Observable<DoctorStatsResponse> {
-        return this.http.get<DoctorStatsResponse>(`${BASE_URL}/doctor-activation-service/api/doctors/stats`);
+    // Get dashboard statistics
+    getDashboardStats(): Observable<DoctorStatsResponse> {
+        return this.http.get<DoctorStatsResponse>(`${BASE_URL}/doctor-activation-service/api/doctors/appointments/dashboard/stats`);
     }
 
     // Accept appointment
     acceptAppointment(appointmentId: string): Observable<AppointmentResponse> {
-        return this.http.put<AppointmentResponse>(
-            `${BASE_URL}/doctor-activation-service/api/appointments/${appointmentId}/accept`,
+        return this.http.post<AppointmentResponse>(
+            `${BASE_URL}/doctor-activation-service/api/doctors/appointments/${appointmentId}/accept`,
             {}
         );
     }
 
     // Reject appointment
-    rejectAppointment(appointmentId: string, reason: string = '', availableHours: string = ''): Observable<AppointmentResponse> {
-        return this.http.put<AppointmentResponse>(
-            `${BASE_URL}/doctor-activation-service/api/appointments/${appointmentId}/reject`,
-            { reason, availableHours }
+    rejectAppointment(appointmentId: string, reason: string, availableHours?: string): Observable<AppointmentResponse> {
+        const request: AppointmentResponseRequest = { reason };
+        if (availableHours) {
+            request.availableHours = availableHours;
+        }
+
+        return this.http.post<AppointmentResponse>(
+            `${BASE_URL}/doctor-activation-service/api/doctors/appointments/${appointmentId}/reject`,
+            request
         );
     }
 
     // Complete appointment
     completeAppointment(appointmentId: string, diagnosis: string, prescription: string, notes: string): Observable<AppointmentResponse> {
-        return this.http.put<AppointmentResponse>(
-            `${BASE_URL}/doctor-activation-service/api/appointments/${appointmentId}/complete`,
-            { diagnosis, prescription, notes }
+        const request = { diagnosis, prescription, notes };
+        return this.http.post<AppointmentResponse>(
+            `${BASE_URL}/doctor-activation-service/api/doctors/appointments/${appointmentId}/complete`,
+            request
         );
     }
 
     // Cancel appointment
-    cancelAppointment(appointmentId: string, reason: string = '', cancelledBy: string = 'DOCTOR'): Observable<void> {
-        return this.http.put<void>(
-            `${BASE_URL}/doctor-activation-service/api/appointments/${appointmentId}/cancel`,
-            { reason, cancelledBy }
+    cancelAppointment(appointmentId: string, reason: string): Observable<any> {
+        return this.http.post<any>(
+            `${BASE_URL}/doctor-activation-service/api/doctors/appointments/${appointmentId}/cancel`,
+            { reason }
         );
     }
 
     // Get appointment details
     getAppointmentDetails(appointmentId: string): Observable<AppointmentResponse> {
-        return this.http.get<AppointmentResponse>(`${BASE_URL}/doctor-activation-service/api/appointments/${appointmentId}`);
-    }
-
-    // Get patient information
-    getPatientInfo(patientId: string): Observable<any> {
-        return this.http.get<any>(`${BASE_URL}/doctor-activation-service/api/patients/${patientId}`);
+        return this.http.get<AppointmentResponse>(`${BASE_URL}/doctor-activation-service/api/doctors/appointments/${appointmentId}`);
     }
 }

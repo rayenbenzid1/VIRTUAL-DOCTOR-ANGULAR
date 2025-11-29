@@ -49,12 +49,24 @@ export class LoginComponent {
 
     authMethod.subscribe({
       next: (res) => {
+        console.log('Login response:', res);
+
+        // Store tokens
         localStorage.setItem('accessToken', res.accessToken);
         localStorage.setItem('refreshToken', res.refreshToken);
-        localStorage.setItem('user', JSON.stringify(res.user));
+
+        // Construct user object from response properties
+        const user = {
+          id: res.doctorId || res.userId || res.id,
+          name: res.fullName || res.name,
+          email: res.email,
+          role: res.role
+        };
+
+        console.log('Constructed user object:', user);
+        localStorage.setItem('user', JSON.stringify(user));
 
         this.loading.set(false);
-
 
         if (isDoctor) {
           this.router.navigate(['/doctor/dashboard']);
