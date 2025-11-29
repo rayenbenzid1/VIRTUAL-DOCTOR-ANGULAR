@@ -1,0 +1,74 @@
+<!-- src/app/healthPatient/components/analysis/analysis.component.html -->
+<div class="analysis-container">
+
+  <!-- Header avec bouton retour -->
+  <div class="page-header">
+    <button class="btn-back" (click)="goBack()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <div class="header-title">
+      <h1>Analyse de Santé</h1>
+      <p class="header-subtitle">Analyse complète de vos données du jour</p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+  <div class="loading-section">
+    <div class="loading-spinner"></div>
+    <p>Analyse de vos données en cours...</p>
+  </div>
+  }
+
+  <!-- Error State -->
+  @if (error() && !isLoading()) {
+  <div class="error-section">
+    <div class="error-icon">⚠️</div>
+    <h3>Erreur de chargement</h3>
+    <p>{{ error() }}</p>
+    <button class="btn-retry" (click)="retryAnalysis()">Réessayer</button>
+  </div>
+  }
+
+  <!-- Main Content -->
+  @if (!isLoading() && !error() && hasData()) {
+  <div class="analysis-content">
+
+    <!-- Header de l'analyse -->
+    <app-analysis-header
+      [healthScore]="analysisData()!.healthScore"
+      [riskLevel]="analysisData()!.riskLevel"
+      [analysisDate]="todayData()!.date">
+    </app-analysis-header>
+
+    <!-- Répartition du score -->
+    <app-score-breakdown
+      [breakdown]="analysisData()!.insights.score_breakdown">
+    </app-score-breakdown>
+
+    <!-- Explication IA -->
+    <app-ai-explanation
+      [explanation]="analysisData()!.aiExplanation">
+    </app-ai-explanation>
+
+    <!-- Anomalies détectées -->
+    <app-anomalies-list
+      [anomalies]="analysisData()!.anomalies">
+    </app-anomalies-list>
+
+    <!-- Recommandations -->
+    <app-recommendations-list
+      [recommendations]="analysisData()!.recommendations">
+    </app-recommendations-list>
+
+    <!-- Détails des métriques -->
+    <app-health-insights
+      [insights]="analysisData()!.insights">
+    </app-health-insights>
+
+  </div>
+  }
+
+</div>

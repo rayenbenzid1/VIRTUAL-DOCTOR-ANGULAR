@@ -1,0 +1,122 @@
+// src/app/healthPatient/components/ai-explanation/ai-explanation.component.ts
+import { Component, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-ai-explanation',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div class="explanation-section">
+      <div class="explanation-header">
+        <div class="header-content">
+          <span class="header-icon">🤖</span>
+          <div class="header-text">
+            <h2 class="header-title">Analyse Personnalisée</h2>
+            <p class="header-subtitle">Interprétation détaillée de votre état de santé</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="explanation-body">
+        <div class="explanation-card">
+          <p class="explanation-text">{{ explanation() }}</p>
+        </div>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .explanation-section {
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .explanation-header {
+      margin-bottom: 20px;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+
+    .header-text {
+      flex: 1;
+    }
+
+    .header-title {
+      margin: 0 0 4px 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .header-subtitle {
+      margin: 0;
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .explanation-body {
+      position: relative;
+    }
+
+    .explanation-card {
+      background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+      border-radius: 16px;
+      padding: 24px;
+      border: 2px solid #e2e8f0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .explanation-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, #8b5cf6 0%, #6366f1 100%);
+    }
+
+    .explanation-text {
+      margin: 0;
+      color: #334155;
+      font-size: 15px;
+      line-height: 1.8;
+      font-weight: 500;
+      text-align: justify;
+    }
+
+    @media (max-width: 640px) {
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .explanation-text {
+        text-align: left;
+      }
+    }
+  `]
+})
+export class AiExplanationComponent {
+  explanation = input.required<string>();
+}
