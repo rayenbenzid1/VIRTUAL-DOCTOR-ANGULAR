@@ -1,0 +1,96 @@
+<div class="goals-container">
+  <!-- Header -->
+  <div class="page-header">
+    <button class="btn-back" (click)="goBack()">
+      ←
+    </button>
+    <div class="header-title">
+      <h1>🎯 Objectifs Santé</h1>
+      <p class="header-subtitle">Définissez et atteignez vos objectifs personnalisés</p>
+    </div>
+  </div>
+
+  <div class="goals-content">
+    <!-- Configuration (affichée si pas d'objectifs ou si demandée) -->
+    @if (showConfig()) {
+      <div class="goals-config-section">
+        <app-goal-config (configChanged)="onConfigChanged($event)"></app-goal-config>
+      </div>
+    }
+
+    <!-- Loading State -->
+    @if (loading()) {
+      <div class="loading-section">
+        <div class="loading-spinner"></div>
+        <p>Génération de vos objectifs personnalisés...</p>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (error()) {
+      <div class="error-section">
+        <span class="error-icon">⚠️</span>
+        <h3>Erreur</h3>
+        <p>{{ error() }}</p>
+        <button class="btn-retry" (click)="regenerateGoals()">Réessayer</button>
+      </div>
+    }
+
+    <!-- Goals Summary -->
+    @if (hasGoals() && !showConfig()) {
+      <div class="goals-summary">
+        <div class="summary-card">
+          <div class="summary-header">
+            <h2>🎯 Votre Plan Personnalisé</h2>
+            <p>Suivez votre progression vers vos objectifs santé</p>
+          </div>
+          
+          <div class="score-section">
+            <div class="score-box current">
+              <span class="score-label">Score actuel</span>
+              <span class="score-value">{{ goalsData()?.average_current_health_score?.split(' ')?.[0] }}</span>
+            </div>
+            <span class="score-arrow">→</span>
+            <div class="score-box projected">
+              <span class="score-label">Score projeté</span>
+              <span class="score-value">{{ goalsData()?.projected_health_score?.split(' ')?.[0] }}</span>
+            </div>
+          </div>
+
+          <div class="summary-stats">
+            <div class="stat-item">
+              <span class="stat-value">{{ totalGoals() }}</span>
+              <span class="stat-label">Objectifs</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ goalsData()?.timeframe_days }}</span>
+              <span class="stat-label">Jours</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">+{{ goalsData()?.estimated_improvement }}</span>
+              <span class="stat-label">Points</span>
+            </div>
+          </div>
+
+          <button class="regenerate-button" (click)="regenerateGoals()">
+            <span class="button-icon">🔄</span>
+            <span>Générer de nouveaux objectifs</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section Title -->
+      <h3 class="section-title">
+        <span class="section-icon">📋</span>
+        Vos Objectifs
+      </h3>
+
+      <!-- Goals List -->
+      <div class="goals-list">
+        @for (goal of goalsData()?.goals; track goal.category) {
+          <app-goal-card [goal]="goal"></app-goal-card>
+        }
+      </div>
+    }
+  </div>
+</div>

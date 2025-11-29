@@ -6,6 +6,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { DoctorDashboardComponent } from './doctor/components/doctor-dashboard/doctor-dashboard.component';
 import { AlertsComponent } from './healthPatient/components/alerts/alerts.component';
 import { TrendsComponent } from './healthPatient/components/trends/trends.component';
+import { GoalsComponent } from './healthPatient/components/goals/goals.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -15,5 +16,6 @@ export const routes: Routes = [
   { path: 'doctor/dashboard', component: DoctorDashboardComponent },
   { path: 'health/alerts', component: AlertsComponent },
   { path: 'health/trends', component: TrendsComponent },
+  { path: 'health/goals', component: GoalsComponent },
   { path: '**', redirectTo: 'login' }
 ];

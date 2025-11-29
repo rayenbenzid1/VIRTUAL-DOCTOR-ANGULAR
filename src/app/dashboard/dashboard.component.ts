@@ -107,6 +107,9 @@ export class DashboardComponent {
   viewTrends() {
     this.router.navigate(['/health/trends']);
   }
+  viewGoals() {
+    this.router.navigate(['/health/goals']);
+  }
 
   logout() {
     this.showDropdown.set(false);

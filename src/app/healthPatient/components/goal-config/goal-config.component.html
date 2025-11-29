@@ -1,0 +1,72 @@
+<div class="config-container">
+  <div class="config-header">
+    <h2>
+      <span class="config-icon">🎯</span>
+      Configurez vos objectifs
+    </h2>
+    <p>Personnalisez votre plan santé selon vos besoins</p>
+  </div>
+
+  <!-- Sélection des objectifs -->
+  <div class="config-section">
+    <div class="section-header">
+      <span class="section-icon">✅</span>
+      <h3>Choisissez vos objectifs</h3>
+    </div>
+    <div class="goals-grid">
+      @for (goal of goalOptions; track goal.id) {
+        <button
+          class="goal-option"
+          [class.selected]="selectedGoals().has(goal.id)"
+          (click)="toggleGoal(goal.id)">
+          @if (selectedGoals().has(goal.id)) {
+            <span class="check-icon">✓</span>
+          }
+          <span class="goal-emoji">{{ goal.icon }}</span>
+          <span class="goal-label">{{ goal.label }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Délai -->
+  <div class="config-section">
+    <div class="section-header">
+      <span class="section-icon">⏱️</span>
+      <h3>Délai pour atteindre vos objectifs</h3>
+    </div>
+    <input
+      type="range"
+      min="7"
+      max="90"
+      [value]="timeframeDays()"
+      (input)="updateTimeframe($event)"
+      class="timeframe-slider">
+    <div class="timeframe-value">{{ timeframeDays() }} jours</div>
+  </div>
+
+  <!-- Niveau de difficulté -->
+  <div class="config-section">
+    <div class="section-header">
+      <span class="section-icon">💪</span>
+      <h3>Niveau de difficulté</h3>
+    </div>
+    <div class="difficulty-grid">
+      @for (option of difficultyOptions; track option.value) {
+        <button
+          class="difficulty-option"
+          [class.selected]="difficulty() === option.value"
+          (click)="setDifficulty(option.value)">
+          <span class="difficulty-emoji">{{ option.icon }}</span>
+          <span class="difficulty-label">{{ option.label }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Bouton de génération -->
+  <button class="generate-button" (click)="generateGoals()">
+    <span class="button-icon">🎯</span>
+    <span class="button-text">✨ Générer mes objectifs</span>
+  </button>
+</div>

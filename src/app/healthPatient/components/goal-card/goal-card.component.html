@@ -1,0 +1,53 @@
+<div class="goal-card">
+  <div class="goal-header">
+    <div class="goal-title-row">
+      <span class="goal-icon">{{ getCategoryIcon(goal().category) }}</span>
+      <h3 class="goal-title">{{ goal().title }}</h3>
+    </div>
+    <span class="priority-badge" [ngClass]="getPriorityClass(goal().priority)">
+      {{ getPriorityLabel(goal().priority) }}
+    </span>
+  </div>
+
+  <div class="goal-progress">
+    <div class="progress-values">
+      <span class="current-value">{{ goal().current }}</span>
+      <span class="progress-bar-container">
+        <div class="progress-bar" [style.width.%]="getProgress()"></div>
+      </span>
+      <span class="target-value">{{ goal().target }}</span>
+    </div>
+  </div>
+
+  <div class="goal-improvement">
+    <span class="improvement-icon">📈</span>
+    <span class="improvement-text">{{ goal().expected_improvement }}</span>
+  </div>
+
+  <div class="goal-milestones">
+    <div class="milestones-header">
+      <span class="milestone-icon">🎯</span>
+      <h4>Étapes clés ({{ goal().timeframe }})</h4>
+    </div>
+    <div class="milestones-list">
+      @for (milestone of goal().milestones; track milestone.day) {
+        <div class="milestone-item">
+          <span class="milestone-day">Jour {{ milestone.day }}</span>
+          <span class="milestone-description">{{ milestone.description }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="goal-tips">
+    <div class="tips-header">
+      <span class="tips-icon">💡</span>
+      <h4>Conseils pratiques</h4>
+    </div>
+    <ul class="tips-list">
+      @for (tip of goal().tips; track tip) {
+        <li class="tip-item">{{ tip }}</li>
+      }
+    </ul>
+  </div>
+</div>
