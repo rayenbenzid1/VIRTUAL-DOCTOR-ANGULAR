@@ -37,6 +37,15 @@
   z-index: 1000;
   border-bottom: 1px solid rgba(226, 232, 240, 0.6);
 }
+.header-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 32px;
+}
 
 .header-content {
   display: flex;
@@ -51,11 +60,24 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-shrink: 0;
+  color:black;
 }
 
 .header-title .icon {
   font-size: 36px;
   filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.3));
+  animation: float 3s ease-in-out infinite;
+}
+.header-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
   animation: float 3s ease-in-out infinite;
 }
 
@@ -65,13 +87,14 @@
 }
 
 .header-text h1 {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   margin: 0;
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
+  white-space: nowrap;
+  color:black;
 }
 
 .header-welcome {
@@ -103,11 +126,11 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 22px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
   position: relative;
   overflow: hidden;
+  color: black;
 }
 
 .profile-btn::before {
@@ -188,7 +211,8 @@
 }
 
 .dropdown-icon {
-  font-size: 20px;
+  width: 20px;
+  height: 20px;
 }
 
 /* ============================================
@@ -197,11 +221,11 @@
 .navbar {
   display: flex;
   gap: 8px;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 16px 32px 0;
+  flex: 1;
+  justify-content: center;
   overflow-x: auto;
   scrollbar-width: none;
+  padding: 0 16px;
 }
 
 .navbar::-webkit-scrollbar {
@@ -224,6 +248,7 @@
   position: relative;
   overflow: hidden;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav-item::before {
@@ -254,7 +279,6 @@
 }
 
 .nav-icon {
-  font-size: 20px;
   transition: transform 0.3s ease;
 }
 
@@ -269,6 +293,7 @@
 .nav-label {
   font-weight: 600;
 }
+
 
 /* ============================================
    MAIN CONTENT

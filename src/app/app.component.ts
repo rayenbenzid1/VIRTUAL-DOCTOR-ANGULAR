@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AppLifecycleService } from './app-lifecycle.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,8 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.component.html',
   imports: [RouterOutlet],
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor(private appLifecycle: AppLifecycleService) {
+    // Le service s'initialise automatiquement
+  }
+}
