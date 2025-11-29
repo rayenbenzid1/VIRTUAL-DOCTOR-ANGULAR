@@ -1,0 +1,82 @@
+<div class="trends-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <button class="btn-back" (click)="goBack()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <div class="header-title">
+      <h1>📈 Évolution de santé</h1>
+      <p class="header-subtitle">Suivez vos progrès au fil du temps</p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+  <div class="loading-section">
+    <div class="loading-spinner"></div>
+    <p>Chargement de vos tendances...</p>
+  </div>
+  }
+
+  <!-- Error State -->
+  @if (error() && !isLoading()) {
+  <div class="error-section">
+    <div class="error-icon">⚠️</div>
+    <h3>Erreur de chargement</h3>
+    <p>{{ error() }}</p>
+    <button class="btn-retry" (click)="loadTrends()">Réessayer</button>
+  </div>
+  }
+
+  <!-- Main Content -->
+  @if (!isLoading() && !error() && hasData()) {
+  <div class="trends-content">
+
+    <!-- Period Selector -->
+    <app-trends-period-selector
+      [selectedPeriod]="selectedPeriod()"
+      (periodChange)="onPeriodChange($event)">
+    </app-trends-period-selector>
+
+    <!-- Health Score Overview -->
+    <div class="health-score-overview">
+      <div class="score-card">
+        <div class="score-header">
+          <h2>Score de santé moyen</h2>
+          <div class="score-trend" [class]="'trend-' + healthScoreTrend()">
+            <span class="trend-icon">{{ getTrendIcon(healthScoreTrend()) }}</span>
+            <span class="trend-label">{{ getTrendLabel(healthScoreTrend()) }}</span>
+          </div>
+        </div>
+        <div class="score-value">
+          <span class="score-number">{{ averageHealthScore() }}</span>
+          <span class="score-max">/100</span>
+        </div>
+        <p class="score-info">{{ dataPoints() }} jours de données analysées</p>
+      </div>
+    </div>
+
+    <!-- Health Score Chart -->
+    @if (healthScoreChartData()) {
+    <app-health-score-chart 
+      [chartData]="healthScoreChartData()!"
+      [trend]="healthScoreTrend()">
+    </app-health-score-chart>
+    }
+
+    <!-- Section Title -->
+    <h2 class="section-title">
+      <span class="section-icon">📊</span>
+      Métriques détaillées
+    </h2>
+
+    <!-- Metric Cards -->
+    <app-metric-cards [metrics]="metricsData()"></app-metric-cards>
+
+  </div>
+  }
+
+</div>

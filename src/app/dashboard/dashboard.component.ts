@@ -22,10 +22,9 @@ interface VitalSign {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent {
-
   loading = signal(true);
   userName = signal('');
   showDropdown = signal(false);
@@ -37,7 +36,7 @@ export class DashboardComponent {
     { id: 'bpm', icon: '❤️', label: 'BPM', value: '-- bpm', color: '#fce4ec' },
     { id: 'sleep', icon: '💤', label: 'Sommeil', value: '0.0h', color: '#f3e5f5' },
     { id: 'hydration', icon: '💧', label: 'Hydratation', value: '0.00 L', color: '#e0f7fa' },
-    { id: 'stress', icon: '🧠', label: 'Stress', value: '--', color: '#fff3e0' }
+    { id: 'stress', icon: '🧠', label: 'Stress', value: '--', color: '#fff3e0' },
   ]);
 
   vitalSigns = signal<VitalSign[]>([
@@ -45,7 +44,7 @@ export class DashboardComponent {
     { icon: '🌡️', label: 'Température', value: '--', color: '#fff3e0' },
     { icon: '💉', label: 'Tension', value: '--/--', color: '#fce4ec' },
     { icon: '⚖️', label: 'Poids', value: '--', color: '#e8f5e9' },
-    { icon: '📏', label: 'Taille', value: '--', color: '#f3e5f5' }
+    { icon: '📏', label: 'Taille', value: '--', color: '#f3e5f5' },
   ]);
 
   constructor(private router: Router) {}
@@ -101,6 +100,12 @@ export class DashboardComponent {
     console.log('Consulter clicked');
     // Naviguer vers la page de consultation
     // this.router.navigate(['/consult']);
+  }
+  viewAlerts() {
+    this.router.navigate(['/health/alerts']);
+  }
+  viewTrends() {
+    this.router.navigate(['/health/trends']);
   }
 
   logout() {

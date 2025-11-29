@@ -35,11 +35,11 @@
         <span class="nav-icon">📊</span>
         <span class="nav-label">Analyse</span>
       </button>
-      <button class="nav-item" [class.active]="activeTab() === 'alerte'" (click)="setActiveTab('alerte')">
+      <button class="nav-item" [class.active]="activeTab() === 'alerte'" (click)="viewAlerts()">
         <span class="nav-icon">🔔</span>
         <span class="nav-label">Alerte</span>
       </button>
-      <button class="nav-item" [class.active]="activeTab() === 'progression'" (click)="setActiveTab('progression')">
+      <button class="nav-item" [class.active]="activeTab() === 'progression'" (click)="viewTrends()">
         <span class="nav-icon">📈</span>
         <span class="nav-label">Progression</span>
       </button>
