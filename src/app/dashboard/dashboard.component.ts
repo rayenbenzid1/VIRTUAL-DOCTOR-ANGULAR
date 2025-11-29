@@ -55,7 +55,7 @@ export class DashboardComponent {
     const user = localStorage.getItem('user');
     if (user) {
       const userData = JSON.parse(user);
-      this.userName.set(userData.firstName || 'Utilisateur');
+      this.userName.set(userData.name || 'Utilisateur');
     }
 
     // Simuler le chargement des données

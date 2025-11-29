@@ -58,8 +58,8 @@ export class LoginComponent {
         // Construct user object from response properties
         const user = {
           id: res.doctorId || res.userId || res.id,
-          name: res.fullName || res.name,
-          email: res.email,
+          name: res.user.fullName,
+          email: res.user.email,
           role: res.role
         };
 
