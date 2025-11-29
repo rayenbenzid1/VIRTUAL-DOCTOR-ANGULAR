@@ -4,6 +4,7 @@ import { DashboardStatsComponent } from '../dashboard-stats/dashboard-stats.comp
 import { DashboardAppointmentsComponent, Appointment } from '../dashboard-appointments/dashboard-appointments.component';
 import { DashboardPatientsComponent } from '../dashboard-patients/dashboard-patients.component';
 import { PatientDetailsModalComponent } from '../patient-details-modal/patient-details-modal.component';
+import { AppointmentActionModalComponent, AppointmentActionData } from '../appointment-action-modal/appointment-action-modal.component';
 
 import { DoctorAuthApiService } from '../../../auth/services/doctor-auth.api';
 import {
@@ -18,6 +19,7 @@ interface DashboardStats {
     todayAppointments: number;
     pendingConsultations: number;
     completedToday: number;
+    totalCompleted: number;
 }
 
 interface Patient {
@@ -43,7 +45,7 @@ interface Patient {
 @Component({
     selector: 'app-doctor-dashboard',
     standalone: true,
-    imports: [CommonModule, DashboardStatsComponent, DashboardAppointmentsComponent, DashboardPatientsComponent, PatientDetailsModalComponent],
+    imports: [CommonModule, DashboardStatsComponent, DashboardAppointmentsComponent, DashboardPatientsComponent, PatientDetailsModalComponent, AppointmentActionModalComponent],
     templateUrl: './doctor-dashboard.component.html',
     styleUrls: ['./doctor-dashboard.component.css']
 })
@@ -56,7 +58,8 @@ export class DoctorDashboardComponent implements OnDestroy {
         totalPatients: 0,
         todayAppointments: 0,
         pendingConsultations: 0,
-        completedToday: 0
+        completedToday: 0,
+        totalCompleted: 0
     });
 
     appointments = signal<Appointment[]>([]);
@@ -72,6 +75,12 @@ export class DoctorDashboardComponent implements OnDestroy {
     loadingPatientInfo = signal(false);
     currentUser = signal<any>(null);
     showProfileModal = signal(false);
+
+    // Appointment action modal
+    showActionModal = signal(false);
+    currentActionType = signal<'reject' | 'cancel' | 'complete'>('reject');
+    currentActionAppointmentId = signal('');
+    currentActionPatientName = signal('');
 
     // Polling
     private pollingInterval: any = null;
@@ -181,7 +190,8 @@ export class DoctorDashboardComponent implements OnDestroy {
                     totalPatients: stats.totalPatients || 0,
                     todayAppointments: stats.todayAppointments || 0,
                     pendingConsultations: stats.pendingAppointments || 0,
-                    completedToday: stats.todayCompleted || 0
+                    completedToday: stats.todayCompleted || 0,
+                    totalCompleted: stats.completedAppointments || 0
                 });
             } else {
                 console.warn('⚠️ Stats response was empty or null');
@@ -360,7 +370,8 @@ export class DoctorDashboardComponent implements OnDestroy {
                 case 'complete':
                     return {
                         ...current,
-                        completedToday: current.completedToday + 1
+                        completedToday: current.completedToday + 1,
+                        totalCompleted: current.totalCompleted + 1
                     };
                 default:
                     return current;
@@ -447,9 +458,84 @@ export class DoctorDashboardComponent implements OnDestroy {
         window.location.href = '/login';
     }
 
+    // Appointment action modal handlers
+    openRejectModal(appointmentId: string) {
+        const appointment = this.appointments().find(a => a.id === appointmentId);
+        if (appointment) {
+            this.currentActionType.set('reject');
+            this.currentActionAppointmentId.set(appointmentId);
+            this.currentActionPatientName.set(appointment.patientName);
+            this.showActionModal.set(true);
+        }
+    }
+
+    openCancelModal(appointmentId: string) {
+        const appointment = this.appointments().find(a => a.id === appointmentId);
+        if (appointment) {
+            this.currentActionType.set('cancel');
+            this.currentActionAppointmentId.set(appointmentId);
+            this.currentActionPatientName.set(appointment.patientName);
+            this.showActionModal.set(true);
+        }
+    }
+
+    openCompleteModal(appointmentId: string) {
+        const appointment = this.appointments().find(a => a.id === appointmentId);
+        if (appointment) {
+            this.currentActionType.set('complete');
+            this.currentActionAppointmentId.set(appointmentId);
+            this.currentActionPatientName.set(appointment.patientName);
+            this.showActionModal.set(true);
+        }
+    }
+
+    closeActionModal() {
+        this.showActionModal.set(false);
+    }
+
+    async handleActionSubmit(data: AppointmentActionData) {
+        try {
+            const appointmentId = this.currentActionAppointmentId();
+
+            if (data.action === 'reject') {
+                await this.appointmentApi.rejectAppointment(
+                    appointmentId,
+                    data.reason || '',
+                    data.availableHours
+                ).toPromise();
+                this.updateAppointmentStatus(appointmentId, 'REJECTED');
+                this.updateStatsAfterAction('reject');
+            } else if (data.action === 'cancel') {
+                await this.appointmentApi.cancelAppointment(
+                    appointmentId,
+                    data.cancellationReason || ''
+                ).toPromise();
+                this.updateAppointmentStatus(appointmentId, 'CANCELLED');
+            } else if (data.action === 'complete') {
+                await this.appointmentApi.completeAppointment(
+                    appointmentId,
+                    data.diagnosis || '',
+                    data.prescription || '',
+                    data.notes || ''
+                ).toPromise();
+                this.updateAppointmentStatus(appointmentId, 'COMPLETED');
+                this.updateStatsAfterAction('complete');
+            }
+
+            // Refresh appointments
+            await this.loadAppointmentsFromAPI();
+            this.closeActionModal();
+        } catch (error) {
+            console.error('❌ Error handling action:', error);
+            alert('Error processing request. Please try again.');
+        }
+    }
+
     ngOnDestroy() {
         if (this.pollingInterval) {
             clearInterval(this.pollingInterval);
         }
     }
 }
+
+

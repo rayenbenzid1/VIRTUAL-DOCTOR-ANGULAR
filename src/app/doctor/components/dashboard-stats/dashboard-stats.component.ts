@@ -6,6 +6,7 @@ export interface DashboardStats {
     todayAppointments: number;
     pendingConsultations: number;
     completedToday: number;
+    totalCompleted: number;
 }
 
 @Component({
@@ -20,7 +21,8 @@ export class DashboardStatsComponent {
         totalPatients: 0,
         todayAppointments: 0,
         pendingConsultations: 0,
-        completedToday: 0
+        completedToday: 0,
+        totalCompleted: 0
     };
     @Input() completionRate: number = 0;
 }

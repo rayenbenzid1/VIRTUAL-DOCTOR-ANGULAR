@@ -61,8 +61,8 @@
             <div class="overview-grid">
                 <!-- Upcoming Appointments -->
                 <app-dashboard-appointments [appointments]="upcomingAppointments()" viewType="list"
-                    (accept)="acceptAppointment($event)" (reject)="rejectAppointment($event)"
-                    (complete)="completeAppointment($event)" (cancel)="cancelAppointment($event)"
+                    (accept)="acceptAppointment($event)" (reject)="openRejectModal($event)"
+                    (complete)="openCompleteModal($event)" (cancel)="openCancelModal($event)"
                     (viewInfo)="viewPatientInfo($event.patientId, $event.appointment)">
                 </app-dashboard-appointments>
 
@@ -76,8 +76,8 @@
             <!-- Appointments Tab -->
             @if (selectedTab() === 'appointments') {
             <app-dashboard-appointments [appointments]="appointments()" viewType="table"
-                (accept)="acceptAppointment($event)" (reject)="rejectAppointment($event)"
-                (complete)="completeAppointment($event)" (cancel)="cancelAppointment($event)"
+                (accept)="acceptAppointment($event)" (reject)="openRejectModal($event)"
+                (complete)="openCompleteModal($event)" (cancel)="openCancelModal($event)"
                 (viewInfo)="viewPatientInfo($event.patientId, $event.appointment)">
             </app-dashboard-appointments>
             }
@@ -142,4 +142,10 @@
         </div>
     </div>
     }
+
+    <!-- Appointment Action Modal -->
+    <app-appointment-action-modal [isVisible]="showActionModal()" [actionType]="currentActionType()"
+        [appointmentId]="currentActionAppointmentId()" [patientName]="currentActionPatientName()"
+        (actionSubmit)="handleActionSubmit($event)" (close)="closeActionModal()">
+    </app-appointment-action-modal>
 </div>

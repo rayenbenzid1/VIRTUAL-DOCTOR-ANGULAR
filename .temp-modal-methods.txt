@@ -1,0 +1,55 @@
+
+    // Appointment action modal handlers
+    openRejectModal(data: {id: string, name: string}) {
+        this.currentActionType.set('reject');
+        this.currentActionAppointmentId.set(data.id);
+        this.currentActionPatientName.set(data.name);
+        this.showActionModal.set(true);
+    }
+
+    openCancelModal(data: {id: string, name: string}) {
+        this.currentActionType.set('cancel');
+        this.currentActionAppointmentId.set(data.id);
+        this.currentActionPatientName.set(data.name);
+        this.showActionModal.set(true);
+    }
+
+    openCompleteModal(data: {id: string, name: string}) {
+        this.currentActionType.set('complete');
+        this.currentActionAppointmentId.set(data.id);
+        this.currentActionPatientName.set(data.name);
+        this.showActionModal.set(true);
+    }
+
+    closeActionModal() {
+        this.showActionModal.set(false);
+    }
+
+    async handleActionSubmit(data: AppointmentActionData) {
+        try {
+            const appointmentId = this.currentActionAppointmentId();
+            
+            if (data.actionType === 'reject') {
+                await this.appointmentApi.rejectAppointment(appointmentId, {
+                    reason: data.reason || '',
+                    availableHours: data.availableHours || ''
+                }).toPromise();
+            } else if (data.actionType === 'cancel') {
+                await this.appointmentApi.cancelAppointment(appointmentId, {
+                    reason: data.reason || ''
+                }).toPromise();
+            } else if (data.actionType === 'complete') {
+                await this.appointmentApi.completeAppointment(appointmentId, {
+                    diagnosis: data.diagnosis || '',
+                    prescription: data.prescription || '',
+                    notes: data.notes || ''
+                }).toPromise();
+            }
+            
+            // Refresh appointments
+            await this.loadAppointmentsFromAPI();
+            this.closeActionModal();
+        } catch (error) {
+            console.error('❌ Error handling action:', error);
+        }
+    }
