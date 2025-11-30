@@ -1,0 +1,105 @@
+<div class="avatar-wrapper">
+  <div class="avatar-main">
+    <div class="avatar-body-container">
+      <div class="avatar-head">
+        <div class="face">
+          <div class="eyes">
+            <div class="eye"></div>
+            <div class="eye"></div>
+          </div>
+          <div class="smile"></div>
+        </div>
+      </div>
+
+      <div class="avatar-body">
+        <div
+          class="body-organ brain organ-pulse"
+          [class.active]="activeOrgan() === 'brain'"
+          (click)="toggleOrgan('brain')"
+          (mouseenter)="hoveredOrgan.set('brain')"
+          (mouseleave)="hoveredOrgan.set(null)">
+          <span class="organ-label">🧠</span>
+        </div>
+
+        <div
+          class="body-organ heart organ-pulse"
+          [class.active]="activeOrgan() === 'heart'"
+          (click)="toggleOrgan('heart')"
+          (mouseenter)="hoveredOrgan.set('heart')"
+          (mouseleave)="hoveredOrgan.set(null)">
+          <span class="organ-label">❤️</span>
+        </div>
+
+        <div
+          class="body-organ lungs-left organ-pulse"
+          [class.active]="activeOrgan() === 'lungs'"
+          (click)="toggleOrgan('lungs')"
+          (mouseenter)="hoveredOrgan.set('lungs')"
+          (mouseleave)="hoveredOrgan.set(null)">
+          <span class="organ-label">🫁</span>
+        </div>
+
+        <div
+          class="body-organ lungs-right organ-pulse"
+          [class.active]="activeOrgan() === 'lungs'"
+          (click)="toggleOrgan('lungs')"
+          (mouseenter)="hoveredOrgan.set('lungs')"
+          (mouseleave)="hoveredOrgan.set(null)">
+        </div>
+
+        <div
+          class="body-organ stomach organ-pulse"
+          [class.active]="activeOrgan() === 'stomach'"
+          (click)="toggleOrgan('stomach')"
+          (mouseenter)="hoveredOrgan.set('stomach')"
+          (mouseleave)="hoveredOrgan.set(null)">
+          <span class="organ-label">🍽️</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="interaction-hint">
+      👆 Cliquez sur un organe pour voir ses détails
+    </div>
+  </div>
+
+  <div class="avatar-info">
+    <div class="info-header">
+      <h2>État de Santé Global</h2>
+      <p class="info-subtitle">
+        {{ activeOrgan() ? 'Détails du système sélectionné' : 'Sélectionnez un organe pour plus d\'informations' }}
+      </p>
+    </div>
+
+    <div *ngIf="activeOrgan(); else defaultMessage" class="organ-detail-card">
+      <div class="organ-card-header">
+        <span class="organ-card-icon">{{ organData()[activeOrgan()!].icon }}</span>
+        <h3>{{ organData()[activeOrgan()!].name }}</h3>
+      </div>
+
+      <div class="status-badge"
+           [style.background]="organData()[activeOrgan()!].statusColor + '15'"
+           [style.color]="organData()[activeOrgan()!].statusColor">
+        <span class="status-icon">{{ getStatusIcon(organData()[activeOrgan()!].status) }}</span>
+        {{ organData()[activeOrgan()!].status }}
+      </div>
+
+      <div class="organ-metrics">
+        <div class="metric-row" *ngFor="let metric of organData()[activeOrgan()!].metrics">
+          <span class="metric-label">{{ metric.label }}</span>
+          <span class="metric-value">{{ metric.value }}</span>
+        </div>
+      </div>
+
+      <p class="organ-details">{{ organData()[activeOrgan()!].details }}</p>
+    </div>
+
+    <ng-template #defaultMessage>
+      <div class="default-message">
+        <div class="default-message-icon">🏥</div>
+        <h3>Bienvenue dans votre tableau de santé</h3>
+        <p>Cliquez sur un organe de l'avatar pour consulter vos données de santé détaillées en temps réel</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

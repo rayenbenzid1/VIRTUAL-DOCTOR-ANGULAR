@@ -1,0 +1,325 @@
+.interaction-hint {
+  color: white;
+}
+
+.avatar-wrapper {
+  display: flex;
+  gap: 32px;
+  align-items: stretch;
+  flex-wrap: wrap;
+  padding: 24px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  border-radius: 24px;
+  min-height: 500px;
+}
+
+.avatar-main {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.avatar-body-container {
+  position: relative;
+  width: 240px;
+  height: 400px;
+}
+
+.avatar-body {
+  width: 200px;
+  height: 350px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 100px 100px 60px 60px;
+  position: relative;
+  margin: 0 auto;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    inset 0 2px 10px rgba(255, 255, 255, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.1);
+}
+
+.avatar-head {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-radius: 50%;
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.3),
+    inset 0 -5px 15px rgba(0, 0, 0, 0.1);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.face {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.eyes {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.eye {
+  width: 12px;
+  height: 12px;
+  background: #1e293b;
+  border-radius: 50%;
+}
+
+.smile {
+  width: 30px;
+  height: 15px;
+  border: 2px solid #1e293b;
+  border-top: none;
+  border-radius: 0 0 15px 15px;
+  margin: 0 auto;
+}
+
+/* ORGANS */
+.body-organ {
+  position: absolute;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 0 0 0 rgba(255, 255, 255, 0.4),
+    inset 0 -10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.body-organ::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 120%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.body-organ:hover::before {
+  opacity: 1;
+}
+
+.body-organ:hover {
+  transform: scale(1.15);
+  box-shadow: 
+    0 0 30px currentColor,
+    0 0 0 8px rgba(255, 255, 255, 0.2),
+    inset 0 -10px 20px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.body-organ.active {
+  transform: scale(1.2);
+  box-shadow: 
+    0 0 40px currentColor,
+    0 0 0 10px rgba(255, 255, 255, 0.3),
+    inset 0 -10px 20px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.organ-pulse {
+  animation: organ-pulse 2s ease-in-out infinite;
+}
+
+@keyframes organ-pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+  }
+}
+
+/* ORGAN POSITIONS & COLORS */
+.brain {
+  width: 70px;
+  height: 60px;
+  background: radial-gradient(circle, #c4b5fd 0%, #a78bfa 100%);
+  color: #c4b5fd;
+  top: -40px;
+  left: 65px;
+  border-radius: 50% 50% 40% 40%;
+}
+
+.heart {
+  width: 55px;
+  height: 55px;
+  background: radial-gradient(circle, #fda4af 0%, #ff6b9d 100%);
+  color: #fda4af;
+  top: 110px;
+  left: 72px;
+}
+
+.lungs-left {
+  width: 45px;
+  height: 70px;
+  background: radial-gradient(circle, #7dd3fc 0%, #4facfe 100%);
+  color: #7dd3fc;
+  top: 100px;
+  left: 30px;
+  border-radius: 50% 50% 50% 30%;
+}
+
+.lungs-right {
+  width: 45px;
+  height: 70px;
+  background: radial-gradient(circle, #7dd3fc 0%, #4facfe 100%);
+  color: #7dd3fc;
+  top: 100px;
+  right: 30px;
+  border-radius: 50% 50% 30% 50%;
+}
+
+.stomach {
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, #fde68a 0%, #ffd93d 100%);
+  color: #fde68a;
+  bottom: 100px;
+  left: 70px;
+}
+
+.organ-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* RIGHT SIDE INFO */
+.avatar-info {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.info-header {
+  color: white;
+  text-align: center;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.info-subtitle {
+  color: #94a3b8;
+  font-size: 14px;
+  margin: 0;
+}
+
+.organ-detail-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.organ-detail-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.organ-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.organ-card-icon {
+  font-size: 32px;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+}
+
+.organ-card-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.status-icon {
+  font-size: 16px;
+}
+
+.organ-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.metric-row {
+  display: flex;
+  justify-content: space-between;
+  color: #e2e8f0;
+  font-size: 14px;
+}
+
+.metric-label {
+  color: #cbd5e1;
+}
+
+.organ-details {
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.default-message {
+  text-align: center;
+  color: #cbd5e1;
+  padding: 40px 20px;
+}
+
+.default-message-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}

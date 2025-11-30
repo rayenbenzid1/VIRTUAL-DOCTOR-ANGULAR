@@ -5,6 +5,11 @@ import { Router } from '@angular/router';
 import { ProfileModalComponent } from '../shared/components/profile-modal/profile-modal.component';
 import { UserResponse } from '../shared/models/profile.models';
 import { BiometricApiService, BiometricData } from './services/biometric.api';
+import { HealthAvatarComponent } from './components/health-avatar/health-avatar.component';
+import { DataSummaryComponent } from './components/data-summary/data-summary.component';
+import { DailySummaryComponent } from './components/daily-summary/daily-summary.component';
+import { VitalSignsComponent } from './components/vital-signs/vital-signs.component';
+import { PhysicalActivitiesComponent } from './components/physical-activities/physical-activities.component';
 
 interface HealthMetric {
   id: string;
@@ -24,7 +29,7 @@ interface VitalSign {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, ProfileModalComponent],
+  imports: [CommonModule, ProfileModalComponent, HealthAvatarComponent, DataSummaryComponent, DailySummaryComponent, VitalSignsComponent, PhysicalActivitiesComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
@@ -90,6 +95,11 @@ export class DashboardComponent {
     ];
   });
 
+  private formatFixed(value: number | undefined | null, decimals: number = 2): string {
+    if (value == null || isNaN(value)) return '--';
+    return value.toFixed(decimals);
+  }
+
   // Signes vitaux calculés
   vitalSigns = computed<VitalSign[]>(() => {
     const data = this.biometricData();
@@ -110,7 +120,9 @@ export class DashboardComponent {
       { 
         icon: '🌡️', 
         label: 'Température', 
-        value: lastTemperature?.temperature ? `${lastTemperature.temperature}°C` : '--', 
+        value: lastTemperature?.temperature != null 
+        ? `${this.formatFixed(lastTemperature.temperature, 2)}°C` 
+        : '--', 
         color: '#fff3e0' 
       },
       { 
@@ -122,7 +134,9 @@ export class DashboardComponent {
       { 
         icon: '⚖️', 
         label: 'Poids', 
-        value: lastWeight?.weight ? `${lastWeight.weight} kg` : '--', 
+        value: lastWeight?.weight != null 
+        ? `${this.formatFixed(lastWeight.weight, 2)} kg` 
+        : '--', 
         color: '#e8f5e9' 
       },
       { 

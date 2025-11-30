@@ -111,73 +111,16 @@
     </div>
 
     <!-- Daily Summary -->
-    <div class="section" *ngIf="!loading()">
-      <div class="section-header">
-        <span class="section-icon">📊</span>
-        <h2>Résumé du Jour</h2>
-      </div>
-
-      <div class="metrics-grid">
-        <div class="metric-card"
-             *ngFor="let metric of dailyMetrics()"
-             [style.background-color]="metric.color">
-          <div class="metric-icon">{{ metric.icon }}</div>
-          <div class="metric-label">{{ metric.label }}</div>
-          <div class="metric-value">{{ metric.value }}</div>
-        </div>
-      </div>
-    </div>
+    <app-daily-summary *ngIf="!loading()" [data]="biometricData()"></app-daily-summary>
 
     <!-- Physical Activities -->
-   <!-- Dans la section Activités Physiques -->
-<div class="section" *ngIf="!loading()">
-  <div class="section-header">
-    <span class="section-icon">🏋️</span>
-    <h2>Activités Physiques</h2>
-  </div>
-  
-  <div class="info-card" *ngIf="!exerciseData()">
-    <p class="info-text">Aucun exercice enregistré aujourd'hui</p>
-      </div>
+    <app-physical-activities *ngIf="!loading()" [data]="biometricData()"></app-physical-activities>
 
-      <div class="exercise-card" *ngIf="exerciseData()">
-        <div class="exercise-type">{{ exerciseData()!.type }}</div>
-        <div class="exercise-details">
-          <div class="exercise-duration">⏱️ {{ exerciseData()!.duration }} min</div>
-          <div class="exercise-distance">📏 {{ exerciseData()!.distance }}</div>
-          <div class="exercise-calories">🔥 {{ exerciseData()!.calories }} calories</div>
-        </div>
-        <div class="exercise-time">{{ exerciseData()!.time }}</div>
-      </div>
-    </div>
-    <!-- Vital Signs -->
-    <div class="section" *ngIf="!loading()">
-      <div class="section-header">
-        <span class="section-icon">🩺</span>
-        <h2>Signes Vitaux</h2>
-      </div>
+    <!-- Vital Signs Component -->
+    <app-vital-signs *ngIf="!loading()" [data]="biometricData()"></app-vital-signs>
 
-      <div class="vitals-scroll">
-        <div class="vital-card"
-             *ngFor="let vital of vitalSigns()"
-             [style.background-color]="vital.color">
-          <div class="vital-icon">{{ vital.icon }}</div>
-          <div class="vital-label">{{ vital.label }}</div>
-          <div class="vital-value">{{ vital.value }}</div>
-        </div>
-      </div>
-    </div>
-
-  <!-- Data Summary -->
-    <div class="section" *ngIf="!loading()">
-      <div class="section-header">
-        <span class="section-icon">📋</span>
-        <h2>Résumé des Données</h2>
-      </div>
-      <div class="info-card">
-        <p class="info-text">{{ dataSummary() }}</p>
-      </div>
-    </div>
+    <!-- Data Summary Component -->
+    <app-data-summary *ngIf="!loading()" [data]="biometricData()"></app-data-summary>
 
     <!-- 3D Avatar -->
     <div class="section" *ngIf="!loading()">
@@ -185,17 +128,7 @@
         <span class="section-icon">🧍</span>
         <h2>Avatar 3D - État de Santé</h2>
       </div>
-      <div class="avatar-container">
-        <div class="avatar-placeholder">
-          <div class="avatar-body">
-            <div class="body-part heart"></div>
-            <div class="body-part lungs-left"></div>
-            <div class="body-part lungs-right"></div>
-            <div class="body-part stomach"></div>
-          </div>
-          <p class="avatar-text">Visualisation 3D de votre état de santé général</p>
-        </div>
-      </div>
+      <app-health-avatar [biometricData]="biometricData()"></app-health-avatar>
     </div>
 
   </div>
