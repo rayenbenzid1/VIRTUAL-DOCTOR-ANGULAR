@@ -1,3 +1,4 @@
+<!-- src/app/dashboard/dashboard.component.html -->
 <div class="dashboard-container">
 
   <!-- Header -->
@@ -85,16 +86,11 @@
   <!-- Main Content -->
   <div class="main-content">
 
-
-
     <!-- Loading State -->
     <div class="loading-section" *ngIf="loading()">
       <div class="loading-spinner"></div>
       <p>Chargement de vos données de santé...</p>
     </div>
-
-    <!-- Refresh Button -->
-
 
     <!-- Action Buttons -->
     <div class="action-buttons" *ngIf="!loading()">
@@ -194,3 +190,10 @@
   </div>
 
 </div>
+
+<!-- Profile Modal Component -->
+<app-profile-modal 
+  #profileModal
+  (modalClosed)="onModalClosed()"
+  (profileUpdated)="onProfileUpdated($event)">
+</app-profile-modal>

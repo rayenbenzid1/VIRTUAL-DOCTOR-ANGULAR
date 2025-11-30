@@ -1,6 +1,9 @@
-import { Component, signal, HostListener } from '@angular/core';
+// src/app/dashboard/dashboard.component.ts
+import { Component, signal, HostListener, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { ProfileModalComponent } from '../shared/components/profile-modal/profile-modal.component';
+import { UserResponse } from '../shared/models/profile.models';
 
 interface HealthMetric {
   id: string;
@@ -20,11 +23,14 @@ interface VitalSign {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ProfileModalComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent {
+  // ViewChild pour accéder au modal
+  @ViewChild('profileModal') profileModal!: ProfileModalComponent;
+
   loading = signal(true);
   userName = signal('');
   showDropdown = signal(false);
@@ -54,7 +60,7 @@ export class DashboardComponent {
     const user = localStorage.getItem('user');
     if (user) {
       const userData = JSON.parse(user);
-      this.userName.set(userData.name || 'Utilisateur');
+      this.userName.set(userData.firstName || userData.name || 'Utilisateur');
     }
 
     // Simuler le chargement des données
@@ -79,21 +85,36 @@ export class DashboardComponent {
   setActiveTab(tab: string) {
     this.activeTab.set(tab);
     console.log('Navigation vers:', tab);
-    // Naviguer vers la page appropriée
-    // this.router.navigate([`/${tab}`]);
   }
 
   editProfile() {
+    // Fermer le dropdown
     this.showDropdown.set(false);
-    console.log('Modifier le profil');
-    // Naviguer vers la page de modification du profil
-    // this.router.navigate(['/profile/edit']);
+    
+    // Ouvrir le modal de profil
+    if (this.profileModal) {
+      this.profileModal.open();
+    } else {
+      console.error('Profile modal not found');
+    }
+  }
+
+  // Callback quand le profil est mis à jour
+  onProfileUpdated(user: UserResponse) {
+    console.log('Profil mis à jour:', user);
+    // Mettre à jour le nom affiché
+    this.userName.set(user.firstName || user.fullName || 'Utilisateur');
+    // Vous pouvez aussi recharger les données du dashboard si nécessaire
+  }
+
+  // Callback quand le modal est fermé
+  onModalClosed() {
+    console.log('Modal fermé');
   }
 
   analyze() {
     console.log('Analyser clicked');
-    // Naviguer vers la page d'analyse
-    // this.router.navigate(['/analyze']);
+    this.router.navigate(['/health/analysis']);
   }
 
   consult() {
@@ -101,15 +122,19 @@ export class DashboardComponent {
     // Naviguer vers la page de consultation
     // this.router.navigate(['/consult']);
   }
+
   viewAlerts() {
     this.router.navigate(['/health/alerts']);
   }
+
   viewTrends() {
     this.router.navigate(['/health/trends']);
   }
+
   viewGoals() {
     this.router.navigate(['/health/goals']);
   }
+
   viewAnalysis() {
     this.router.navigate(['/health/analysis']);
   }

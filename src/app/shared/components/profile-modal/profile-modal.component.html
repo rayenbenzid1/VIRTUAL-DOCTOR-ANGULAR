@@ -1,0 +1,210 @@
+<!-- src/app/shared/components/profile-modal/profile-modal.component.html -->
+@if (isVisible()) {
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">Modifier le Profil</h2>
+      <button class="btn-close" (click)="close()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="modal-tabs">
+      <button 
+        class="tab-button"
+        [class.active]="activeTab() === 'profile'"
+        (click)="switchTab('profile')">
+        Informations
+      </button>
+      <button 
+        class="tab-button"
+        [class.active]="activeTab() === 'password'"
+        (click)="switchTab('password')">
+        Mot de passe
+      </button>
+    </div>
+
+    <!-- Messages -->
+    @if (successMessage()) {
+    <div class="message message-success">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 6L9 17l-5-5"/>
+      </svg>
+      <span>{{ successMessage() }}</span>
+    </div>
+    }
+
+    @if (errorMessage()) {
+    <div class="message message-error">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 8v4M12 16h.01"/>
+      </svg>
+      <span>{{ errorMessage() }}</span>
+    </div>
+    }
+
+    <!-- Profile Form -->
+    @if (activeTab() === 'profile') {
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmitProfile()" class="modal-form">
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Prénom *</label>
+          <input 
+            type="text" 
+            class="form-input"
+            [class.error]="profileForm.get('firstName')?.touched && profileForm.get('firstName')?.invalid"
+            formControlName="firstName"
+            placeholder="Entrez votre prénom">
+          @if (getFieldError(profileForm, 'firstName')) {
+          <span class="error-message">{{ getFieldError(profileForm, 'firstName') }}</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nom *</label>
+          <input 
+            type="text" 
+            class="form-input"
+            [class.error]="profileForm.get('lastName')?.touched && profileForm.get('lastName')?.invalid"
+            formControlName="lastName"
+            placeholder="Entrez votre nom">
+          @if (getFieldError(profileForm, 'lastName')) {
+          <span class="error-message">{{ getFieldError(profileForm, 'lastName') }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email *</label>
+        <input 
+          type="email" 
+          class="form-input"
+          [class.error]="profileForm.get('email')?.touched && profileForm.get('email')?.invalid"
+          formControlName="email"
+          placeholder="exemple@email.com">
+        @if (getFieldError(profileForm, 'email')) {
+        <span class="error-message">{{ getFieldError(profileForm, 'email') }}</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Téléphone</label>
+        <input 
+          type="tel" 
+          class="form-input"
+          [class.error]="profileForm.get('phoneNumber')?.touched && profileForm.get('phoneNumber')?.invalid"
+          formControlName="phoneNumber"
+          placeholder="+33612345678">
+        @if (getFieldError(profileForm, 'phoneNumber')) {
+        <span class="error-message">{{ getFieldError(profileForm, 'phoneNumber') }}</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Photo de profil (URL)</label>
+        <input 
+          type="url" 
+          class="form-input"
+          formControlName="profilePictureUrl"
+          placeholder="https://exemple.com/photo.jpg">
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          Annuler
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="isLoading() || profileForm.invalid">
+          @if (isLoading()) {
+          <span class="spinner"></span>
+          } @else {
+          <span>Enregistrer</span>
+          }
+        </button>
+      </div>
+    </form>
+    }
+
+    <!-- Password Form -->
+    @if (activeTab() === 'password') {
+    <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPassword()" class="modal-form">
+      
+      <div class="form-group">
+        <label class="form-label">Mot de passe actuel *</label>
+        <input 
+          type="password" 
+          class="form-input"
+          [class.error]="passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.invalid"
+          formControlName="currentPassword"
+          placeholder="••••••••">
+        @if (getFieldError(passwordForm, 'currentPassword')) {
+        <span class="error-message">{{ getFieldError(passwordForm, 'currentPassword') }}</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nouveau mot de passe *</label>
+        <input 
+          type="password" 
+          class="form-input"
+          [class.error]="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.invalid"
+          formControlName="newPassword"
+          placeholder="••••••••">
+        @if (getFieldError(passwordForm, 'newPassword')) {
+        <span class="error-message">{{ getFieldError(passwordForm, 'newPassword') }}</span>
+        }
+        <div class="password-hint">
+          <span class="hint-text">Le mot de passe doit contenir:</span>
+          <ul class="hint-list">
+            <li>Au moins 8 caractères</li>
+            <li>1 lettre minuscule</li>
+            <li>1 lettre majuscule</li>
+            <li>1 chiffre</li>
+            <li>1 caractère spécial (@$!%*?&.)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Confirmer le nouveau mot de passe *</label>
+        <input 
+          type="password" 
+          class="form-input"
+          [class.error]="passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.invalid"
+          formControlName="confirmPassword"
+          placeholder="••••••••">
+        @if (getFieldError(passwordForm, 'confirmPassword')) {
+        <span class="error-message">{{ getFieldError(passwordForm, 'confirmPassword') }}</span>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="close()">
+          Annuler
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="isLoading() || passwordForm.invalid">
+          @if (isLoading()) {
+          <span class="spinner"></span>
+          } @else {
+          <span>Changer le mot de passe</span>
+          }
+        </button>
+      </div>
+    </form>
+    }
+
+  </div>
+</div>
+}

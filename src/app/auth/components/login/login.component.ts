@@ -59,6 +59,8 @@ export class LoginComponent {
         const user = {
           id: res.doctorId || res.userId || res.id,
           name: res.user.fullName,
+          firstName: res.user.firstName,
+          lastName: res.user.lastName,
           email: res.user.email,
           role: res.role
         };
