@@ -54,7 +54,7 @@ export class HealthAvatarComponent {
                      this.getLastValue(data?.heartRate, 'value') ??
                      this.getLastValue(data?.heartRate, 'rate');
 
-    return lastRate != null ? `${Math.round(lastRate)} bpm` : '72 bpm';
+    return lastRate != null ? `${Math.round(lastRate)} bpm` : '-- bpm';
   }
 
   organData = computed<OrganDataMap>(() => ({
@@ -77,7 +77,7 @@ export class HealthAvatarComponent {
       statusColor: '#0284c7',
       details: 'Fonction respiratoire adéquate.',
       metrics: [
-        { label: 'O2', value: `${this.biometricData?.oxygenSaturation?.[0]?.percentage ?? 98}%` },
+        { label: 'O2', value: `${this.biometricData?.oxygenSaturation?.[0]?.percentage ?? '--'}%` },
       ],
     },
     brain: {

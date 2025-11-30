@@ -19,6 +19,10 @@ export class LoginComponent {
 
   loading = signal(false);
   hidePassword = signal(true);
+  loginError = signal('');
+  
+  toastMessage = signal('');
+  toastType = signal<'success' | 'error'>('success');
 
   constructor(
     private fb: FormBuilder,
@@ -30,70 +34,83 @@ export class LoginComponent {
   ngOnInit() {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', [Validators.required, Validators.minLength(6)]]
+    });
+
+    // Réinitialiser l'erreur quand l'utilisateur modifie les champs
+    this.form.valueChanges.subscribe(() => {
+      if (this.loginError()) {
+        this.loginError.set('');
+      }
     });
   }
 
-  // submit() {
-  //   if (this.form.invalid) return;
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.form.get(fieldName);
+    return !!(field && field.invalid && field.touched);
+  }
 
-  //   this.loading.set(true);
+  showToast(message: string, type: 'success' | 'error') {
+    this.toastMessage.set(message);
+    this.toastType.set(type);
+    
+    setTimeout(() => {
+      this.toastMessage.set('');
+    }, 4000);
+  }
 
-  //   const email = this.form.value.email;
-  //   const isDoctor = email.endsWith('@doctor.com');
+  getErrorMessage(error: any): string {
+    if (error.status === 401) {
+      return 'Email ou mot de passe incorrect';
+    } else if (error.status === 403) {
+      return 'Accès refusé. Vérifiez vos identifiants';
+    } else if (error.status === 404) {
+      return 'Utilisateur non trouvé';
+    } else if (error.status === 0) {
+      return 'Impossible de se connecter au serveur. Vérifiez votre connexion';
+    } else if (error.error?.message) {
+      return error.error.message;
+    } else {
+      return 'Une erreur est survenue lors de la connexion';
+    }
+  }
 
-  //   // Choose the appropriate authentication method based on email domain
-  //   const authMethod = isDoctor
-  //     ? this.doctorAuthApi.login(this.form.value)
-  //     : this.authApi.login(this.form.value);
+  validateForm(): boolean {
+    // Marquer tous les champs comme touchés
+    Object.keys(this.form.controls).forEach(key => {
+      this.form.get(key)?.markAsTouched();
+    });
 
-  //   authMethod.subscribe({
-  //     next: (res) => {
-  //       console.log('Login response:', res);
+    if (this.form.invalid) {
+      if (this.form.get('email')?.invalid) {
+        this.loginError.set('Veuillez entrer un email valide');
+      } else if (this.form.get('password')?.invalid) {
+        this.loginError.set('Le mot de passe doit contenir au moins 6 caractères');
+      }
+      return false;
+    }
 
-  //       // Store tokens
-  //       localStorage.setItem('accessToken', res.accessToken);
-  //       localStorage.setItem('refreshToken', res.refreshToken);
+    return true;
+  }
 
-  //       // Construct user object from response properties
-  //       const user = {
-  //         id: res.doctorId || res.userId || res.id,
-  //         name: res.user.fullName,
-  //         firstName: res.user.firstName,
-  //         lastName: res.user.lastName,
-  //         email: res.user.email,
-  //         role: res.role
-  //       };
-
-  //       console.log('Constructed user object:', user);
-  //       localStorage.setItem('user', JSON.stringify(user));
-
-  //       this.loading.set(false);
-  //      if (res.role === 'ADMIN') {
-  //       this.router.navigate(['/admin/dashboard']);
-  //     } else if (isDoctor) {
-  //         this.router.navigate(['/doctor/dashboard']);
-  //       } else {
-  //         this.router.navigate(['/dashboard']);
-  //       }
-  //     },
-  //     error: () => {
-  //       this.loading.set(false);
-  //     }
-  //   });
-  // }
   submit() {
-  if (this.form.invalid) return;
+    // Réinitialiser les erreurs
+    this.loginError.set('');
 
-  this.loading.set(true);
+    if (!this.validateForm()) {
+      return;
+    }
 
-  const email = this.form.value.email;
-  const isDoctor = email.endsWith('@doctor.com');
+    this.loading.set(true);
 
-  // Choose the appropriate authentication method based on email domain
-  const authMethod = isDoctor
-    ? this.doctorAuthApi.login(this.form.value)
-    : this.authApi.login(this.form.value);
+    const email = this.form.value.email;
+    const isDoctor = email.endsWith('@doctor.com');
+    const isAdmin = email.endsWith('@admin.com');
+
+    // Choisir la méthode d'authentification appropriée
+    const authMethod = isDoctor
+      ? this.doctorAuthApi.login(this.form.value)
+      : this.authApi.login(this.form.value);
 
   authMethod.subscribe({
     next: (res) => {
@@ -101,72 +118,52 @@ export class LoginComponent {
       console.log('🔍 res.user:', res.user);
       console.log('🔍 res.user.roles:', res.user?.roles);
 
-      // Store tokens
-      localStorage.setItem('accessToken', res.accessToken);
-      localStorage.setItem('refreshToken', res.refreshToken);
+        try {
+          // Stocker les tokens
+          localStorage.setItem('accessToken', res.accessToken);
+          localStorage.setItem('refreshToken', res.refreshToken);
 
-      // Construct user object from response properties
-      const user = {
-        id: res.doctorId || res.userId || res.id,
-        name: res.user.firstName,
-        firstName: res.user.firstName,
-        lastName: res.user.lastName,
-        email: res.user.email,
-        role: this.getPrimaryRole(res.user.roles) // ✅ CORRECTION ICI
-      };
+          // Construire l'objet utilisateur
+          const user = {
+            id: res.doctorId || res.userId || res.id,
+            name: res.user?.fullName || `${res.user?.firstName} ${res.user?.lastName}`,
+            firstName: res.user?.firstName,
+            lastName: res.user?.lastName,
+            email: res.user?.email,
+            role: res.role
+          };
 
-      console.log('🔍 Constructed user object:', user);
-      console.log('🔍 User role:', user.role);
-      localStorage.setItem('user', JSON.stringify(user));
+          console.log('Constructed user object:', user);
+          localStorage.setItem('user', JSON.stringify(user));
 
-      this.loading.set(false);
-      
-      // FIX: Vérifier le rôle EN PREMIER (priorité au rôle sur l'email)
-      if (user.role === 'ADMIN') {
-        console.log('✅ Redirecting to admin dashboard');
-        this.router.navigate(['/admin/dashboard']);
-      } else if (user.role === 'DOCTOR' || isDoctor) {
-        console.log('✅ Redirecting to doctor dashboard');
-        this.router.navigate(['/doctor/dashboard']);
-      } else {
-        console.log('✅ Redirecting to user dashboard');
-        this.router.navigate(['/dashboard']);
+          this.loading.set(false);
+          this.showToast('Connexion réussie ! Redirection...', 'success');
+
+          // Rediriger selon le rôle
+          setTimeout(() => {
+            if (isDoctor) {
+              this.router.navigate(['/doctor/dashboard']);
+            } else if (isAdmin) {
+              this.router.navigate(['/admin/dashboard']);
+            } else {
+              this.router.navigate(['/dashboard']);
+            }
+          }, 1000);
+          
+        } catch (error) {
+          console.error('Error processing login response:', error);
+          this.loading.set(false);
+          this.loginError.set('Erreur lors du traitement de la réponse');
+        }
+      },
+      error: (error) => {
+        console.error('Login error:', error);
+        this.loading.set(false);
+        
+        const errorMessage = this.getErrorMessage(error);
+        this.loginError.set(errorMessage);
+        this.showToast(errorMessage, 'error');
       }
-    },
-    error: (error) => {
-      console.error('❌ Login error:', error);
-      this.loading.set(false);
-    }
-  });
-}
-
-/**
- * Extrait le rôle principal depuis le tableau de rôles
- * Priorité: ADMIN > DOCTOR > USER
- */
-private getPrimaryRole(roles: string[] | Set<string> | undefined): string {
-  console.log('🔍 getPrimaryRole input:', roles);
-  
-  if (!roles) {
-    console.warn('⚠️ No roles found, defaulting to USER');
-    return 'USER';
+    });
   }
-
-  // Convertir Set en Array si nécessaire
-  const rolesArray = Array.isArray(roles) ? roles : Array.from(roles);
-  console.log('🔍 Roles array:', rolesArray);
-
-  // Priorité des rôles
-  if (rolesArray.includes('ADMIN')) {
-    console.log('✅ Found ADMIN role');
-    return 'ADMIN';
-  }
-  if (rolesArray.includes('DOCTOR')) {
-    console.log('✅ Found DOCTOR role');
-    return 'DOCTOR';
-  }
-  
-  console.log('✅ Defaulting to USER role');
-  return 'USER';
-}
 }
