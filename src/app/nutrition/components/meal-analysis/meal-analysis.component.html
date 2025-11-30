@@ -1,0 +1,257 @@
+<!-- src/app/nutrition/components/meal-analysis/meal-analysis.component.html -->
+<div class="meal-analysis-container">
+
+  <!-- ========== HEADER ========== -->
+  <div class="header">
+    <button class="btn-back" (click)="goBack()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <div class="header-title">
+      <h1>🍽️ Analyse du Repas</h1>
+      <p class="header-subtitle">Détails nutritionnels complets</p>
+    </div>
+    <button class="btn-history" (click)="goToHistory()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="main-content">
+
+    <!-- ========== IMAGE PREVIEW CARD ========== -->
+    <div class="card image-preview-card">
+      <div class="image-container">
+        
+        <!-- Placeholder (quand aucune image n'est sélectionnée) -->
+        @if (!hasImage()) {
+        <div class="placeholder">
+          <div class="placeholder-icon">📸</div>
+          <p class="placeholder-text">Aucune image sélectionnée</p>
+          <p class="placeholder-hint">Prenez une photo ou choisissez depuis la galerie</p>
+        </div>
+        }
+
+        <!-- Image sélectionnée -->
+        @if (selectedImage()) {
+        <img [src]="selectedImage()!" alt="Repas" class="meal-image" />
+        }
+
+        <!-- Overlay de chargement -->
+        @if (isLoading()) {
+        <div class="loading-overlay">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">🤖 Analyse en cours...</p>
+          <p class="loading-hint">L'IA analyse votre repas</p>
+        </div>
+        }
+
+      </div>
+    </div>
+
+    <!-- ========== ACTION BUTTONS ========== -->
+    @if (!hasResult()) {
+    <div class="action-buttons">
+      <button class="btn-action btn-camera" (click)="openCamera()">
+        <span class="btn-icon">📷</span>
+        <span class="btn-text">Caméra</span>
+      </button>
+      <button class="btn-action btn-gallery" (click)="openGallery()">
+        <span class="btn-icon">🖼️</span>
+        <span class="btn-text">Galerie</span>
+      </button>
+    </div>
+    }
+
+    <!-- ========== ERROR MESSAGE ========== -->
+    @if (error()) {
+    <div class="error-card">
+      <span class="error-icon">❌</span>
+      <p class="error-text">{{ error() }}</p>
+      <button class="btn-retry" (click)="scanNewMeal()">Réessayer</button>
+    </div>
+    }
+
+    <!-- ========== NUTRITIONAL BREAKDOWN ========== -->
+    @if (hasResult() && totalNutrition()) {
+    <div class="card nutrition-card">
+      <h2 class="card-title">Analyse Nutritionnelle</h2>
+
+      <!-- Food Name & Confidence -->
+      @if (detectedFoods().length > 0) {
+      <div class="food-header">
+        <h3 class="food-name">{{ detectedFoods()[0].food_name }}</h3>
+        <span class="confidence-badge">{{ detectedFoods()[0].confidence }}% confiance</span>
+      </div>
+      }
+
+      <!-- Total Calories -->
+      <div class="calories-section">
+        <span class="calories-label">🔥 Calories totales :</span>
+        <span class="calories-value">{{ totalNutrition()!.calories | number:'1.0-0' }} kcal</span>
+      </div>
+
+      <!-- Macronutrients with Progress Bars -->
+      <div class="macros-section">
+        
+        <!-- Proteins -->
+        <div class="macro-item">
+          <div class="macro-header">
+            <span class="macro-label">Protéines</span>
+            <span class="macro-value" style="color: #2196F3;">
+              {{ totalNutrition()!.proteins | number:'1.1-1' }}g
+            </span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" 
+                 [style.width.%]="getProgressPercentage(totalNutrition()!.proteins, 50)"
+                 [style.background-color]="getProgressColor(totalNutrition()!.proteins, 50)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Carbohydrates -->
+        <div class="macro-item">
+          <div class="macro-header">
+            <span class="macro-label">Glucides</span>
+            <span class="macro-value" style="color: #FF9800;">
+              {{ totalNutrition()!.carbohydrates | number:'1.1-1' }}g
+            </span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" 
+                 [style.width.%]="getProgressPercentage(totalNutrition()!.carbohydrates, 60)"
+                 [style.background-color]="getProgressColor(totalNutrition()!.carbohydrates, 60)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Fats -->
+        <div class="macro-item">
+          <div class="macro-header">
+            <span class="macro-label">Lipides</span>
+            <span class="macro-value" style="color: #F44336;">
+              {{ totalNutrition()!.fats | number:'1.1-1' }}g
+            </span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" 
+                 [style.width.%]="getProgressPercentage(totalNutrition()!.fats, 35)"
+                 [style.background-color]="getProgressColor(totalNutrition()!.fats, 35)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Fiber -->
+        <div class="macro-item">
+          <div class="macro-header">
+            <span class="macro-label">Fibres</span>
+            <span class="macro-value" style="color: #4CAF50;">
+              {{ totalNutrition()!.fiber | number:'1.1-1' }}g
+            </span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" 
+                 [style.width.%]="getProgressPercentage(totalNutrition()!.fiber, 15)"
+                 [style.background-color]="getProgressColor(totalNutrition()!.fiber, 15)">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    }
+
+    <!-- ========== ALTERNATIVES ========== -->
+    @if (hasResult() && alternatives().length > 0) {
+    <div class="card alternatives-card">
+      <h2 class="card-title">Alternatives Plus Saines</h2>
+      <div class="alternatives-list">
+        @for (alt of alternatives(); track $index) {
+        <div class="alternative-item">
+          <div class="alternative-content">
+            <h4 class="alternative-name">{{ alt.name }}</h4>
+            <p class="alternative-confidence">{{ alt.confidence }}% confiance</p>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+    <!-- ========== RECOMMENDATIONS ========== -->
+    @if (hasResult() && recommendations()) {
+    <div class="card recommendations-card">
+      <h2 class="card-title">💡 Recommandations Personnalisées</h2>
+      
+      <!-- Health Score -->
+      <div class="health-score">
+        <span class="score-label">Score santé :</span>
+        <span class="score-value">{{ recommendations()!.health_score }}/100</span>
+      </div>
+
+      <!-- Meal Percentage -->
+      <div class="meal-percentage">
+        <span class="percentage-label">Part du besoin quotidien :</span>
+        <span class="percentage-value">{{ recommendations()!.meal_percentage }}%</span>
+      </div>
+
+      <!-- Recommendations List -->
+      @if (recommendations()!.recommendations.length > 0) {
+      <div class="recommendations-section">
+        <h3 class="section-subtitle">✅ Conseils</h3>
+        <ul class="recommendations-list">
+          @for (rec of recommendations()!.recommendations; track $index) {
+          <li>{{ rec }}</li>
+          }
+        </ul>
+      </div>
+      }
+
+      <!-- Warnings List -->
+      @if (recommendations()!.warnings.length > 0) {
+      <div class="warnings-section">
+        <h3 class="section-subtitle">⚠️ Avertissements</h3>
+        <ul class="warnings-list">
+          @for (warn of recommendations()!.warnings; track $index) {
+          <li>{{ warn }}</li>
+          }
+        </ul>
+      </div>
+      }
+    </div>
+    }
+
+    <!-- ========== SCAN NEW MEAL BUTTON ========== -->
+    @if (hasResult()) {
+    <button class="btn-scan-new" (click)="scanNewMeal()">
+      <span class="btn-icon">📸</span>
+      <span>Analyser un Nouveau Repas</span>
+    </button>
+    }
+
+  </div>
+
+  <!-- ========== HIDDEN FILE INPUTS ========== -->
+  <input 
+    #fileInput 
+    type="file" 
+    accept="image/*" 
+    style="display: none;" 
+    (change)="onFileSelected($event, false)" 
+  />
+  
+  <input 
+    #cameraInput 
+    type="file" 
+    accept="image/*" 
+    capture="environment" 
+    style="display: none;" 
+    (change)="onFileSelected($event, true)" 
+  />
+
+</div>
