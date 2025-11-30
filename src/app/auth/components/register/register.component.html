@@ -1,136 +1,373 @@
 <div class="register-container">
-
-  <div class="header-icon">
-    <div class="circle">
-      <span>❤</span>
-    </div>
+  
+  <div class="header-section">
+    <h2>Créer un compte</h2>
+    <p class="subtitle">Rejoignez-nous aujourd'hui</p>
   </div>
 
-  <h2>Créer un compte</h2>
-  <p class="subtitle">Rejoignez nous aujourd'hui</p>
+  <!-- Alerte d'erreur globale -->
+  <div *ngIf="globalError()" class="error-alert">
+    <span class="error-alert-icon">❌</span>
+    <span class="error-alert-text">{{ globalError() }}</span>
+  </div>
 
   <!-- Type de compte -->
   <div class="account-type">
-    <label class="radio-label">
-      <input type="radio"
-             name="role"
-             [checked]="role() === 'USER'"
-             (change)="role.set('USER')" />
-      <span>Patient</span>
-    </label>
-
-    <label class="radio-label">
-      <input type="radio"
-             name="role"
-             [checked]="role() === 'DOCTOR'"
-             (change)="role.set('DOCTOR')" />
-      <span>Médecin</span>
-    </label>
+    <label class="account-type-label">Type de compte</label>
+    <div class="radio-group">
+      <div class="radio-option">
+        <input 
+          type="radio" 
+          id="patient" 
+          name="role" 
+          [checked]="role() === 'USER'"
+          (change)="changeRole('USER')" />
+        <label for="patient" class="radio-button">
+          <span class="radio-icon"></span>
+          <span>Patient</span>
+        </label>
+      </div>
+      
+      <div class="radio-option">
+        <input 
+          type="radio" 
+          id="doctor" 
+          name="role" 
+          [checked]="role() === 'DOCTOR'"
+          (change)="changeRole('DOCTOR')" />
+        <label for="doctor" class="radio-button">
+          <span class="radio-icon"></span>
+          <span>Médecin</span>
+        </label>
+      </div>
+    </div>
   </div>
 
   <form [formGroup]="form" (ngSubmit)="submit()">
 
+    <!-- Prénom -->
     <div class="field">
       <label>Prénom</label>
-      <input
-        formControlName="firstName"
-        placeholder="Entrez votre prénom"
-        type="text"
-        autocomplete="given-name" />
-      <div *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched"
-           class="error-message">
-        Prénom requis
+      <div class="input-wrapper">
+        <span class="input-icon">👤</span>
+        <input
+          formControlName="firstName"
+          placeholder="Prénom"
+          type="text"
+          autocomplete="given-name"
+          [class.error]="isFieldInvalid('firstName')" />
+      </div>
+      <div *ngIf="isFieldInvalid('firstName')" class="error-message">
+        Le prénom est requis
       </div>
     </div>
 
+    <!-- Nom -->
     <div class="field">
       <label>Nom</label>
-      <input
-        formControlName="lastName"
-        placeholder="Entrez votre nom"
-        type="text"
-        autocomplete="family-name" />
-      <div *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched"
-           class="error-message">
-        Nom requis
+      <div class="input-wrapper">
+        <span class="input-icon">👤</span>
+        <input
+          formControlName="lastName"
+          placeholder="Nom"
+          type="text"
+          autocomplete="family-name"
+          [class.error]="isFieldInvalid('lastName')" />
+      </div>
+      <div *ngIf="isFieldInvalid('lastName')" class="error-message">
+        Le nom est requis
       </div>
     </div>
 
+    <!-- Email système (pour médecin uniquement) -->
+    <div class="field" *ngIf="role() === 'DOCTOR'">
+      <label>Email système</label>
+      <div class="input-wrapper">
+        <span class="input-icon">📧</span>
+        <input
+          formControlName="systemEmail"
+          placeholder="Email système (@doctor.com)"
+          type="email"
+          autocomplete="email"
+          [class.error]="isFieldInvalid('systemEmail')" />
+      </div>
+      <div *ngIf="isFieldInvalid('systemEmail')" class="error-message">
+        Email système valide requis (doit finir par @doctor.com)
+      </div>
+    </div>
+
+    <!-- Email de contact -->
     <div class="field">
       <label>Email</label>
-      <input
-        formControlName="email"
-        placeholder="votre@email.com"
-        type="email"
-        autocomplete="email" />
-      <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
-           class="error-message">
+      <div class="input-wrapper">
+        <span class="input-icon">📧</span>
+        <input
+          formControlName="email"
+          [placeholder]="role() === 'DOCTOR' ? 'Email de contact (pour recevoir les...' : 'Email'"
+          type="email"
+          autocomplete="email"
+          [class.error]="isFieldInvalid('email')" />
+      </div>
+      <div *ngIf="isFieldInvalid('email')" class="error-message">
         Email valide requis
       </div>
     </div>
 
+    <!-- Téléphone -->
     <div class="field">
       <label>Téléphone</label>
-      <input
-        formControlName="phone"
-        placeholder="+216 XX XXX XXX"
-        type="tel"
-        autocomplete="tel" />
-      <div *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched"
-           class="error-message">
-        Téléphone requis
+      <div class="input-wrapper">
+        <span class="input-icon">📱</span>
+        <input
+          formControlName="phone"
+          placeholder="Téléphone"
+          type="tel"
+          autocomplete="tel"
+          [class.error]="isFieldInvalid('phone')" />
+      </div>
+      <div *ngIf="isFieldInvalid('phone')" class="error-message">
+        Le téléphone est requis
       </div>
     </div>
 
+    <!-- Champs spécifiques au médecin -->
+    <ng-container *ngIf="role() === 'DOCTOR'">
+      
+      <!-- Spécialisation -->
+      <div class="field">
+        <label>Spécialisation</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🩺</span>
+          <input
+            formControlName="specialization"
+            placeholder="Spécialisation"
+            type="text"
+            [class.error]="isFieldInvalid('specialization')" />
+        </div>
+        <div *ngIf="isFieldInvalid('specialization')" class="error-message">
+          La spécialisation est requise
+        </div>
+      </div>
+
+      <!-- Numéro de licence -->
+      <div class="field">
+        <label>Numéro de licence</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🆔</span>
+          <input
+            formControlName="licenseNumber"
+            placeholder="Numéro de licence"
+            type="text"
+            [class.error]="isFieldInvalid('licenseNumber')" />
+        </div>
+        <div *ngIf="isFieldInvalid('licenseNumber')" class="error-message">
+          Le numéro de licence est requis
+        </div>
+      </div>
+
+      <!-- Années d'expérience -->
+      <div class="field">
+        <label>Années d'expérience</label>
+        <div class="input-wrapper">
+          <span class="input-icon">📅</span>
+          <input
+            formControlName="yearsOfExperience"
+            placeholder="Années d'expérience"
+            type="number"
+            min="0"
+            [class.error]="isFieldInvalid('yearsOfExperience')" />
+        </div>
+        <div *ngIf="isFieldInvalid('yearsOfExperience')" class="error-message">
+          Les années d'expérience sont requises
+        </div>
+      </div>
+
+      <!-- Formation -->
+      <div class="field">
+        <label>Formation</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🎓</span>
+          <input
+            formControlName="education"
+            placeholder="Formation (ex: MD, PhD)"
+            type="text"
+            [class.error]="isFieldInvalid('education')" />
+        </div>
+        <div *ngIf="isFieldInvalid('education')" class="error-message">
+          La formation est requise
+        </div>
+      </div>
+
+      <!-- Nom de la clinique/hôpital -->
+      <div class="field">
+        <label>Nom de la clinique/hôpital</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🏥</span>
+          <input
+            formControlName="hospitalName"
+            placeholder="Nom de la clinique/hôpital"
+            type="text"
+            [class.error]="isFieldInvalid('hospitalName')" />
+        </div>
+        <div *ngIf="isFieldInvalid('hospitalName')" class="error-message">
+          Le nom de la clinique/hôpital est requis
+        </div>
+      </div>
+
+      <!-- Adresse de la clinique -->
+      <div class="field">
+        <label>Adresse de la clinique</label>
+        <div class="input-wrapper">
+          <span class="input-icon">📍</span>
+          <input
+            formControlName="hospitalAddress"
+            placeholder="Adresse de la clinique"
+            type="text"
+            [class.error]="isFieldInvalid('hospitalAddress')" />
+        </div>
+        <div *ngIf="isFieldInvalid('hospitalAddress')" class="error-message">
+          L'adresse est requise
+        </div>
+      </div>
+
+      <!-- Frais de consultation -->
+      <div class="field">
+        <label>Frais de consultation</label>
+        <div class="input-wrapper">
+          <span class="input-icon">💰</span>
+          <input
+            formControlName="consultationFee"
+            placeholder="Frais de consultation (optionnel)"
+            type="number"
+            min="0" />
+        </div>
+      </div>
+
+      <!-- Langues parlées -->
+      <div class="field">
+        <label>Langues parlées</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🌐</span>
+          <input
+            formControlName="languages"
+            placeholder="Langues parlées (séparées par virgule)"
+            type="text"
+            [class.error]="isFieldInvalid('languages')" />
+        </div>
+        <div *ngIf="isFieldInvalid('languages')" class="error-message">
+          Les langues parlées sont requises
+        </div>
+      </div>
+
+      <!-- Biographie professionnelle -->
+      <div class="field">
+        <label>Biographie professionnelle</label>
+        <div class="input-wrapper">
+          <span class="input-icon" style="top: 20px; transform: none;">📝</span>
+          <textarea
+            formControlName="bio"
+            placeholder="Biographie professionnelle"
+            rows="4"
+            [class.error]="isFieldInvalid('bio')"></textarea>
+        </div>
+        <div *ngIf="isFieldInvalid('bio')" class="error-message">
+          La biographie est requise
+        </div>
+      </div>
+
+      <!-- Disponibilité -->
+      <div class="availability-section">
+        <label class="availability-label">Disponibilité</label>
+        <div class="checkbox-group">
+          <label class="checkbox-option">
+            <input 
+              type="checkbox" 
+              [checked]="onlineConsultation()"
+              (change)="onlineConsultation.set(!onlineConsultation())" />
+            <span class="checkbox-text">Consultations en ligne</span>
+          </label>
+          
+          <label class="checkbox-option">
+            <input 
+              type="checkbox" 
+              [checked]="inPersonConsultation()"
+              (change)="inPersonConsultation.set(!inPersonConsultation())" />
+            <span class="checkbox-text">Consultations en personne</span>
+          </label>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Mot de passe -->
     <div class="field">
       <label>Mot de passe</label>
-      <div class="password-wrapper">
+      <div class="input-wrapper password-wrapper">
+        <span class="input-icon">🔒</span>
         <input
           [type]="hidePassword() ? 'password' : 'text'"
           formControlName="password"
-          placeholder="Minimum 6 caractères"
-          autocomplete="new-password" />
+          placeholder="Mot de passe"
+          autocomplete="new-password"
+          [class.error]="isFieldInvalid('password')" />
         <span class="eye-icon" (click)="togglePassword()">
-          {{ hidePassword() ? '👁️' : '👁️‍🗨️' }}
+          {{ hidePassword() ? '👁' : '👁‍🗨' }}
         </span>
       </div>
-      <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched"
-           class="error-message">
+      <div *ngIf="isFieldInvalid('password')" class="error-message">
         Mot de passe requis (min. 6 caractères)
       </div>
     </div>
 
+    <!-- Confirmer le mot de passe -->
     <div class="field">
-      <label>Confirmer le mot de passe</label>
-      <div class="password-wrapper">
+      <label>Confirmer mot de passe</label>
+      <div class="input-wrapper password-wrapper">
+        <span class="input-icon">🔒</span>
         <input
           [type]="hideConfirmPassword() ? 'password' : 'text'"
           formControlName="confirmPassword"
-          placeholder="Confirmez votre mot de passe"
-          autocomplete="new-password" />
+          placeholder="Confirmer mot de passe"
+          autocomplete="new-password"
+          [class.error]="isFieldInvalid('confirmPassword') || passwordMismatch()" />
         <span class="eye-icon" (click)="toggleConfirmPassword()">
-          {{ hideConfirmPassword() ? '👁️' : '👁️‍🗨️' }}
+          {{ hideConfirmPassword() ? '👁' : '👁‍🗨' }}
         </span>
       </div>
-      <div *ngIf="form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched"
-           class="error-message">
-        Confirmation requise
+      <div *ngIf="form.get('confirmPassword')?.touched && passwordMismatch()" class="error-message">
+        Les mots de passe ne correspondent pas
       </div>
     </div>
 
-    <label class="terms-label">
-      <input type="checkbox" formControlName="acceptTerms" />
-      <span>J'accepte les conditions d'utilisation</span>
-    </label>
+    <!-- Conditions d'utilisation -->
+    <div class="terms-wrapper">
+      <label class="terms-option">
+        <input 
+          type="checkbox" 
+          formControlName="acceptTerms" />
+        <span class="terms-text">
+          J'accepte les conditions d'utilisation
+        </span>
+      </label>
+      <div *ngIf="isFieldInvalid('acceptTerms')" class="error-message" style="margin-left: 30px;">
+        Vous devez accepter les conditions
+      </div>
+    </div>
 
+    <!-- Bouton d'inscription -->
     <button type="submit" class="submit" [disabled]="loading()">
       {{ loading() ? 'Inscription en cours...' : "S'inscrire" }}
     </button>
 
+    <!-- Lien de connexion -->
     <div class="login-link">
       Vous avez déjà un compte ?
       <a routerLink="/login">Se connecter</a>
     </div>
 
   </form>
+</div>
+
+<!-- Toast -->
+<div *ngIf="toastMessage()" [class]="'toast ' + toastType()">
+  {{ toastMessage() }}
 </div>
