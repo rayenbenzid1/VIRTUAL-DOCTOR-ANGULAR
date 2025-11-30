@@ -9,6 +9,8 @@ import { AlertsComponent } from './healthPatient/components/alerts/alerts.compon
 import { TrendsComponent } from './healthPatient/components/trends/trends.component';
 import { GoalsComponent } from './healthPatient/components/goals/goals.component';
 import { AnalysisComponent } from './healthPatient/components/analysis/analysis.component';
+import { AdminDashboardComponent } from './admin/components/admin-dashboard/admin-dashboard.component';
+import { UserManagementComponent } from './admin/components/user-management/user-management.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -20,5 +22,49 @@ export const routes: Routes = [
   { path: 'health/alerts', component: AlertsComponent },
   { path: 'health/trends', component: TrendsComponent },
   { path: 'health/goals', component: GoalsComponent },
-  { path: '**', redirectTo: 'login' }
+    // ✅ ROUTES ADMIN
+  { path: 'admin/dashboard', component: AdminDashboardComponent },
+  { path: 'admin/users', component: UserManagementComponent },
+  {
+    path: 'nutrition',
+    children: [
+      {
+        path: 'analysis',
+        loadComponent: () => 
+          import('./nutrition/components/meal-analysis/meal-analysis.component')
+            .then(m => m.MealAnalysisComponent),
+        title: 'Analyse Nutritionnelle'
+      },
+      {
+        path: 'history',
+        loadComponent: () => 
+          import('./nutrition/components/meal-history/meal-history.component')
+            .then(m => m.MealHistoryComponent),
+        title: 'Historique des Repas'
+      },
+      {
+        path: 'details/:id',
+        loadComponent: () => 
+          import('./nutrition/components/meal-details/meal-details.component')
+            .then(m => m.MealDetailsComponent),
+        title: 'Détails du Repas'
+      },
+      {
+        path: 'statistics',
+        loadComponent: () => 
+          import('./nutrition/components/nutrition-statistics/nutrition-statistics.component')
+            .then(m => m.NutritionStatisticsComponent),
+        title: 'Statistiques Nutritionnelles'
+      },
+      {
+        path: '',
+        redirectTo: 'analysis',
+        pathMatch: 'full'
+      }
+    ]
+  },
+  
+  { path: '**', redirectTo: 'login' },
+
+
 ];

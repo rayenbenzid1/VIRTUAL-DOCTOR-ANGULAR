@@ -284,10 +284,10 @@ export class DashboardComponent {
     console.log('Modal fermé');
   }
 
-  analyze() {
-    this.router.navigate(['/health/analysis']);
-  }
 
+   analyzeNutrition() {
+    this.router.navigate(['/nutrition/analysis']);
+  }
   consult() {
     console.log('Consulter clicked');
   }

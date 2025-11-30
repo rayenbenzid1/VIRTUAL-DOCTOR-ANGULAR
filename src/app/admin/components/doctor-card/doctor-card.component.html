@@ -1,0 +1,75 @@
+<article class="doctor-card">
+  <!-- Status Badge -->
+  <div class="card-header">
+    @if (isPending) {
+    <span class="status-badge pending">⏳ EN ATTENTE</span>
+    } @else {
+    <span class="status-badge activated">✅ ACTIVÉ</span>
+    }
+  </div>
+
+  <!-- Doctor Info -->
+  <div class="doctor-info">
+    <div class="doctor-avatar">
+      <span>{{ doctor.fullName.charAt(0) }}</span>
+    </div>
+    <h3 class="doctor-name">👨‍⚕️ Dr. {{ doctor.fullName }}</h3>
+    <p class="doctor-email">📧 {{ doctor.email }}</p>
+  </div>
+
+  <!-- Details -->
+  <div class="doctor-details">
+    <div class="detail-item">
+      <span class="detail-icon">🏥</span>
+      <span class="detail-text">{{ doctor.specialization }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-icon">🏨</span>
+      <span class="detail-text">{{ doctor.hospitalAffiliation }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-icon">📅</span>
+      <span class="detail-text">{{ doctor.yearsOfExperience }} ans d'expérience</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-icon">🆔</span>
+      <span class="detail-text">Licence: {{ doctor.medicalLicenseNumber }}</span>
+    </div>
+  </div>
+
+  <!-- Date -->
+  <div class="card-footer">
+    @if (isPending) {
+    <p class="registration-date">📆 {{ formatDate(doctor.registrationDate) }}</p>
+    } @else {
+    <p class="activation-date">✅ Activé le: {{ formatDate(doctor.activationRequestDate) }}</p>
+    }
+  </div>
+
+  <!-- Actions -->
+  <div class="card-actions">
+    @if (isPending) {
+    <button class="btn btn-approve" (click)="onApprove()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      Approuver
+    </button>
+    <button class="btn btn-reject" (click)="onReject()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+      Rejeter
+    </button>
+    }
+    <button class="btn btn-details" (click)="onViewDetails()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      Détails
+    </button>
+  </div>
+</article>

@@ -1,0 +1,78 @@
+<article class="user-card">
+  <!-- User Avatar & Basic Info -->
+  <div class="user-header">
+    <div class="user-avatar">
+      {{ user.fullName.charAt(0) }}
+    </div>
+    <div class="user-basic-info">
+      <h3 class="user-name">{{ user.fullName }}</h3>
+      <p class="user-email">{{ user.email }}</p>
+    </div>
+  </div>
+
+  <!-- User Details -->
+  <div class="user-details">
+    <div class="detail-item">
+      <span class="detail-icon">📱</span>
+      <span class="detail-text">{{ user.phoneNumber || 'N/A' }}</span>
+    </div>
+    <div class="detail-item">
+      <span class="detail-icon">📅</span>
+      <span class="detail-text">Créé: {{ formatDate(user.createdAt) }}</span>
+    </div>
+    @if (user.lastLoginAt) {
+    <div class="detail-item">
+      <span class="detail-icon">🕐</span>
+      <span class="detail-text">Connexion: {{ formatDate(user.lastLoginAt) }}</span>
+    </div>
+    }
+  </div>
+
+  <!-- Badges -->
+  <div class="user-badges">
+    <!-- Role Badge -->
+    <span class="badge badge-role" [ngClass]="getRoleBadgeClass(user.roles)">
+      {{ user.roles.join(', ') }}
+    </span>
+
+    <!-- Status Badge -->
+    <span class="badge badge-status" [ngClass]="getStatusBadgeClass(user.accountStatus)">
+      @switch (user.accountStatus) {
+        @case ('ACTIVE') { ✅ {{ user.accountStatus }} }
+        @case ('INACTIVE') { ❌ {{ user.accountStatus }} }
+        @case ('LOCKED') { 🔒 {{ user.accountStatus }} }
+        @case ('SUSPENDED') { ⏸️ {{ user.accountStatus }} }
+        @default { {{ user.accountStatus }} }
+      }
+    </span>
+
+    <!-- Verification Badges -->
+    @if (user.isActivated) {
+    <span class="badge badge-verified">✅ Activé</span>
+    }
+    @if (user.isEmailVerified) {
+    <span class="badge badge-verified">✉️ Email vérifié</span>
+    }
+  </div>
+
+  <!-- Actions -->
+  <div class="card-actions">
+    <button class="btn btn-view" (click)="onViewDetails()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      Détails
+    </button>
+    <button class="btn btn-delete" (click)="onDelete()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        <line x1="10" y1="11" x2="10" y2="17"></line>
+        <line x1="14" y1="11" x2="14" y2="17"></line>
+      </svg>
+      Supprimer
+    </button>
+  </div>
+</article>
