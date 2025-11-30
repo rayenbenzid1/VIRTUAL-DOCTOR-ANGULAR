@@ -877,3 +877,37 @@
     grid-template-columns: 1fr;
   }
 }
+/* Ajouter dans dashboard.component.css */
+.exercise-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px;
+  border-radius: 12px;
+  margin-top: 12px;
+}
+
+.exercise-type {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.exercise-details {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.exercise-duration,
+.exercise-distance,
+.exercise-calories {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.exercise-time {
+  font-size: 12px;
+  opacity: 0.7;
+  text-align: right;
+}

@@ -129,16 +129,27 @@
     </div>
 
     <!-- Physical Activities -->
-    <div class="section" *ngIf="!loading()">
-      <div class="section-header">
-        <span class="section-icon">🏋️</span>
-        <h2>Activités Physiques</h2>
+   <!-- Dans la section Activités Physiques -->
+<div class="section" *ngIf="!loading()">
+  <div class="section-header">
+    <span class="section-icon">🏋️</span>
+    <h2>Activités Physiques</h2>
+  </div>
+  
+  <div class="info-card" *ngIf="!exerciseData()">
+    <p class="info-text">Aucun exercice enregistré aujourd'hui</p>
       </div>
-      <div class="info-card">
-        <p class="info-text">Aucun exercice enregistré aujourd'hui</p>
+
+      <div class="exercise-card" *ngIf="exerciseData()">
+        <div class="exercise-type">{{ exerciseData()!.type }}</div>
+        <div class="exercise-details">
+          <div class="exercise-duration">⏱️ {{ exerciseData()!.duration }} min</div>
+          <div class="exercise-distance">📏 {{ exerciseData()!.distance }}</div>
+          <div class="exercise-calories">🔥 {{ exerciseData()!.calories }} calories</div>
+        </div>
+        <div class="exercise-time">{{ exerciseData()!.time }}</div>
       </div>
     </div>
-
     <!-- Vital Signs -->
     <div class="section" *ngIf="!loading()">
       <div class="section-header">
@@ -157,14 +168,14 @@
       </div>
     </div>
 
-    <!-- Data Summary -->
+  <!-- Data Summary -->
     <div class="section" *ngIf="!loading()">
       <div class="section-header">
         <span class="section-icon">📋</span>
         <h2>Résumé des Données</h2>
       </div>
       <div class="info-card">
-        <p class="info-text">En attente de synchronisation avec vos appareils...</p>
+        <p class="info-text">{{ dataSummary() }}</p>
       </div>
     </div>
 

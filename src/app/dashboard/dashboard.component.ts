@@ -1,9 +1,10 @@
 // src/app/dashboard/dashboard.component.ts
-import { Component, signal, HostListener, ViewChild } from '@angular/core';
+import { Component, signal, computed, effect, inject, HostListener, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ProfileModalComponent } from '../shared/components/profile-modal/profile-modal.component';
 import { UserResponse } from '../shared/models/profile.models';
+import { BiometricApiService, BiometricData } from './services/biometric.api';
 
 interface HealthMetric {
   id: string;
@@ -28,48 +29,230 @@ interface VitalSign {
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent {
-  // ViewChild pour accéder au modal
+  private router = inject(Router);
+  private biometricApi = inject(BiometricApiService);
+
   @ViewChild('profileModal') profileModal!: ProfileModalComponent;
 
   loading = signal(true);
   userName = signal('');
   showDropdown = signal(false);
   activeTab = signal('analyse');
+  biometricData = signal<BiometricData | null>(null);
 
-  dailyMetrics = signal<HealthMetric[]>([
-    { id: 'steps', icon: '👣', label: 'Pas', value: '0', color: '#e8f5e9' },
-    { id: 'distance', icon: '📏', label: 'Distance', value: '0.00 km', color: '#e3f2fd' },
-    { id: 'bpm', icon: '❤️', label: 'BPM', value: '-- bpm', color: '#fce4ec' },
-    { id: 'sleep', icon: '💤', label: 'Sommeil', value: '0.0h', color: '#f3e5f5' },
-    { id: 'hydration', icon: '💧', label: 'Hydratation', value: '0.00 L', color: '#e0f7fa' },
-    { id: 'stress', icon: '🧠', label: 'Stress', value: '--', color: '#fff3e0' },
-  ]);
+  // Métriques calculées
+  dailyMetrics = computed<HealthMetric[]>(() => {
+    const data = this.biometricData();
+    
+    return [
+      { 
+        id: 'steps', 
+        icon: '👣', 
+        label: 'Pas', 
+        value: data?.totalSteps ? data.totalSteps.toLocaleString() : '0', 
+        color: '#e8f5e9' 
+      },
+      { 
+        id: 'distance', 
+        icon: '📏', 
+        label: 'Distance', 
+        value: data?.totalDistanceKm ? `${parseFloat(data.totalDistanceKm).toFixed(2)} km` : '0.00 km', 
+        color: '#e3f2fd' 
+      },
+      { 
+        id: 'bpm', 
+        icon: '❤️', 
+        label: 'BPM', 
+        value: data?.avgHeartRate ? `${data.avgHeartRate} bpm` : '-- bpm', 
+        color: '#fce4ec' 
+      },
+      { 
+        id: 'sleep', 
+        icon: '💤', 
+        label: 'Sommeil', 
+        value: data?.totalSleepHours ? `${parseFloat(data.totalSleepHours).toFixed(1)}h` : '0.0h', 
+        color: '#f3e5f5' 
+      },
+      { 
+        id: 'hydration', 
+        icon: '💧', 
+        label: 'Hydratation', 
+        value: data?.totalHydrationLiters ? `${parseFloat(data.totalHydrationLiters).toFixed(2)} L` : '0.00 L', 
+        color: '#e0f7fa' 
+      },
+      { 
+        id: 'stress', 
+        icon: '🧠', 
+        label: 'Stress', 
+        value: data?.stressLevel ? data.stressLevel : '--', 
+        color: '#fff3e0' 
+      },
+    ];
+  });
 
-  vitalSigns = signal<VitalSign[]>([
-    { icon: '🫁', label: 'SpO₂', value: '--', color: '#e3f2fd' },
-    { icon: '🌡️', label: 'Température', value: '--', color: '#fff3e0' },
-    { icon: '💉', label: 'Tension', value: '--/--', color: '#fce4ec' },
-    { icon: '⚖️', label: 'Poids', value: '--', color: '#e8f5e9' },
-    { icon: '📏', label: 'Taille', value: '--', color: '#f3e5f5' },
-  ]);
+  // Signes vitaux calculés
+  vitalSigns = computed<VitalSign[]>(() => {
+    const data = this.biometricData();
+    
+    const lastOxygen = data?.oxygenSaturation?.[data.oxygenSaturation.length - 1];
+    const lastTemperature = data?.bodyTemperature?.[data.bodyTemperature.length - 1];
+    const lastBloodPressure = data?.bloodPressure?.[data.bloodPressure.length - 1];
+    const lastWeight = data?.weight?.[data.weight.length - 1];
+    const lastHeight = data?.height?.[data.height.length - 1];
 
-  constructor(private router: Router) {}
+    return [
+      { 
+        icon: '🫁', 
+        label: 'SpO₂', 
+        value: lastOxygen?.percentage ? `${lastOxygen.percentage}%` : '--', 
+        color: '#e3f2fd' 
+      },
+      { 
+        icon: '🌡️', 
+        label: 'Température', 
+        value: lastTemperature?.temperature ? `${lastTemperature.temperature}°C` : '--', 
+        color: '#fff3e0' 
+      },
+      { 
+        icon: '💉', 
+        label: 'Tension', 
+        value: lastBloodPressure ? `${lastBloodPressure.systolic}/${lastBloodPressure.diastolic}` : '--/--', 
+        color: '#fce4ec' 
+      },
+      { 
+        icon: '⚖️', 
+        label: 'Poids', 
+        value: lastWeight?.weight ? `${lastWeight.weight} kg` : '--', 
+        color: '#e8f5e9' 
+      },
+      { 
+        icon: '📏', 
+        label: 'Taille', 
+        value: lastHeight?.height ? `${(lastHeight.height * 100).toFixed(0)} cm` : '--', 
+        color: '#f3e5f5' 
+      },
+    ];
+  });
+
+  // Données d'exercice calculées
+  exerciseData = computed(() => {
+    const data = this.biometricData();
+    
+    if (!data?.exercise || data.exercise.length === 0) {
+      return null;
+    }
+
+    // Prendre le premier exercice (vous pouvez adapter pour afficher plusieurs exercices)
+    const exercise = data.exercise[0];
+    
+    return {
+      type: exercise.exerciseTypeName || 'Exercice',
+      duration: exercise.durationMinutes || 0,
+      distance: exercise.distanceKm ? `${parseFloat(exercise.distanceKm).toFixed(2)} km` : '0 km',
+      calories: exercise.activeCalories || 0,
+      time: exercise.startTime ? this.formatTime(exercise.startTime) : ''
+    };
+  });
+
+  // Résumé des données calculé
+  dataSummary = computed(() => {
+    const data = this.biometricData();
+    
+    if (!data) {
+      return "En attente de synchronisation avec vos appareils...";
+    }
+
+    const summaries = [];
+
+    // Vérifier les pas
+    if (data.totalSteps && data.totalSteps > 0) {
+      summaries.push(`${data.totalSteps.toLocaleString()} pas`);
+    }
+
+    // Vérifier la distance
+    if (data.totalDistanceKm && parseFloat(data.totalDistanceKm) > 0) {
+      summaries.push(`${parseFloat(data.totalDistanceKm).toFixed(2)} km parcourus`);
+    }
+
+    // Vérifier les exercices
+    if (data.exercise && data.exercise.length > 0) {
+      const exerciseCount = data.exercise.length;
+      summaries.push(`${exerciseCount} activité${exerciseCount > 1 ? 's' : ''} physique${exerciseCount > 1 ? 's' : ''}`);
+    }
+
+    // Vérifier la fréquence cardiaque
+    if (data.heartRate && data.heartRate.length > 0) {
+      summaries.push(`${data.heartRate.length} mesure${data.heartRate.length > 1 ? 's' : ''} cardiaque${data.heartRate.length > 1 ? 's' : ''}`);
+    }
+
+    // Vérifier le sommeil
+    if (data.totalSleepHours && parseFloat(data.totalSleepHours) > 0) {
+      summaries.push(`${parseFloat(data.totalSleepHours).toFixed(1)}h de sommeil`);
+    }
+
+    // Vérifier l'hydratation
+    if (data.totalHydrationLiters && parseFloat(data.totalHydrationLiters) > 0) {
+      summaries.push(`${parseFloat(data.totalHydrationLiters).toFixed(2)}L d'eau bue`);
+    }
+
+    return summaries.length > 0 
+      ? `Aujourd'hui : ${summaries.join(', ')}`
+      : "Peu d'activité enregistrée aujourd'hui";
+  });
 
   ngOnInit() {
-    // Charger les données utilisateur
+    this.loadUserData();
+    this.loadBiometricData();
+  }
+
+  private logDataChanges = effect(() => {
+    const data = this.biometricData();
+    console.log('Données biométriques:', data);
+    console.log('Exercice calculé:', this.exerciseData());
+    console.log('Résumé calculé:', this.dataSummary());
+  });
+
+  private loadUserData() {
     const user = localStorage.getItem('user');
     if (user) {
       const userData = JSON.parse(user);
       this.userName.set(userData.firstName || userData.name || 'Utilisateur');
     }
-
-    // Simuler le chargement des données
-    setTimeout(() => {
-      this.loading.set(false);
-    }, 1500);
   }
 
-  // Fermer le dropdown si on clique ailleurs
+  private loadBiometricData() {
+    const user = localStorage.getItem('user');
+    if (!user) {
+      this.loading.set(false);
+      return;
+    }
+
+    const userData = JSON.parse(user);
+    const userEmail = userData.email;
+
+    this.biometricApi.getTodayData(userEmail).subscribe({
+      next: (data) => {
+        console.log('Données complètes reçues:', data);
+        this.biometricData.set(data);
+        this.loading.set(false);
+      },
+      error: (error) => {
+        console.error('Erreur:', error);
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private formatTime(timeString: string): string {
+    try {
+      const timePart = timeString.split(' ')[1]; // Prendre la partie heure "16:05:09"
+      return timePart ? timePart.substring(0, 5) : timeString; // Retourner "16:05"
+    } catch {
+      return timeString;
+    }
+  }
+
+  // ... le reste des méthodes reste inchangé
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
@@ -84,43 +267,29 @@ export class DashboardComponent {
 
   setActiveTab(tab: string) {
     this.activeTab.set(tab);
-    console.log('Navigation vers:', tab);
   }
 
   editProfile() {
-    // Fermer le dropdown
     this.showDropdown.set(false);
-    
-    // Ouvrir le modal de profil
     if (this.profileModal) {
       this.profileModal.open();
-    } else {
-      console.error('Profile modal not found');
     }
   }
 
-  // Callback quand le profil est mis à jour
   onProfileUpdated(user: UserResponse) {
-    console.log('Profil mis à jour:', user);
-    // Mettre à jour le nom affiché
     this.userName.set(user.firstName || user.fullName || 'Utilisateur');
-    // Vous pouvez aussi recharger les données du dashboard si nécessaire
   }
 
-  // Callback quand le modal est fermé
   onModalClosed() {
     console.log('Modal fermé');
   }
 
   analyze() {
-    console.log('Analyser clicked');
     this.router.navigate(['/health/analysis']);
   }
 
   consult() {
     console.log('Consulter clicked');
-    // Naviguer vers la page de consultation
-    // this.router.navigate(['/consult']);
   }
 
   viewAlerts() {
