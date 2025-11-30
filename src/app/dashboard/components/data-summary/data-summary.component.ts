@@ -753,7 +753,7 @@ export class DataSummaryComponent {
       points.push({
         icon: '🌡️',
         label: 'Température corporelle',
-        value: `${lastTemp.temperature}°C`,
+        value: `${lastTemp.temperature.toFixed(2)}°C`,
         type: 'health'
       });
     }
@@ -831,7 +831,7 @@ export class DataSummaryComponent {
       points.push({
         icon: '⚖️',
         label: 'Poids',
-        value: `${lastWeight.weight} kg`,
+        value: `${lastWeight.weight.toFixed(2)} kg`,
         type: 'nutrition'
       });
     }
