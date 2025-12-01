@@ -298,10 +298,10 @@ export class DashboardComponent {
     console.log('Modal fermé');
   }
 
-  analyze() {
-    this.router.navigate(['/health/analysis']);
-  }
 
+   analyzeNutrition() {
+    this.router.navigate(['/nutrition/analysis']);
+  }
   consult() {
     console.log('Consulter clicked');
   }
@@ -332,5 +332,9 @@ export class DashboardComponent {
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
+  }
+
+  openChatBot() {
+    this.router.navigate(['/chatbot']);
   }
 }

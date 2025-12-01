@@ -94,26 +94,35 @@
 
     <!-- Action Buttons -->
     <div class="action-buttons" *ngIf="!loading()">
-      <button class="action-card analyze" (click)="analyze()">
+
+      <button class="action-card analyze" (click)="analyzeNutrition()">
         <div class="action-icon">
           <span>📸</span>
           <span class="pulse-dot"></span>
         </div>
         <span class="action-text">Analyser</span>
       </button>
-
       <button class="action-card consult" (click)="consult()">
         <div class="action-icon">
           <span>🩺</span>
         </div>
         <span class="action-text">Consulter</span>
       </button>
+<<<<<<< HEAD
 
       <button class="action-card appointment" (click)="goToAppointments()">
         <div class="action-icon">
           <span>📅</span>
         </div>
         <span class="action-text">Rendez-vous</span>
+=======
+      <button class="action-card chatbot" (click)="openChatBot()">
+        <div class="action-icon">
+          <span>🤖</span>
+          <span class="pulse-dot"></span>
+        </div>
+        <span class="action-text">Assistant IA</span>
+>>>>>>> 71ad615f8eeb29e447bf8976ba9027a39e9c4b7d
       </button>
     </div>
 

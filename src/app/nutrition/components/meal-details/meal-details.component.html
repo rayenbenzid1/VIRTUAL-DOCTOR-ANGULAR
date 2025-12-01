@@ -1,0 +1,216 @@
+<!-- src/app/nutrition/components/meal-details/meal-details.component.html -->
+<div class="details-container">
+
+  <!-- ========== HEADER ========== -->
+  <div class="header">
+    <button class="btn-back" (click)="goBack()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <div class="header-title">
+      <h1>🍽️ Détails du Repas</h1>
+    </div>
+  </div>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="main-content">
+
+    <!-- ========== LOADING STATE ========== -->
+    @if (isLoading()) {
+    <div class="loading-section">
+      <div class="loading-spinner"></div>
+      <p>Chargement des détails...</p>
+    </div>
+    }
+
+    <!-- ========== ERROR STATE ========== -->
+    @if (error() && !isLoading()) {
+    <div class="error-section">
+      <div class="error-icon">⚠️</div>
+      <h3>Erreur</h3>
+      <p>{{ error() }}</p>
+      <button class="btn-back-error" (click)="goBack()">Retour à l'historique</button>
+    </div>
+    }
+
+    <!-- ========== MEAL DETAILS ========== -->
+    @if (hasData() && !isLoading()) {
+
+    <!-- Image Card -->
+    <div class="card image-card">
+      <img 
+        [src]="fixImageUrl(mealData()!.image_url)" 
+        alt="Repas" 
+        class="meal-image"
+        onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22800%22 height=%22300%22%3E%3Crect fill=%22%23f1f5f9%22 width=%22800%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-size=%2280%22%3E🍽️%3C/text%3E%3C/svg%3E'"
+      />
+    </div>
+
+    <!-- Main Info Card -->
+    <div class="card info-card">
+      <h2 class="food-name">{{ mainFood()?.food_name || 'Repas' }}</h2>
+      <p class="meal-date">{{ formatDate(mealData()!.created_at) }}</p>
+
+      <!-- Calories Highlight -->
+      <div class="calories-highlight">
+        <span class="calories-icon">🔥</span>
+        <div class="calories-content">
+          <span class="calories-label">Calories totales</span>
+          <span class="calories-value">{{ totalNutrition()!.calories | number:'1.0-0' }} kcal</span>
+        </div>
+      </div>
+
+      <!-- Confidence Badge (if available) -->
+      @if (mainFood()?.confidence) {
+      <div class="confidence-section">
+        <span class="confidence-label">Confiance de détection :</span>
+        <span class="confidence-value">{{ mainFood()!.confidence }}%</span>
+        <div class="confidence-bar">
+          <div class="confidence-fill" [style.width.%]="mainFood()!.confidence"></div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- Macronutrients Card -->
+    <div class="card macros-card">
+      <h3 class="card-title">
+        <span class="title-icon">📊</span>
+        Macronutriments
+      </h3>
+
+      <div class="macro-list">
+        
+        <!-- Proteins -->
+        <div class="macro-row">
+          <div class="macro-icon" style="background: #dbeafe;">💪</div>
+          <div class="macro-info">
+            <span class="macro-label">Protéines</span>
+            <span class="macro-value" style="color: #2196F3;">
+              {{ totalNutrition()!.proteins | number:'1.1-1' }}g
+            </span>
+          </div>
+        </div>
+
+        <!-- Carbohydrates -->
+        <div class="macro-row">
+          <div class="macro-icon" style="background: #ffedd5;">🍞</div>
+          <div class="macro-info">
+            <span class="macro-label">Glucides</span>
+            <span class="macro-value" style="color: #FF9800;">
+              {{ totalNutrition()!.carbohydrates | number:'1.1-1' }}g
+            </span>
+          </div>
+        </div>
+
+        <!-- Fats -->
+        <div class="macro-row">
+          <div class="macro-icon" style="background: #fee2e2;">🥑</div>
+          <div class="macro-info">
+            <span class="macro-label">Lipides</span>
+            <span class="macro-value" style="color: #F44336;">
+              {{ totalNutrition()!.fats | number:'1.1-1' }}g
+            </span>
+          </div>
+        </div>
+
+        <!-- Fiber -->
+        <div class="macro-row">
+          <div class="macro-icon" style="background: #dcfce7;">🥦</div>
+          <div class="macro-info">
+            <span class="macro-label">Fibres</span>
+            <span class="macro-value" style="color: #4CAF50;">
+              {{ totalNutrition()!.fiber | number:'1.1-1' }}g
+            </span>
+          </div>
+        </div>
+
+        <!-- Sugars -->
+        <div class="macro-row">
+          <div class="macro-icon" style="background: #f3e8ff;">🍬</div>
+          <div class="macro-info">
+            <span class="macro-label">Sucres</span>
+            <span class="macro-value" style="color: #9C27B0;">
+              {{ totalNutrition()!.sugars | number:'1.1-1' }}g
+            </span>
+          </div>
+        </div>
+
+        <!-- Sodium -->
+        <div class="macro-row">
+          <div class="macro-icon" style="background: #f1f5f9;">🧂</div>
+          <div class="macro-info">
+            <span class="macro-label">Sodium</span>
+            <span class="macro-value" style="color: #607D8B;">
+              {{ totalNutrition()!.sodium | number:'1.0-0' }}mg
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Detected Foods Card (if multiple foods detected) -->
+    @if (mealData()!.detected_foods.length > 1) {
+    <div class="card detected-foods-card">
+      <h3 class="card-title">
+        <span class="title-icon">🔍</span>
+        Aliments détectés ({{ mealData()!.detected_foods.length }})
+      </h3>
+      <div class="foods-list">
+        @for (food of mealData()!.detected_foods; track $index) {
+        <div class="food-item">
+          <div class="food-rank">{{ $index + 1 }}</div>
+          <div class="food-info">
+            <h4 class="food-item-name">{{ food.food_name }}</h4>
+            <p class="food-confidence">Confiance: {{ food.confidence }}%</p>
+          </div>
+          <div class="food-nutrition">
+            <span class="food-calories">{{ food.calories | number:'1.0-0' }} kcal</span>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+    <!-- Recommendations Card (if available) -->
+    @if (mealData()!.recommendations) {
+    <div class="card recommendations-card">
+      <h3 class="card-title">
+        <span class="title-icon">💡</span>
+        Recommandations
+      </h3>
+      
+      <div class="recommendations-content">
+        @if (mealData()!.recommendations.recommendations && mealData()!.recommendations.recommendations.length > 0) {
+        <div class="recommendations-list">
+          <h4 class="list-title">✅ Conseils</h4>
+          <ul>
+            @for (rec of mealData()!.recommendations.recommendations; track $index) {
+            <li>{{ rec }}</li>
+            }
+          </ul>
+        </div>
+        }
+
+        @if (mealData()!.recommendations.warnings && mealData()!.recommendations.warnings.length > 0) {
+        <div class="warnings-list">
+          <h4 class="list-title">⚠️ Points d'attention</h4>
+          <ul>
+            @for (warn of mealData()!.recommendations.warnings; track $index) {
+            <li>{{ warn }}</li>
+            }
+          </ul>
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+    }
+
+  </div>
+
+</div>

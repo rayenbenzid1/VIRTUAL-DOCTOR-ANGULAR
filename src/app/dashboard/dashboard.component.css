@@ -19,6 +19,19 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
+.action-card.chatbot {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.action-card.chatbot .action-icon {
+  background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+}
+
+.action-card.chatbot:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 40px rgba(56, 189, 248, 0.3);
+}
+
 .dashboard-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
@@ -930,4 +943,45 @@
   font-size: 12px;
   opacity: 0.7;
   text-align: right;
+}
+/* ============================================
+   NUTRITION BUTTON - NOUVEAU STYLE
+   ============================================ */
+
+.action-card.nutrition {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+.action-card.nutrition .action-icon {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.action-card.nutrition:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 40px rgba(251, 191, 36, 0.3);
+}
+
+/* Ajustement de la grille pour 3 boutons */
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Responsive pour 3 boutons */
+@media (max-width: 768px) {
+  .action-buttons {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .action-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

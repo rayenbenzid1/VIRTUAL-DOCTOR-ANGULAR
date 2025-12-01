@@ -11,49 +11,54 @@
 
   <form [formGroup]="form" (ngSubmit)="submit()">
 
+    <!-- Email -->
     <div class="field">
       <label>Email</label>
-      <input
-        type="email"
-        formControlName="email"
-        placeholder="votre@email.com"
-        autocomplete="email"
-      />
-      <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
-           class="error-message">
-        Email invalide
+      <div class="input-wrapper">
+        <span class="input-icon">📧</span>
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Email"
+          autocomplete="email"
+          [class.error]="isFieldInvalid('email')"
+        />
+      </div>
+      <div *ngIf="isFieldInvalid('email')" class="error-message">
+        Veuillez entrer un email valide
       </div>
     </div>
 
-    <p class="hint">
-      Utilisez "patient@...", "doctor@..." ou "admin@..." pour accéder aux différents portails
-    </p>
-
+    <!-- Mot de passe -->
     <div class="field">
       <label>Mot de passe</label>
-      <div class="password-wrapper">
+      <div class="input-wrapper password-wrapper">
+        <span class="input-icon">🔒</span>
         <input
           [type]="hidePassword() ? 'password' : 'text'"
           formControlName="password"
-          placeholder="••••••••"
+          placeholder="Mot de passe"
           autocomplete="current-password"
+          [class.error]="isFieldInvalid('password')"
         />
         <span class="eye-icon" (click)="hidePassword.set(!hidePassword())">
-          {{ hidePassword() ? '👁️' : '👁️‍🗨️' }}
+          {{ hidePassword() ? '👁' : '👁‍🗨' }}
         </span>
       </div>
-      <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched"
-           class="error-message">
-        Mot de passe requis
+      <div *ngIf="isFieldInvalid('password')" class="error-message">
+        Le mot de passe est requis
       </div>
     </div>
 
+    <!-- Mot de passe oublié -->
     <a class="forgot" routerLink="/forgot-password">Mot de passe oublié ?</a>
 
+    <!-- Bouton de connexion -->
     <button class="submit" type="submit" [disabled]="loading()">
       {{ loading() ? 'Connexion...' : 'Se connecter' }}
     </button>
 
+    <!-- Lien d'inscription -->
     <div class="login-link">
       Pas encore de compte ?
       <a routerLink="/register">S'inscrire</a>
@@ -61,6 +66,11 @@
 
   </form>
 
-  <p class="footer">Votre santé, notre priorité</p>
+  <p class="footer">Votre santé, notre priorité ❤️</p>
 
+</div>
+
+<!-- Toast -->
+<div *ngIf="toastMessage()" [class]="'toast ' + toastType()">
+  {{ toastMessage() }}
 </div>

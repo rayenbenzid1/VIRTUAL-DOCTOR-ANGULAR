@@ -1,0 +1,124 @@
+<!-- src/app/nutrition/components/meal-history/meal-history.component.html -->
+<div class="history-container">
+
+  <!-- ========== HEADER ========== -->
+  <div class="header">
+    <button class="btn-back" (click)="goBack()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <div class="header-content">
+      <h1>📋 Historique des Repas</h1>
+      
+      <!-- Statistics -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-value">{{ totalMeals() }}</span>
+          <span class="stat-label">repas analysés</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">{{ avgCalories() }}</span>
+          <span class="stat-label">kcal/repas</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="main-content">
+
+    <!-- ========== LOADING STATE ========== -->
+    @if (isLoading()) {
+    <div class="loading-section">
+      <div class="loading-spinner"></div>
+      <p>Chargement de l'historique...</p>
+    </div>
+    }
+
+    <!-- ========== ERROR STATE ========== -->
+    @if (error()) {
+    <div class="error-section">
+      <div class="error-icon">⚠️</div>
+      <h3>Erreur de chargement</h3>
+      <p>{{ error() }}</p>
+      <button class="btn-retry" (click)="loadHistory()">Réessayer</button>
+    </div>
+    }
+
+    <!-- ========== EMPTY STATE ========== -->
+    @if (!isLoading() && !error() && !hasItems()) {
+    <div class="empty-section">
+      <div class="empty-icon">🍽️</div>
+      <h3>Aucun repas analysé</h3>
+      <p>Commencez à analyser vos repas pour voir votre historique ici</p>
+      <button class="btn-analyze" (click)="goBack()">
+        <span>📸</span>
+        <span>Analyser un repas</span>
+      </button>
+    </div>
+    }
+
+    <!-- ========== HISTORY LIST ========== -->
+    @if (!isLoading() && !error() && hasItems()) {
+    <div class="history-list">
+      @for (item of historyItems(); track item.analysis_id) {
+      <div class="history-card" (click)="viewDetails(item)">
+        
+        <!-- Image -->
+        <div class="card-image">
+          <img 
+            [src]="fixImageUrl(item.image_url)" 
+            alt="Repas" 
+            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23f1f5f9%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-size=%2240%22%3E🍽️%3C/text%3E%3C/svg%3E'"
+            loading="lazy"
+          />
+        </div>
+
+        <!-- Content -->
+        <div class="card-content">
+          <h3 class="food-name">
+            {{ item.detected_foods[0]?.food_name || 'Repas' }}
+          </h3>
+          <p class="card-date">{{ formatDate(item.created_at) }}</p>
+
+          <!-- Nutrition Grid -->
+          <div class="nutrition-grid">
+            <div class="nutrition-item calories">
+              <span class="nutrition-icon">🔥</span>
+              <span class="nutrition-value">{{ item.total_nutrition.calories | number:'1.0-0' }}</span>
+              <span class="nutrition-label">kcal</span>
+            </div>
+            <div class="nutrition-item proteins">
+              <span class="nutrition-icon">💪</span>
+              <span class="nutrition-value">{{ item.total_nutrition.proteins | number:'1.1-1' }}g</span>
+              <span class="nutrition-label">Protéines</span>
+            </div>
+            <div class="nutrition-item carbs">
+              <span class="nutrition-icon">🍞</span>
+              <span class="nutrition-value">{{ item.total_nutrition.carbohydrates | number:'1.1-1' }}g</span>
+              <span class="nutrition-label">Glucides</span>
+            </div>
+            <div class="nutrition-item fats">
+              <span class="nutrition-icon">🥑</span>
+              <span class="nutrition-value">{{ item.total_nutrition.fats | number:'1.1-1' }}g</span>
+              <span class="nutrition-label">Lipides</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Arrow Icon -->
+        <div class="card-arrow">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </div>
+
+      </div>
+      }
+    </div>
+    }
+
+  </div>
+
+</div>

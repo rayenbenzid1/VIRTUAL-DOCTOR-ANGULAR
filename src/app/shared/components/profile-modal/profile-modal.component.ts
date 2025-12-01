@@ -36,7 +36,6 @@ export class ProfileModalComponent {
       lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.pattern(/^\+?[1-9]\d{1,14}$/)]],
-      profilePictureUrl: ['']
     });
 
     // Initialiser le formulaire de mot de passe
@@ -110,7 +109,6 @@ export class ProfileModalComponent {
       lastName: this.profileForm.value.lastName,
       email: this.profileForm.value.email,
       phoneNumber: this.profileForm.value.phoneNumber || undefined,
-      profilePictureUrl: this.profileForm.value.profilePictureUrl || undefined
     };
 
     this.profileService.updateProfile(request).subscribe({
