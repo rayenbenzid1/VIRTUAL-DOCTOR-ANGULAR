@@ -131,12 +131,27 @@
       
       <div class="form-group">
         <label class="form-label">Mot de passe actuel *</label>
-        <input 
-          type="password" 
-          class="form-input"
-          [class.error]="passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.invalid"
-          formControlName="currentPassword"
-          placeholder="••••••••">
+        <div class="password-input-wrapper">
+          <input 
+            [type]="showCurrentPassword() ? 'text' : 'password'" 
+            class="form-input"
+            [class.error]="passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.invalid"
+            formControlName="currentPassword"
+            placeholder="••••••••">
+          <button 
+            type="button" 
+            class="eye-toggle-btn" 
+            (click)="togglePasswordVisibility('current')">
+            <svg *ngIf="!showCurrentPassword()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg *ngIf="showCurrentPassword()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
         @if (getFieldError(passwordForm, 'currentPassword')) {
         <span class="error-message">{{ getFieldError(passwordForm, 'currentPassword') }}</span>
         }
@@ -144,12 +159,27 @@
 
       <div class="form-group">
         <label class="form-label">Nouveau mot de passe *</label>
-        <input 
-          type="password" 
-          class="form-input"
-          [class.error]="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.invalid"
-          formControlName="newPassword"
-          placeholder="••••••••">
+        <div class="password-input-wrapper">
+          <input 
+            [type]="showNewPassword() ? 'text' : 'password'" 
+            class="form-input"
+            [class.error]="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.invalid"
+            formControlName="newPassword"
+            placeholder="••••••••">
+          <button 
+            type="button" 
+            class="eye-toggle-btn" 
+            (click)="togglePasswordVisibility('new')">
+            <svg *ngIf="!showNewPassword()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg *ngIf="showNewPassword()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
         @if (getFieldError(passwordForm, 'newPassword')) {
         <span class="error-message">{{ getFieldError(passwordForm, 'newPassword') }}</span>
         }
@@ -167,12 +197,27 @@
 
       <div class="form-group">
         <label class="form-label">Confirmer le nouveau mot de passe *</label>
-        <input 
-          type="password" 
-          class="form-input"
-          [class.error]="passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.invalid"
-          formControlName="confirmPassword"
-          placeholder="••••••••">
+        <div class="password-input-wrapper">
+          <input 
+            [type]="showConfirmPassword() ? 'text' : 'password'" 
+            class="form-input"
+            [class.error]="passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.invalid"
+            formControlName="confirmPassword"
+            placeholder="••••••••">
+          <button 
+            type="button" 
+            class="eye-toggle-btn" 
+            (click)="togglePasswordVisibility('confirm')">
+            <svg *ngIf="!showConfirmPassword()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg *ngIf="showConfirmPassword()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
         @if (getFieldError(passwordForm, 'confirmPassword')) {
         <span class="error-message">{{ getFieldError(passwordForm, 'confirmPassword') }}</span>
         }

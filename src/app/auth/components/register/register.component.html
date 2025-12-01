@@ -2,12 +2,12 @@
   
   <div class="header-section">
     <h2>Créer un compte</h2>
-    <p class="subtitle">Rejoignez-nous aujourd'hui</p>
+    <p class="subtitle">Rejoignez Virtual Doctor aujourd'hui</p>
   </div>
 
   <!-- Alerte d'erreur globale -->
   <div *ngIf="globalError()" class="error-alert">
-    <span class="error-alert-icon">❌</span>
+    <span class="error-alert-icon"></span>
     <span class="error-alert-text">{{ globalError() }}</span>
   </div>
 
@@ -49,10 +49,15 @@
     <div class="field">
       <label>Prénom</label>
       <div class="input-wrapper">
-        <span class="input-icon">👤</span>
+        <span class="input-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </span>
         <input
           formControlName="firstName"
-          placeholder="Prénom"
+          placeholder="Votre prénom"
           type="text"
           autocomplete="given-name"
           [class.error]="isFieldInvalid('firstName')" />
@@ -66,10 +71,15 @@
     <div class="field">
       <label>Nom</label>
       <div class="input-wrapper">
-        <span class="input-icon">👤</span>
+        <span class="input-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </span>
         <input
           formControlName="lastName"
-          placeholder="Nom"
+          placeholder="Votre nom"
           type="text"
           autocomplete="family-name"
           [class.error]="isFieldInvalid('lastName')" />
@@ -83,10 +93,15 @@
     <div class="field" *ngIf="role() === 'DOCTOR'">
       <label>Email système</label>
       <div class="input-wrapper">
-        <span class="input-icon">📧</span>
+        <span class="input-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </span>
         <input
           formControlName="systemEmail"
-          placeholder="Email système (@doctor.com)"
+          placeholder="email@doctor.com"
           type="email"
           autocomplete="email"
           [class.error]="isFieldInvalid('systemEmail')" />
@@ -98,12 +113,17 @@
 
     <!-- Email de contact -->
     <div class="field">
-      <label>Email</label>
+      <label>{{ role() === 'DOCTOR' ? 'Email de contact' : 'Adresse email' }}</label>
       <div class="input-wrapper">
-        <span class="input-icon">📧</span>
+        <span class="input-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </span>
         <input
           formControlName="email"
-          [placeholder]="role() === 'DOCTOR' ? 'Email de contact (pour recevoir les...' : 'Email'"
+          [placeholder]="role() === 'DOCTOR' ? 'Email pour recevoir les notifications' : 'votre@email.com'"
           type="email"
           autocomplete="email"
           [class.error]="isFieldInvalid('email')" />
@@ -115,12 +135,16 @@
 
     <!-- Téléphone -->
     <div class="field">
-      <label>Téléphone</label>
+      <label>Numéro de téléphone</label>
       <div class="input-wrapper">
-        <span class="input-icon">📱</span>
+        <span class="input-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+        </span>
         <input
           formControlName="phone"
-          placeholder="Téléphone"
+          placeholder="+216 XX XXX XXX"
           type="tel"
           autocomplete="tel"
           [class.error]="isFieldInvalid('phone')" />
@@ -137,10 +161,14 @@
       <div class="field">
         <label>Spécialisation</label>
         <div class="input-wrapper">
-          <span class="input-icon">🩺</span>
+          <span class="input-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </span>
           <input
             formControlName="specialization"
-            placeholder="Spécialisation"
+            placeholder="Ex: Cardiologie, Pédiatrie..."
             type="text"
             [class.error]="isFieldInvalid('specialization')" />
         </div>
@@ -151,12 +179,19 @@
 
       <!-- Numéro de licence -->
       <div class="field">
-        <label>Numéro de licence</label>
+        <label>Numéro de licence médicale</label>
         <div class="input-wrapper">
-          <span class="input-icon">🆔</span>
+          <span class="input-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </span>
           <input
             formControlName="licenseNumber"
-            placeholder="Numéro de licence"
+            placeholder="Votre numéro de licence"
             type="text"
             [class.error]="isFieldInvalid('licenseNumber')" />
         </div>
@@ -169,10 +204,15 @@
       <div class="field">
         <label>Années d'expérience</label>
         <div class="input-wrapper">
-          <span class="input-icon">📅</span>
+          <span class="input-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </span>
           <input
             formControlName="yearsOfExperience"
-            placeholder="Années d'expérience"
+            placeholder="Nombre d'années"
             type="number"
             min="0"
             [class.error]="isFieldInvalid('yearsOfExperience')" />
@@ -184,12 +224,17 @@
 
       <!-- Formation -->
       <div class="field">
-        <label>Formation</label>
+        <label>Formation académique</label>
         <div class="input-wrapper">
-          <span class="input-icon">🎓</span>
+          <span class="input-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+          </span>
           <input
             formControlName="education"
-            placeholder="Formation (ex: MD, PhD)"
+            placeholder="Ex: Doctorat en Médecine, MD, PhD..."
             type="text"
             [class.error]="isFieldInvalid('education')" />
         </div>
@@ -202,10 +247,23 @@
       <div class="field">
         <label>Nom de la clinique/hôpital</label>
         <div class="input-wrapper">
-          <span class="input-icon">🏥</span>
+          <span class="input-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M3 21h18"/>
+              <path d="M9 8h1"/>
+              <path d="M9 12h1"/>
+              <path d="M9 16h1"/>
+              <path d="M14 8h1"/>
+              <path d="M14 12h1"/>
+              <path d="M14 16h1"/>
+              <path d="M6 3v18"/>
+              <path d="M18 3v18"/>
+              <path d="M6 3h12"/>
+            </svg>
+          </span>
           <input
             formControlName="hospitalName"
-            placeholder="Nom de la clinique/hôpital"
+            placeholder="Nom de votre établissement"
             type="text"
             [class.error]="isFieldInvalid('hospitalName')" />
         </div>
@@ -218,10 +276,15 @@
       <div class="field">
         <label>Adresse de la clinique</label>
         <div class="input-wrapper">
-          <span class="input-icon">📍</span>
+          <span class="input-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </span>
           <input
             formControlName="hospitalAddress"
-            placeholder="Adresse de la clinique"
+            placeholder="Adresse complète"
             type="text"
             [class.error]="isFieldInvalid('hospitalAddress')" />
         </div>
@@ -232,12 +295,17 @@
 
       <!-- Frais de consultation -->
       <div class="field">
-        <label>Frais de consultation</label>
+        <label>Frais de consultation (optionnel)</label>
         <div class="input-wrapper">
-          <span class="input-icon">💰</span>
+          <span class="input-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </span>
           <input
             formControlName="consultationFee"
-            placeholder="Frais de consultation (optionnel)"
+            placeholder="Montant en TND"
             type="number"
             min="0" />
         </div>
@@ -247,10 +315,16 @@
       <div class="field">
         <label>Langues parlées</label>
         <div class="input-wrapper">
-          <span class="input-icon">🌐</span>
+          <span class="input-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </span>
           <input
             formControlName="languages"
-            placeholder="Langues parlées (séparées par virgule)"
+            placeholder="Ex: Français, Arabe, Anglais"
             type="text"
             [class.error]="isFieldInvalid('languages')" />
         </div>
@@ -263,10 +337,18 @@
       <div class="field">
         <label>Biographie professionnelle</label>
         <div class="input-wrapper">
-          <span class="input-icon" style="top: 20px; transform: none;">📝</span>
+          <span class="input-icon" style="top: 18px; transform: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </span>
           <textarea
             formControlName="bio"
-            placeholder="Biographie professionnelle"
+            placeholder="Présentez votre parcours et votre expertise..."
             rows="4"
             [class.error]="isFieldInvalid('bio')"></textarea>
         </div>
@@ -302,35 +384,59 @@
     <div class="field">
       <label>Mot de passe</label>
       <div class="input-wrapper password-wrapper">
-        <span class="input-icon">🔒</span>
+        <span class="input-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </span>
         <input
           [type]="hidePassword() ? 'password' : 'text'"
           formControlName="password"
-          placeholder="Mot de passe"
+          placeholder="Créez un mot de passe sécurisé"
           autocomplete="new-password"
           [class.error]="isFieldInvalid('password')" />
         <span class="eye-icon" (click)="togglePassword()">
-          {{ hidePassword() ? '👁' : '👁‍🗨' }}
+          <svg *ngIf="hidePassword()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <svg *ngIf="!hidePassword()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
         </span>
       </div>
       <div *ngIf="isFieldInvalid('password')" class="error-message">
-        Mot de passe requis (min. 6 caractères)
+        Mot de passe requis (minimum 6 caractères)
       </div>
     </div>
 
     <!-- Confirmer le mot de passe -->
     <div class="field">
-      <label>Confirmer mot de passe</label>
+      <label>Confirmer le mot de passe</label>
       <div class="input-wrapper password-wrapper">
-        <span class="input-icon">🔒</span>
+        <span class="input-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </span>
         <input
           [type]="hideConfirmPassword() ? 'password' : 'text'"
           formControlName="confirmPassword"
-          placeholder="Confirmer mot de passe"
+          placeholder="Confirmez votre mot de passe"
           autocomplete="new-password"
           [class.error]="isFieldInvalid('confirmPassword') || passwordMismatch()" />
         <span class="eye-icon" (click)="toggleConfirmPassword()">
-          {{ hideConfirmPassword() ? '👁' : '👁‍🗨' }}
+          <svg *ngIf="hideConfirmPassword()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <svg *ngIf="!hideConfirmPassword()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
         </span>
       </div>
       <div *ngIf="form.get('confirmPassword')?.touched && passwordMismatch()" class="error-message">
@@ -345,17 +451,17 @@
           type="checkbox" 
           formControlName="acceptTerms" />
         <span class="terms-text">
-          J'accepte les conditions d'utilisation
+          J'accepte les <a href="/terms" target="_blank">conditions d'utilisation</a> et la <a href="/privacy" target="_blank">politique de confidentialité</a>
         </span>
       </label>
-      <div *ngIf="isFieldInvalid('acceptTerms')" class="error-message" style="margin-left: 30px;">
+      <div *ngIf="isFieldInvalid('acceptTerms')" class="error-message" style="margin-left: 32px; margin-top: 8px;">
         Vous devez accepter les conditions
       </div>
     </div>
 
     <!-- Bouton d'inscription -->
     <button type="submit" class="submit" [disabled]="loading()">
-      {{ loading() ? 'Inscription en cours...' : "S'inscrire" }}
+      {{ loading() ? 'Inscription en cours...' : "Créer mon compte" }}
     </button>
 
     <!-- Lien de connexion -->
@@ -367,7 +473,7 @@
   </form>
 </div>
 
-<!-- Toast -->
+<!-- Toast Notification -->
 <div *ngIf="toastMessage()" [class]="'toast ' + toastType()">
   {{ toastMessage() }}
 </div>

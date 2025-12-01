@@ -25,6 +25,11 @@ export class ProfileModalComponent {
   successMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
 
+  // Signaux pour gérer la visibilité des mots de passe
+  showCurrentPassword = signal(false);
+  showNewPassword = signal(false);
+  showConfirmPassword = signal(false);
+
   profileForm: FormGroup;
   passwordForm: FormGroup;
   currentUser = signal<UserResponse | null>(null);
@@ -60,6 +65,16 @@ export class ProfileModalComponent {
     return null;
   }
 
+  togglePasswordVisibility(field: 'current' | 'new' | 'confirm') {
+    if (field === 'current') {
+      this.showCurrentPassword.set(!this.showCurrentPassword());
+    } else if (field === 'new') {
+      this.showNewPassword.set(!this.showNewPassword());
+    } else {
+      this.showConfirmPassword.set(!this.showConfirmPassword());
+    }
+  }
+
   open() {
     const user = this.profileService.getCurrentUser();
     if (user) {
@@ -81,6 +96,9 @@ export class ProfileModalComponent {
     this.activeTab.set('profile');
     this.profileForm.reset();
     this.passwordForm.reset();
+    this.showCurrentPassword.set(false);
+    this.showNewPassword.set(false);
+    this.showConfirmPassword.set(false);
     this.resetMessages();
     this.modalClosed.emit();
   }

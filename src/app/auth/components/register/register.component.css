@@ -1,49 +1,56 @@
+/* Container Principal */
 .register-container {
   width: 100%;
-  max-width: 440px;
-  margin: 20px auto;
-  padding: 24px;
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 40px;
   background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
+/* Header */
 .header-section {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 h2 {
   margin: 0 0 8px 0;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #1a202c;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
-  color: #666;
-  font-size: 14px;
+  color: #718096;
+  font-size: 15px;
   margin: 0;
+  font-weight: 400;
 }
 
-/* Account Type Selection */
+/* Type de Compte - Radio Buttons */
 .account-type {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .account-type-label {
   display: block;
   font-weight: 600;
   font-size: 14px;
-  color: #1a1a1a;
+  color: #4a5568;
   margin-bottom: 12px;
+  letter-spacing: 0.2px;
 }
 
 .radio-group {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
 .radio-option {
-  flex: 1;
   position: relative;
 }
 
@@ -59,39 +66,43 @@ h2 {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 12px 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  padding: 14px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   background: white;
   font-size: 15px;
-  font-weight: 500;
-  color: #333;
+  font-weight: 600;
+  color: #4a5568;
 }
 
 .radio-option input[type="radio"]:checked + .radio-button {
-  border-color: #5b6cf5;
-  background: white;
+  border-color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .radio-button:hover {
-  border-color: #5b6cf5;
+  border-color: #667eea;
+  transform: translateY(-1px);
 }
 
 .radio-icon {
   width: 20px;
   height: 20px;
-  border: 2px solid #d0d0d0;
+  border: 2px solid #cbd5e0;
   border-radius: 50%;
   position: relative;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   background: white;
 }
 
 .radio-option input[type="radio"]:checked + .radio-button .radio-icon {
-  border-color: #5b6cf5;
-  background: #5b6cf5;
+  border-color: #667eea;
+  background: #667eea;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px #667eea;
 }
 
 .radio-option input[type="radio"]:checked + .radio-button .radio-icon::after {
@@ -99,20 +110,37 @@ h2 {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(1);
   width: 8px;
   height: 8px;
   background: white;
   border-radius: 50%;
+  animation: radioCheck 0.3s ease;
 }
 
-/* Form Fields - Style exactement comme les captures */
+@keyframes radioCheck {
+  from {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Champs de Formulaire */
 .field {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .field label {
-  display: none; /* Les labels ne sont pas visibles dans les captures */
+  display: block;
+  margin-bottom: 8px;
+  color: #4a5568;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
 }
 
 .input-wrapper {
@@ -123,11 +151,22 @@ h2 {
 
 .input-icon {
   position: absolute;
-  left: 16px;
-  font-size: 20px;
-  color: #757575;
+  left: 18px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
   z-index: 1;
+}
+
+.input-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: #a0aec0;
+  stroke-width: 2;
+  fill: none;
 }
 
 .field input[type="text"],
@@ -137,98 +176,153 @@ h2 {
 .field input[type="number"],
 .field textarea {
   width: 100%;
-  padding: 16px 16px 16px 52px;
-  border-radius: 8px;
-  border: none;
-  background: #f5f5f7;
+  padding: 14px 18px 14px 50px;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
+  background: white;
   font-size: 15px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #1a1a1a;
+  color: #2d3748;
+  font-weight: 500;
 }
 
 .field textarea {
   resize: vertical;
   min-height: 120px;
-  padding-top: 16px;
-  padding-left: 52px;
-  line-height: 1.5;
+  padding-top: 14px;
+  padding-left: 50px;
+  line-height: 1.6;
 }
 
 .field input:focus,
 .field textarea:focus {
   outline: none;
-  background: #ebebed;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.field input:focus + .input-icon svg,
+.field textarea:focus ~ .input-icon svg {
+  stroke: #667eea;
 }
 
 .field input.error,
 .field textarea.error {
-  background: #ffebee;
-  border: 1px solid #f44336;
+  border-color: #fc8181;
+  background: #fff5f5;
 }
 
 .field input::placeholder,
 .field textarea::placeholder {
-  color: #999;
+  color: #cbd5e0;
   font-weight: 400;
 }
 
-/* Password Field with Eye Icon */
+/* Password avec Eye Icon */
 .password-wrapper {
   position: relative;
   width: 100%;
 }
 
 .password-wrapper input {
-  padding-right: 52px;
+  padding-right: 50px;
 }
 
 .eye-icon {
   position: absolute;
-  right: 16px;
+  right: 18px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  font-size: 22px;
-  color: #757575;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   user-select: none;
   transition: all 0.2s ease;
   z-index: 10;
 }
 
-.eye-icon:hover {
-  color: #333;
+.eye-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: #a0aec0;
+  stroke-width: 2;
+  fill: none;
+  transition: stroke 0.2s ease;
 }
 
-/* Error Messages */
+.eye-icon:hover svg {
+  stroke: #667eea;
+}
+
+/* Messages d'Erreur */
 .error-message {
-  color: #f44336;
-  font-size: 12px;
-  margin-top: 6px;
+  color: #e53e3e;
+  font-size: 13px;
+  margin-top: 8px;
   margin-left: 4px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   font-weight: 500;
 }
 
 .error-message::before {
-  content: '⚠';
-  font-size: 12px;
+  content: '';
+  width: 16px;
+  height: 16px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e53e3e' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='8' x2='12' y2='12'/%3E%3Cline x1='12' y1='16' x2='12.01' y2='16'/%3E%3C/svg%3E") center/contain no-repeat;
 }
 
-/* Availability Section */
-.availability-section {
+/* Alerte d'Erreur Globale */
+.error-alert {
+  background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+  border: 1px solid #fc8181;
+  border-radius: 12px;
+  padding: 14px 18px;
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: shake 0.4s ease;
+}
+
+.error-alert-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e53e3e' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='15' y1='9' x2='9' y2='15'/%3E%3Cline x1='9' y1='9' x2='15' y2='15'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+.error-alert-text {
+  color: #c53030;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+/* Section Disponibilité */
+.availability-section {
+  margin-bottom: 24px;
 }
 
 .availability-label {
   display: block;
   font-weight: 600;
   font-size: 14px;
-  color: #1a1a1a;
+  color: #4a5568;
   margin-bottom: 12px;
+  letter-spacing: 0.2px;
 }
 
 .checkbox-group {
@@ -241,36 +335,46 @@ h2 {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0;
-  border: none;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  background: transparent;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.checkbox-option:hover {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.02);
 }
 
 .checkbox-option input[type="checkbox"] {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   cursor: pointer;
-  accent-color: #5b6cf5;
-  border-radius: 4px;
+  accent-color: #667eea;
+  border-radius: 6px;
 }
 
 .checkbox-text {
   font-size: 15px;
-  color: #333;
-  font-weight: 400;
+  color: #4a5568;
+  font-weight: 500;
 }
 
-/* Terms Checkbox */
+/* Conditions d'Utilisation */
 .terms-wrapper {
-  margin: 20px 0;
+  margin: 24px 0;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
+  border-radius: 10px;
+  border: 1px solid rgba(102, 126, 234, 0.1);
 }
 
 .terms-option {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
   cursor: pointer;
 }
 
@@ -278,178 +382,189 @@ h2 {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #5b6cf5;
+  accent-color: #667eea;
   margin-top: 2px;
   flex-shrink: 0;
 }
 
 .terms-text {
   font-size: 14px;
-  color: #555;
-  line-height: 1.5;
-}
-
-.terms-text a {
-  color: #5b6cf5;
-  text-decoration: none;
+  color: #4a5568;
+  line-height: 1.6;
   font-weight: 500;
 }
 
-/* Submit Button - Style exactement comme les captures */
+.terms-text a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.terms-text a:hover {
+  color: #5a67d8;
+  text-decoration: underline;
+}
+
+/* Bouton de Soumission */
 .submit {
   width: 100%;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   border: none;
-  background: #5b6cf5;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   font-weight: 600;
   font-size: 16px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(91, 108, 245, 0.25);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
   margin-top: 8px;
+  letter-spacing: 0.3px;
 }
 
 .submit:hover:not(:disabled) {
-  background: #4a5de5;
-  box-shadow: 0 4px 12px rgba(91, 108, 245, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(102, 126, 234, 0.4);
 }
 
 .submit:active:not(:disabled) {
-  transform: translateY(1px);
+  transform: translateY(0);
 }
 
 .submit:disabled {
-  background: #b0b0b0;
+  background: linear-gradient(135deg, #cbd5e0 0%, #a0aec0 100%);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
-/* Login Link */
+/* Animation de Chargement */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.submit:disabled::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+
+/* Lien de Connexion */
 .login-link {
-  margin-top: 20px;
+  margin-top: 24px;
   text-align: center;
   font-size: 14px;
-  color: #666;
+  color: #718096;
 }
 
 .login-link a {
-  color: #5b6cf5;
+  color: #667eea;
   font-weight: 600;
   text-decoration: none;
   transition: color 0.2s ease;
+  margin-left: 4px;
 }
 
 .login-link a:hover {
-  color: #4a5de5;
+  color: #5a67d8;
   text-decoration: underline;
 }
 
-/* Toast */
+/* Toast Notifications */
 .toast {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  left: 20px;
-  max-width: 400px;
+  top: 24px;
+  right: 24px;
+  left: 24px;
+  max-width: 420px;
   margin: 0 auto;
   padding: 16px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   font-size: 14px;
   font-weight: 500;
   z-index: 1000;
-  animation: slideDown 0.3s ease;
+  animation: slideDown 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  backdrop-filter: blur(10px);
 }
 
 .toast.success {
-  background: #4caf50;
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
   color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .toast.error {
-  background: #f44336;
+  background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
   color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 @keyframes slideDown {
   from {
-    transform: translateY(-100px);
+    transform: translateY(-100px) scale(0.9);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
 
-/* Error Alert */
-.error-alert {
-  background: #ffebee;
-  border: 1px solid #f44336;
-  border-radius: 8px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  animation: shake 0.4s ease;
+/* Scrollbar Personnalisée */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-.error-alert-icon {
-  font-size: 18px;
-  flex-shrink: 0;
+::-webkit-scrollbar-track {
+  background: #f7fafc;
+  border-radius: 4px;
 }
 
-.error-alert-text {
-  color: #d32f2f;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.4;
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #cbd5e0 0%, #a0aec0 100%);
+  border-radius: 4px;
 }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-8px); }
-  75% { transform: translateX(8px); }
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
 }
 
 /* Responsive */
 @media (max-width: 600px) {
   .register-container {
     margin: 0;
-    padding: 20px 16px;
+    padding: 28px 20px;
     min-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  h2 {
+    font-size: 24px;
   }
 
   .field input,
   .field textarea {
-    font-size: 16px; /* Prevent zoom on iOS */
+    font-size: 16px; /* Évite le zoom sur iOS */
   }
 
   .toast {
     left: 16px;
     right: 16px;
+    top: 16px;
   }
-}
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a0a0a0;
+  .radio-group {
+    grid-template-columns: 1fr;
+  }
 }

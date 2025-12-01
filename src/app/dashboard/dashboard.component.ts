@@ -302,9 +302,6 @@ export class DashboardComponent {
    analyzeNutrition() {
     this.router.navigate(['/nutrition/analysis']);
   }
-  consult() {
-    console.log('Consulter clicked');
-  }
 
   goToAppointments() {
     this.router.navigate(['/appointments']);

@@ -404,10 +404,6 @@
   background: linear-gradient(135deg, #fafbff 0%, #f0f4ff 100%);
 }
 
-.action-card.consult {
-  background: linear-gradient(135deg, #f9fdfb 0%, #ecfdf5 100%);
-}
-
 .action-card.appointment {
   background: linear-gradient(135deg, #fffbf5 0%, #fff7ed 100%);
 }
@@ -433,9 +429,6 @@
   background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
 }
 
-.action-card.consult .action-icon {
-  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-}
 
 .action-card.appointment .action-icon {
   background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);

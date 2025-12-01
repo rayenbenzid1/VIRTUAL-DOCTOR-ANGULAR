@@ -223,6 +223,43 @@
   font-weight: 500;
 }
 
+/* ========== PASSWORD INPUT WITH EYE TOGGLE ========== */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper .form-input {
+  padding-right: 50px;
+}
+
+.eye-toggle-btn {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.eye-toggle-btn:hover {
+  color: #4f46e5;
+}
+
+.eye-toggle-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
 /* ========== PASSWORD HINT ========== */
 .password-hint {
   margin-top: 12px;
