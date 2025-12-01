@@ -119,7 +119,7 @@ export class DoctorDashboardComponent implements OnDestroy {
 
     doctorName = computed(() => {
         const user = this.currentUser();
-        return user?.name || user?.fullName || 'Doctor';
+        return user?.fullName || 'Doctor';
     });
 
     constructor() {
