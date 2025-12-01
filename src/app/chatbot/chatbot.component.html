@@ -1,85 +1,94 @@
 <div class="chatbot-container">
-
-  <!-- ==================== HEADER ==================== -->
-  <header class="chatbot-header">
-    <button class="btn-back" (click)="goBack()" aria-label="Retour">
-      <i class="material-icons">arrow_back</i>
+  
+  <!-- Header -->
+  <div class="chatbot-header">
+    <button class="btn-back" (click)="goBack()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
     </button>
-
+    
     <div class="header-content">
       <div class="bot-avatar">
-        <span class="bot-icon material-icons">smart_toy</span>
-        <div class="status-indicator"></div>
+        <span class="bot-icon">🤖</span>
+        <span class="status-indicator"></span>
       </div>
       <div class="header-text">
         <h1>Assistant Santé IA</h1>
-        <p class="status-text">En ligne • Prêt à vous aider</p>
+        <p class="status-text">En ligne</p>
       </div>
     </div>
 
-    <div class="header-actions"></div>
-  </header>
+    <div class="header-actions">
+      <!-- Placeholder pour actions futures -->
+    </div>
+  </div>
 
-  <!-- ==================== MESSAGES ==================== -->
-  <div #messagesContainer class="messages-container">
-
-    <ng-container *ngFor="let message of messages()">
-      <div class="message-wrapper" [class.user]="message.isUser">
-        <div class="message-avatar">
-          <i class="material-icons">
-            {{ message.isUser ? 'person' : 'smart_toy' }}
-          </i>
-        </div>
-
-        <div class="message-bubble"
-             [class.bot-bubble]="!message.isUser"
-             [class.user-bubble]="message.isUser">
-          <p class="message-text">{{ message.text }}</p>
-          <span class="message-time" *ngIf="message.timestamp">
-            {{ message.timestamp | date:'HH:mm' }}
-          </span>
-        </div>
+  <!-- Messages Container -->
+  <div class="messages-container" #messagesContainer>
+    <div *ngFor="let message of messages()" 
+         [class]="message.isUser ? 'message-wrapper user' : 'message-wrapper bot'">
+      
+      <!-- Bot Avatar -->
+      <div class="message-avatar" *ngIf="!message.isUser">
+        <span>🤖</span>
       </div>
-    </ng-container>
 
-    <!-- Indicateur de chargement -->
-    <div class="message-wrapper" *ngIf="loading()">
+      <!-- Message Bubble -->
+      <div [class]="message.isUser ? 'message-bubble user-bubble' : 'message-bubble bot-bubble'">
+        <p class="message-text">{{ message.text }}</p>
+        <span class="message-time" *ngIf="message.timestamp">
+          {{ message.timestamp | date:'HH:mm' }}
+        </span>
+      </div>
+
+      <!-- User Avatar -->
+      <div class="message-avatar" *ngIf="message.isUser">
+        <span>👤</span>
+      </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div class="message-wrapper bot" *ngIf="loading()">
       <div class="message-avatar">
-        <i class="material-icons">smart_toy</i>
+        <span>🤖</span>
       </div>
       <div class="message-bubble bot-bubble typing">
         <div class="typing-indicator">
-          <span></span><span></span><span></span>
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
       </div>
     </div>
-
   </div>
 
-  <!-- ==================== INPUT ==================== -->
+  <!-- Input Area -->
   <div class="input-container">
     <div class="input-wrapper">
-      <!-- Correction 1 : one-way + (input) au lieu de [(ngModel)] -->
-      <textarea #messageInput
-                class="message-input"
-                rows="1"
-                [value]="userMessage()"
-                (input)="userMessage.set(messageInput.value)"
-                (keydown.enter)="onKeyPress($any($event))"
-                placeholder="Écrivez votre message..."
-                [disabled]="loading()"
-                autocomplete="off">
-      </textarea>
-
-      <button class="btn-send"
-              (start)="sendMessage()"
-              [disabled]="loading() || !userMessage().trim()">
-        <i class="material-icons">send</i>
+      <textarea
+        [(ngModel)]="userMessage"
+        (keypress)="onKeyPress($event)"
+        placeholder="Posez votre question sur la santé..."
+        rows="1"
+        [disabled]="loading()"
+        class="message-input"></textarea>
+      
+      <button 
+        class="btn-send" 
+        (click)="sendMessage()"
+        [disabled]="!userMessage().trim() || loading()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
       </button>
     </div>
 
     <p class="input-hint">
-      Appuyez sur Entrée pour envoyer • Shift + Entrée pour un retour à la ligne
+      💡 Conseil : Soyez précis dans vos questions pour obtenir les meilleures réponses
     </p>
   </div>
+
 </div>
