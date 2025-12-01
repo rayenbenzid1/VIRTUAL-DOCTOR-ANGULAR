@@ -329,4 +329,8 @@ export class DashboardComponent {
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
   }
+
+  openChatBot() {
+    this.router.navigate(['/chatbot']);
+  }
 }

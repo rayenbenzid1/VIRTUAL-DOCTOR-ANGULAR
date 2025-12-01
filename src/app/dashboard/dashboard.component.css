@@ -19,6 +19,19 @@
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
+.action-card.chatbot {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.action-card.chatbot .action-icon {
+  background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+}
+
+.action-card.chatbot:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 40px rgba(56, 189, 248, 0.3);
+}
+
 .dashboard-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);

@@ -11,6 +11,8 @@ import { GoalsComponent } from './healthPatient/components/goals/goals.component
 import { AnalysisComponent } from './healthPatient/components/analysis/analysis.component';
 import { AdminDashboardComponent } from './admin/components/admin-dashboard/admin-dashboard.component';
 import { UserManagementComponent } from './admin/components/user-management/user-management.component';
+import { ChatbotComponent } from './chatbot/chatbot.component';
+
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -22,6 +24,7 @@ export const routes: Routes = [
   { path: 'health/alerts', component: AlertsComponent },
   { path: 'health/trends', component: TrendsComponent },
   { path: 'health/goals', component: GoalsComponent },
+  { path: 'chatbot', component: ChatbotComponent },
     // ✅ ROUTES ADMIN
   { path: 'admin/dashboard', component: AdminDashboardComponent },
   { path: 'admin/users', component: UserManagementComponent },

@@ -1,0 +1,85 @@
+<div class="chatbot-container">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="chatbot-header">
+    <button class="btn-back" (click)="goBack()" aria-label="Retour">
+      <i class="material-icons">arrow_back</i>
+    </button>
+
+    <div class="header-content">
+      <div class="bot-avatar">
+        <span class="bot-icon material-icons">smart_toy</span>
+        <div class="status-indicator"></div>
+      </div>
+      <div class="header-text">
+        <h1>Assistant Santé IA</h1>
+        <p class="status-text">En ligne • Prêt à vous aider</p>
+      </div>
+    </div>
+
+    <div class="header-actions"></div>
+  </header>
+
+  <!-- ==================== MESSAGES ==================== -->
+  <div #messagesContainer class="messages-container">
+
+    <ng-container *ngFor="let message of messages()">
+      <div class="message-wrapper" [class.user]="message.isUser">
+        <div class="message-avatar">
+          <i class="material-icons">
+            {{ message.isUser ? 'person' : 'smart_toy' }}
+          </i>
+        </div>
+
+        <div class="message-bubble"
+             [class.bot-bubble]="!message.isUser"
+             [class.user-bubble]="message.isUser">
+          <p class="message-text">{{ message.text }}</p>
+          <span class="message-time" *ngIf="message.timestamp">
+            {{ message.timestamp | date:'HH:mm' }}
+          </span>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Indicateur de chargement -->
+    <div class="message-wrapper" *ngIf="loading()">
+      <div class="message-avatar">
+        <i class="material-icons">smart_toy</i>
+      </div>
+      <div class="message-bubble bot-bubble typing">
+        <div class="typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== INPUT ==================== -->
+  <div class="input-container">
+    <div class="input-wrapper">
+      <!-- Correction 1 : one-way + (input) au lieu de [(ngModel)] -->
+      <textarea #messageInput
+                class="message-input"
+                rows="1"
+                [value]="userMessage()"
+                (input)="userMessage.set(messageInput.value)"
+                (keydown.enter)="onKeyPress($any($event))"
+                placeholder="Écrivez votre message..."
+                [disabled]="loading()"
+                autocomplete="off">
+      </textarea>
+
+      <button class="btn-send"
+              (start)="sendMessage()"
+              [disabled]="loading() || !userMessage().trim()">
+        <i class="material-icons">send</i>
+      </button>
+    </div>
+
+    <p class="input-hint">
+      Appuyez sur Entrée pour envoyer • Shift + Entrée pour un retour à la ligne
+    </p>
+  </div>
+</div>
