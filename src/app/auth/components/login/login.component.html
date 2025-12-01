@@ -9,12 +9,6 @@
   <h2>Connexion</h2>
   <p class="subtitle">Bienvenue sur Virtual Doctor</p>
 
-  <!-- Alerte d'erreur globale -->
-  <div *ngIf="loginError()" class="error-alert">
-    <span class="error-alert-icon">❌</span>
-    <span class="error-alert-text">{{ loginError() }}</span>
-  </div>
-
   <form [formGroup]="form" (ngSubmit)="submit()">
 
     <!-- Email -->
