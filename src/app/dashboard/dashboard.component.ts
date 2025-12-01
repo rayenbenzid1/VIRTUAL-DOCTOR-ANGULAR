@@ -306,6 +306,10 @@ export class DashboardComponent {
     console.log('Consulter clicked');
   }
 
+  goToAppointments() {
+    this.router.navigate(['/appointments']);
+  }
+
   viewAlerts() {
     this.router.navigate(['/health/alerts']);
   }

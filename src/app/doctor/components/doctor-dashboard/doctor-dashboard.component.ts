@@ -212,15 +212,54 @@ export class DoctorDashboardComponent implements OnDestroy {
                 console.log('✅ Loaded appointments from API:', appointments);
 
                 const transformedAppointments: Appointment[] = appointments.map(apt => {
-                    const appointmentDate = new Date(apt.appointmentDateTime);
+                    // Parse the appointmentDateTime - handle different formats
+                    let appointmentDate: Date;
+                    let timeStr: string;
+                    
+                    console.log('🕐 Raw appointmentDateTime:', apt.appointmentDateTime, 'Type:', typeof apt.appointmentDateTime);
+                    
+                    if (apt.appointmentDateTime) {
+                        // Handle array format [2024, 12, 1, 14, 0] from Java LocalDateTime
+                        if (Array.isArray(apt.appointmentDateTime)) {
+                            const [year, month, day, hour = 0, minute = 0] = apt.appointmentDateTime;
+                            appointmentDate = new Date(year, month - 1, day, hour, minute);
+                            console.log('📆 Parsed from array:', appointmentDate);
+                        } else if (typeof apt.appointmentDateTime === 'string') {
+                            // Handle ISO string format
+                            appointmentDate = new Date(apt.appointmentDateTime);
+                            console.log('📆 Parsed from string:', appointmentDate);
+                        } else {
+                            // Handle object with date/time properties
+                            appointmentDate = new Date();
+                            console.log('⚠️ Unknown format, using current date');
+                        }
+                    } else {
+                        appointmentDate = new Date();
+                    }
+
+                    // Check if date is valid
+                    if (isNaN(appointmentDate.getTime())) {
+                        console.error('❌ Invalid date for appointment:', apt.id);
+                        appointmentDate = new Date();
+                    }
+
+                    // Format time properly
+                    timeStr = appointmentDate.toLocaleTimeString('en-US', { 
+                        hour: '2-digit', 
+                        minute: '2-digit',
+                        hour12: true 
+                    });
+
+                    console.log('✅ Final date:', appointmentDate, 'Time:', timeStr);
+
                     return {
                         id: apt.id,
                         patientId: apt.patientId,
                         patientName: apt.patientName,
                         patientEmail: apt.patientEmail,
                         patientPhone: apt.patientPhone,
-                        time: appointmentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                        date: appointmentDate.toISOString().split('T')[0],
+                        time: timeStr,
+                        date: appointmentDate, // Pass Date object directly for date pipe
                         type: apt.appointmentType,
                         status: apt.status,
                         notes: apt.notes,

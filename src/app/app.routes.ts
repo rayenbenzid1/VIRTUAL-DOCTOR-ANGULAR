@@ -9,16 +9,19 @@ import { AlertsComponent } from './healthPatient/components/alerts/alerts.compon
 import { TrendsComponent } from './healthPatient/components/trends/trends.component';
 import { GoalsComponent } from './healthPatient/components/goals/goals.component';
 import { AnalysisComponent } from './healthPatient/components/analysis/analysis.component';
+import { AppointmentsComponent } from './dashboard/components/appointments/appointments.component';
+import { authGuard } from './auth/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'doctor/dashboard', component: DoctorDashboardComponent },
-  { path: 'health/analysis', component: AnalysisComponent },
-  { path: 'health/alerts', component: AlertsComponent },
-  { path: 'health/trends', component: TrendsComponent },
-  { path: 'health/goals', component: GoalsComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'doctor/dashboard', component: DoctorDashboardComponent, canActivate: [authGuard] },
+  { path: 'health/analysis', component: AnalysisComponent, canActivate: [authGuard] },
+  { path: 'health/alerts', component: AlertsComponent, canActivate: [authGuard] },
+  { path: 'health/trends', component: TrendsComponent, canActivate: [authGuard] },
+  { path: 'health/goals', component: GoalsComponent, canActivate: [authGuard] },
+  { path: 'appointments', component: AppointmentsComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: 'login' }
 ];

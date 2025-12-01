@@ -55,14 +55,18 @@ export class LoginComponent {
         localStorage.setItem('accessToken', res.accessToken);
         localStorage.setItem('refreshToken', res.refreshToken);
 
+        // Handle different response structures for doctor vs patient login
+        // Doctor login may have user data directly on response, patient login has it nested under 'user'
+        const userData = res.user || res;
+        
         // Construct user object from response properties
         const user = {
-          id: res.doctorId || res.userId || res.id,
-          name: res.user.fullName,
-          firstName: res.user.firstName,
-          lastName: res.user.lastName,
-          email: res.user.email,
-          role: res.role
+          id: res.doctorId || res.userId || res.id || userData.id,
+          name: userData.fullName || `${userData.firstName || ''} ${userData.lastName || ''}`.trim(),
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+          role: res.role || userData.role
         };
 
         console.log('Constructed user object:', user);

@@ -344,7 +344,7 @@
    ============================================ */
 .action-buttons {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   margin-bottom: 40px;
 }
@@ -395,6 +395,10 @@
   background: linear-gradient(135deg, #f9fdfb 0%, #ecfdf5 100%);
 }
 
+.action-card.appointment {
+  background: linear-gradient(135deg, #fffbf5 0%, #fff7ed 100%);
+}
+
 .action-icon {
   width: 80px;
   height: 80px;
@@ -418,6 +422,10 @@
 
 .action-card.consult .action-icon {
   background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+}
+
+.action-card.appointment .action-icon {
+  background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
 }
 
 .pulse-dot {

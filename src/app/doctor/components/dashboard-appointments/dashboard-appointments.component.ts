@@ -8,11 +8,11 @@ export interface Appointment {
     patientEmail?: string;
     patientPhone?: string;
     time: string;
-    date: string;
+    date: string | Date;
     type: string;
     status: string;
     notes?: string;
-    appointmentDateTime?: string;
+    appointmentDateTime?: string | number[];
     cancelledBy?: string;
     cancellationReason?: string;
     doctorResponseReason?: string;

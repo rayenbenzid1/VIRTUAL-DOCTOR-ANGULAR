@@ -1,0 +1,178 @@
+<div class="appointments-container">
+    <!-- Header -->
+    <div class="appointments-header">
+        <div class="header-content">
+            <div class="header-left">
+                <button class="btn-back" (click)="goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <div class="header-title">
+                    <span class="header-icon">📅</span>
+                    <h1>Mes Rendez-vous</h1>
+                </div>
+            </div>
+            <button class="btn-primary" (click)="openBookModal()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Nouveau Rendez-vous</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading()" class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement de vos rendez-vous...</p>
+    </div>
+
+    <!-- Appointments List -->
+    <div *ngIf="!isLoading()" class="appointments-list">
+        <div *ngIf="appointments().length === 0" class="empty-state">
+            <div class="empty-icon">📅</div>
+            <h3>Aucun rendez-vous</h3>
+            <p>Vous n'avez pas encore de rendez-vous programmés</p>
+            <button class="btn-secondary" (click)="openBookModal()">Prendre un rendez-vous</button>
+        </div>
+
+        <div *ngFor="let appointment of appointments()" class="appointment-card">
+            <div class="appointment-main">
+                <div class="appointment-icon">
+                    <span>🩺</span>
+                </div>
+                <div class="appointment-info">
+                    <h3 class="doctor-name">Dr. {{ appointment.doctorName }}</h3>
+                    <p class="specialization" *ngIf="appointment.specialization">
+                        {{ appointment.specialization }}
+                    </p>
+                    <p class="appointment-datetime">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        {{ formatDateTime(appointment.appointmentDateTime) }}
+                    </p>
+                    <p class="appointment-type">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        {{ appointment.appointmentType }}
+                    </p>
+                    <p class="appointment-reason">{{ appointment.reason }}</p>
+                </div>
+            </div>
+            <div class="appointment-actions">
+                <span class="status-badge" [ngClass]="getStatusClass(appointment.status)">
+                    {{ getStatusLabel(appointment.status) }}
+                </span>
+                <button *ngIf="canCancel(appointment)" class="btn-cancel" (click)="openCancelModal(appointment.id)">
+                    Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Book Appointment Modal -->
+    <div *ngIf="showBookModal()" class="modal-overlay" (click)="closeBookModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Nouveau Rendez-vous</h2>
+                <button class="btn-close" (click)="closeBookModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Médecin <span class="required">*</span></label>
+                    <select class="form-control" [value]="selectedDoctorId()"
+                        (change)="selectedDoctorId.set($any($event.target).value)">
+                        <option value="">Sélectionner un médecin</option>
+                        <option *ngFor="let doctor of availableDoctors()" [value]="doctor.id">
+                            Dr. {{ getDoctorDisplayName(doctor) }} {{ doctor.specialization ? '- ' + doctor.specialization : '' }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date <span class="required">*</span></label>
+                        <input type="date" class="form-control" [value]="appointmentDate()"
+                            (input)="appointmentDate.set($any($event.target).value)" [min]="getCurrentDate()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Heure <span class="required">*</span></label>
+                        <input type="time" class="form-control" [value]="appointmentTime()"
+                            (input)="appointmentTime.set($any($event.target).value)">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Type de consultation <span class="required">*</span></label>
+                    <select class="form-control" [value]="appointmentType()"
+                        (change)="appointmentType.set($any($event.target).value)">
+                        <option value="CONSULTATION">Consultation</option>
+                        <option value="FOLLOW_UP">Suivi</option>
+                        <option value="EMERGENCY">Urgence</option>
+                        <option value="ROUTINE_CHECKUP">Contrôle de routine</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Motif de la consultation <span class="required">*</span></label>
+                    <textarea class="form-control" rows="3" placeholder="Décrivez la raison de votre consultation..."
+                        [value]="reason()" (input)="reason.set($any($event.target).value)"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Notes additionnelles</label>
+                    <textarea class="form-control" rows="2" placeholder="Informations complémentaires (optionnel)..."
+                        [value]="notes()" (input)="notes.set($any($event.target).value)"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" (click)="closeBookModal()">Annuler</button>
+                <button class="btn-primary" (click)="bookAppointment()">Confirmer le rendez-vous</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Modal -->
+    <div *ngIf="showCancelModal()" class="modal-overlay" (click)="closeCancelModal()">
+        <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Annuler le rendez-vous</h2>
+                <button class="btn-close" (click)="closeCancelModal()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="cancel-warning">⚠️ Êtes-vous sûr de vouloir annuler ce rendez-vous?</p>
+                <div class="form-group">
+                    <label>Raison de l'annulation <span class="required">*</span></label>
+                    <textarea class="form-control" rows="3" placeholder="Veuillez expliquer pourquoi vous annulez..."
+                        [value]="cancellationReason()"
+                        (input)="cancellationReason.set($any($event.target).value)"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" (click)="closeCancelModal()">Retour</button>
+                <button class="btn-danger" (click)="cancelAppointment()">Confirmer l'annulation</button>
+            </div>
+        </div>
+    </div>
+</div>

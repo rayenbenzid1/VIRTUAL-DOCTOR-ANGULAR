@@ -15,7 +15,7 @@ export interface AppointmentResponse {
     doctorId: string;
     doctorName: string;
     specialization: string;
-    appointmentDateTime: string;
+    appointmentDateTime: string | number[]; // Can be ISO string or Java LocalDateTime array
     appointmentType: string;
     reason: string;
     notes?: string;
