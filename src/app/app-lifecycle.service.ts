@@ -11,13 +11,13 @@ export class AppLifecycleService {
 
   private setupUnloadListener() {
     // Vider le localStorage quand la fenêtre/onglet se ferme
-    window.addEventListener('beforeunload', () => {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
+    // window.addEventListener('beforeunload', () => {
+    //   localStorage.removeItem('accessToken');
+    //   localStorage.removeItem('refreshToken');
+    //   localStorage.removeItem('user');
       
-      // Ou vider tout le localStorage :
-      // localStorage.clear();
-    });
+    //   // Ou vider tout le localStorage :
+    //   // localStorage.clear();
+    // });
   }
 }
