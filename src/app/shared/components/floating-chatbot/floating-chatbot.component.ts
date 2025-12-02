@@ -33,7 +33,7 @@ export class FloatingChatbotComponent {
 
   private readonly BASE_URL = `${environment.BASE_URL}/health-assistant-service`;
   private readonly STORAGE_KEY = 'chatbot_history';
-  private readonly EXCLUDED_ROUTES = ['/', '/login', '/register', '/chatbot'];
+  private readonly EXCLUDED_ROUTES = ['/', '/login', '/register', '/chatbot', '/admin/dashboard', '/admin/users', '/doctor/dashboard'];
 
   isOpen = signal(false);
   
