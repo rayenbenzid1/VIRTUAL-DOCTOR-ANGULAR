@@ -2,7 +2,7 @@
 @if (viewType === 'list') {
 <div class="card">
     <div class="card-header">
-        <h2>Recent Patients</h2>
+        <h2>Patients Récents</h2>
     </div>
     <div class="card-body">
         @if (patients.length > 0) {
@@ -14,17 +14,17 @@
                 </div>
                 <div class="patient-info">
                     <h4>{{ patient.name }}</h4>
-                    <p>{{ patient.condition }}</p>
-                    <span class="last-visit">Last visit: {{ patient.lastVisit | date:'MMM d, yyyy'
+                    <p>{{ translateCondition(patient.condition) }}</p>
+                    <span class="last-visit">Dernière visite : {{ patient.lastVisit | date:'d MMM yyyy'
                         }}</span>
                 </div>
-                <a class="link-primary">View Details</a>
+                <a class="link-primary">Voir Détails</a>
             </div>
             }
         </div>
         } @else {
         <div class="empty-state">
-            <p>No recent patients</p>
+            <p>Aucun patient récent</p>
         </div>
         }
     </div>
@@ -35,7 +35,7 @@
 @if (viewType === 'grid') {
 <div class="card">
     <div class="card-header">
-        <h2>Recent Patients</h2>
+        <h2>Patients Récents</h2>
     </div>
     <div class="card-body">
         @if (patients.length > 0) {
@@ -46,23 +46,23 @@
                     {{ patient.name.charAt(0) }}
                 </div>
                 <h3>{{ patient.name }}</h3>
-                <p class="patient-age">{{ patient.age }} years old</p>
+                <p class="patient-age">{{ patient.age }} ans</p>
                 <div class="patient-condition">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
                     </svg>
-                    <span>{{ patient.condition }}</span>
+                    <span>{{ translateCondition(patient.condition) }}</span>
                 </div>
                 <div class="patient-last-visit">
-                    Last visit: {{ patient.lastVisit | date:'MMM d, yyyy' }}
+                    Dernière visite : {{ patient.lastVisit | date:'d MMM yyyy' }}
                 </div>
-                <button class="btn-outline">View Profile</button>
+                <button class="btn-outline">Voir Profil</button>
             </div>
             }
         </div>
         } @else {
         <div class="empty-state">
-            <p>No patients found</p>
+            <p>Aucun patient trouvé</p>
         </div>
         }
     </div>

@@ -34,6 +34,26 @@ export class DashboardPatientsComponent {
 
     @Output() viewInfo = new EventEmitter<string>();
 
+    // Condition/Type translation
+    translateCondition(condition: string | undefined): string {
+        if (!condition) return '';
+        const conditionMap: { [key: string]: string } = {
+            'Follow-up': 'Suivi',
+            'FOLLOW_UP': 'Suivi',
+            'FOLLOW-UP': 'Suivi',
+            'Checkup': 'Bilan de santé',
+            'CHECK_UP': 'Bilan de santé',
+            'CHECKUP': 'Bilan de santé',
+            'Emergency': 'Urgence',
+            'EMERGENCY': 'Urgence',
+            'Consultation': 'Consultation',
+            'CONSULTATION': 'Consultation',
+            'Routine': 'Routine',
+            'ROUTINE': 'Routine'
+        };
+        return conditionMap[condition] || condition;
+    }
+
     onViewInfo(id: string) {
         this.viewInfo.emit(id);
     }

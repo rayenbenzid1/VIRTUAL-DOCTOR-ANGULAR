@@ -2,7 +2,7 @@
 <div class="modal-overlay" (click)="onClose()">
     <div class="modal-content" (click)="stopPropagation($event)">
         <div class="modal-header">
-            <h2>Patient Information</h2>
+            <h2>Informations du Patient</h2>
             <button class="btn-close" (click)="onClose()">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -14,7 +14,7 @@
         @if (isLoading) {
         <div class="modal-loading">
             <div class="spinner"></div>
-            <p>Loading patient information...</p>
+            <p>Chargement des informations du patient...</p>
         </div>
         } @else if (patient) {
         <div class="modal-body">
@@ -37,7 +37,7 @@
                     </div>
                     @if (appointmentContext?.cancellationReason || appointmentContext?.doctorResponseReason) {
                     <div class="cancellation-reason-box">
-                        <p class="reason-label">Reason:</p>
+                        <p class="reason-label">Motif :</p>
                         <p class="reason-text">
                             "{{ appointmentContext!.cancellationReason || appointmentContext!.doctorResponseReason }}"
                         </p>
@@ -49,34 +49,34 @@
                 @if (appointmentContext) {
                 <div class="appointment-info-box">
                     <div class="info-row">
-                        <span class="label">Reason:</span>
+                        <span class="label">Motif :</span>
                         <span class="value">{{ appointmentContext.reason || appointmentContext.type }}</span>
                     </div>
                     @if (appointmentContext.notes) {
                     <div class="info-row">
-                        <span class="label">Patient Notes:</span>
+                        <span class="label">Notes du Patient :</span>
                         <span class="value">{{ appointmentContext.notes }}</span>
                     </div>
                     }
 
                     @if (appointmentContext.status === 'COMPLETED') {
                     <div class="completed-details">
-                        <h5>Consultation Summary</h5>
+                        <h5>Résumé de la Consultation</h5>
                         @if (appointmentContext.diagnosis) {
                         <div class="info-group">
-                            <span class="label">Diagnosis:</span>
+                            <span class="label">Diagnostic :</span>
                             <p class="value-text">{{ appointmentContext.diagnosis }}</p>
                         </div>
                         }
                         @if (appointmentContext.prescription) {
                         <div class="info-group">
-                            <span class="label">Prescription:</span>
+                            <span class="label">Prescription :</span>
                             <p class="value-text">{{ appointmentContext.prescription }}</p>
                         </div>
                         }
                         @if (appointmentContext.doctorNotes) {
                         <div class="info-group">
-                            <span class="label">Doctor Notes:</span>
+                            <span class="label">Notes du Médecin :</span>
                             <p class="value-text">{{ appointmentContext.doctorNotes }}</p>
                         </div>
                         }
@@ -89,23 +89,23 @@
             <div class="patient-details">
                 <!-- Patient Statistics -->
                 <div class="detail-section">
-                    <h4>Patient Statistics</h4>
+                    <h4>Statistiques du Patient</h4>
                     <div class="detail-grid">
                         <div class="detail-item">
-                            <span class="detail-label">Total Appointments:</span>
+                            <span class="detail-label">Total Rendez-vous :</span>
                             <span class="detail-value">{{ patient.totalAppointments || 0 }}</span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">Completed:</span>
+                            <span class="detail-label">Terminés :</span>
                             <span class="detail-value">{{ patient.completedAppointments || 0 }}</span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-label">Cancelled:</span>
+                            <span class="detail-label">Annulés :</span>
                             <span class="detail-value">{{ patient.cancelledAppointments || 0 }}</span>
                         </div>
                         @if (patient.phone) {
                         <div class="detail-item">
-                            <span class="detail-label">Phone:</span>
+                            <span class="detail-label">Téléphone :</span>
                             <span class="detail-value">{{ patient.phone }}</span>
                         </div>
                         }
@@ -114,23 +114,23 @@
 
                 <!-- Visit History -->
                 <div class="detail-section">
-                    <h4>Visit History</h4>
+                    <h4>Historique des Visites</h4>
                     <div class="detail-grid">
                         @if (patient.firstVisitDate) {
                         <div class="detail-item">
-                            <span class="detail-label">First Visit:</span>
+                            <span class="detail-label">Première Visite :</span>
                             <span class="detail-value">{{ patient.firstVisitDate | date:'mediumDate' }}</span>
                         </div>
                         }
                         @if (patient.lastVisit) {
                         <div class="detail-item">
-                            <span class="detail-label">Last Visit:</span>
+                            <span class="detail-label">Dernière Visite :</span>
                             <span class="detail-value">{{ patient.lastVisit | date:'mediumDate' }}</span>
                         </div>
                         }
                         @if (patient.nextAppointmentDate) {
                         <div class="detail-item">
-                            <span class="detail-label">Next Appointment:</span>
+                            <span class="detail-label">Prochain RDV :</span>
                             <span class="detail-value">{{ patient.nextAppointmentDate | date:'mediumDate' }}</span>
                         </div>
                         }
@@ -139,14 +139,14 @@
 
                 @if (patient.condition) {
                 <div class="detail-section">
-                    <h4>Current Condition</h4>
+                    <h4>État Actuel</h4>
                     <p class="condition-badge">{{ patient.condition }}</p>
                 </div>
                 }
 
                 @if (patient.medicalHistory && patient.medicalHistory.length > 0) {
                 <div class="detail-section">
-                    <h4>Medical History</h4>
+                    <h4>Historique Médical</h4>
                     <ul class="info-list">
                         @for (history of patient.medicalHistory; track $index) {
                         <li>{{ history }}</li>
@@ -168,7 +168,7 @@
 
                 @if (patient.currentMedications && patient.currentMedications.length > 0) {
                 <div class="detail-section">
-                    <h4>Current Medications</h4>
+                    <h4>Médicaments Actuels</h4>
                     <ul class="info-list medications">
                         @for (medication of patient.currentMedications; track $index) {
                         <li>{{ medication }}</li>

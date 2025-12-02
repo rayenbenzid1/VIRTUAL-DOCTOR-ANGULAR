@@ -112,14 +112,15 @@ export class DoctorDashboardComponent implements OnDestroy {
 
     greeting = computed(() => {
         const hour = this.currentTime().getHours();
-        if (hour < 12) return 'Good Morning';
-        if (hour < 18) return 'Good Afternoon';
-        return 'Good Evening';
+        if (hour < 12) return 'Bonjour';
+        if (hour < 18) return 'Bon après-midi';
+        return 'Bonsoir';
     });
 
     doctorName = computed(() => {
         const user = this.currentUser();
-        return user?.fullName || 'Doctor';
+        // Try different property names based on how user data might be stored
+        return user?.name || user?.fullName || user?.firstName || 'Doctor';
     });
 
     constructor() {

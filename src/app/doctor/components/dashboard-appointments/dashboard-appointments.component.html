@@ -2,7 +2,7 @@
 @if (viewType === 'list') {
 <div class="card">
     <div class="card-header">
-        <h2>Upcoming Appointments</h2>
+        <h2>Rendez-vous à Venir</h2>
         <span class="badge">{{ appointments.length }}</span>
     </div>
     <div class="card-body">
@@ -16,9 +16,9 @@
                 </div>
                 <div class="appointment-details">
                     <h4>{{ appointment.patientName }}</h4>
-                    <p>{{ appointment.type }}</p>
+                    <p>{{ translateType(appointment.type) }}</p>
                     <span class="status-label status-{{ appointment.status.toLowerCase() }}">
-                        {{ appointment.status }}
+                        {{ translateStatus(appointment.status) }}
                     </span>
                 </div>
                 <div class="appointment-actions">
@@ -32,10 +32,10 @@
                     }
                     @if (appointment.status === 'ACCEPTED' || appointment.status === 'SCHEDULED') {
                     <button class="btn-sm btn-complete" (click)="onComplete(appointment.id)">
-                        Complete
+                        Terminer
                     </button>
                     <button class="btn-sm btn-cancel" (click)="onCancel(appointment.id)">
-                        Cancel
+                        Annuler
                     </button>
                     }
                     <button class="btn-sm btn-info" (click)="onViewInfo(appointment.patientId, appointment)"
@@ -53,7 +53,7 @@
         </div>
         } @else {
         <div class="empty-state">
-            <p>No upcoming appointments</p>
+            <p>Aucun rendez-vous à venir</p>
         </div>
         }
     </div>
@@ -64,7 +64,7 @@
 @if (viewType === 'table') {
 <div class="card">
     <div class="card-header">
-        <h2>All Appointments</h2>
+        <h2>Tous les Rendez-vous</h2>
     </div>
     <div class="card-body">
         @if (appointments.length > 0) {
@@ -76,20 +76,20 @@
                     <span class="time-val">{{ appointment.time }}</span>
                 </div>
                 <div class="col-patient">{{ appointment.patientName }}</div>
-                <div class="col-type">{{ appointment.type }}</div>
+                <div class="col-type">{{ translateType(appointment.type) }}</div>
                 <div class="col-status">
                     <span class="status-badge" [class]="appointment.status.toLowerCase()">
-                        {{ appointment.status }}
+                        {{ translateStatus(appointment.status) }}
                     </span>
                 </div>
                 <div class="col-actions">
                     @if (appointment.status === 'PENDING') {
-                    <button class="btn-sm btn-accept" (click)="onAccept(appointment.id)">Accept</button>
-                    <button class="btn-sm btn-reject" (click)="onReject(appointment.id)">Reject</button>
+                    <button class="btn-sm btn-accept" (click)="onAccept(appointment.id)">Accepter</button>
+                    <button class="btn-sm btn-reject" (click)="onReject(appointment.id)">Refuser</button>
                     }
                     @if (appointment.status === 'ACCEPTED' || appointment.status === 'SCHEDULED') {
-                    <button class="btn-sm btn-complete" (click)="onComplete(appointment.id)">Complete</button>
-                    <button class="btn-sm btn-cancel" (click)="onCancel(appointment.id)">Cancel</button>
+                    <button class="btn-sm btn-complete" (click)="onComplete(appointment.id)">Terminer</button>
+                    <button class="btn-sm btn-cancel" (click)="onCancel(appointment.id)">Annuler</button>
                     }
                     <button class="btn-sm btn-info"
                         (click)="onViewInfo(appointment.patientId, appointment)">Info</button>
@@ -99,7 +99,7 @@
         </div>
         } @else {
         <div class="empty-state">
-            <p>No appointments found</p>
+            <p>Aucun rendez-vous trouvé</p>
         </div>
         }
     </div>

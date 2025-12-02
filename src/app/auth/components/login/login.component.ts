@@ -116,21 +116,33 @@ export class LoginComponent {
     next: (res) => {
       console.log('🔍 Login response complète:', res);
       console.log('🔍 res.user:', res.user);
-      console.log('🔍 res.user.roles:', res.user?.roles);
 
         try {
           // Stocker les tokens
           localStorage.setItem('accessToken', res.accessToken);
           localStorage.setItem('refreshToken', res.refreshToken);
 
+          // Get user data - handle both nested (res.user) and flat response structures
+          const userData = res.user || res;
+          
+          // Build the name from available properties
+          let userName = 'User';
+          if (userData.fullName) {
+            userName = userData.fullName;
+          } else if (userData.name) {
+            userName = userData.name;
+          } else if (userData.firstName || userData.lastName) {
+            userName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
+          }
+
           // Construire l'objet utilisateur
           const user = {
-            id: res.doctorId || res.userId || res.id,
-            name: res.user?.fullName || `${res.user?.firstName} ${res.user?.lastName}`,
-            firstName: res.user?.firstName,
-            lastName: res.user?.lastName,
-            email: res.user?.email,
-            phoneNumber: res.user?.phoneNumber,
+            id: res.doctorId || res.userId || userData.id || res.id,
+            name: userName,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email || this.form.value.email,
+            phoneNumber: userData.phoneNumber,
             role: res.role
           };
 

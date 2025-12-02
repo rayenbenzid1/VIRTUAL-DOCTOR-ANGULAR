@@ -45,9 +45,9 @@ export class AppointmentActionModalComponent {
 
     getTitle(): string {
         switch (this.actionType()) {
-            case 'reject': return 'Reject Appointment';
-            case 'cancel': return 'Cancel Appointment';
-            case 'complete': return 'Complete Appointment';
+            case 'reject': return 'Refuser le Rendez-vous';
+            case 'cancel': return 'Annuler le Rendez-vous';
+            case 'complete': return 'Terminer le Rendez-vous';
         }
     }
 

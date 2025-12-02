@@ -31,7 +31,7 @@
                         <polyline points="16 17 21 12 16 7"></polyline>
                         <line x1="21" y1="12" x2="9" y2="12"></line>
                     </svg>
-                    Logout
+                    Déconnexion
                 </button>
             </div>
         </div>
@@ -41,7 +41,7 @@
     @if (isLoading()) {
     <div class="loading-container">
         <div class="spinner"></div>
-        <p>Loading dashboard...</p>
+        <p>Chargement du tableau de bord...</p>
     </div>
     }
 
@@ -55,14 +55,14 @@
         <!-- Tabs Navigation -->
         <nav class="tabs-nav">
             <button class="tab-btn" [class.active]="selectedTab() === 'overview'" (click)="selectTab('overview')">
-                Overview
+                Aperçu
             </button>
             <button class="tab-btn" [class.active]="selectedTab() === 'appointments'"
                 (click)="selectTab('appointments')">
-                Appointments
+                Rendez-vous
             </button>
             <button class="tab-btn" [class.active]="selectedTab() === 'patients'" (click)="selectTab('patients')">
-                Recent Patients
+                Patients Récents
             </button>
         </nav>
 
@@ -113,7 +113,7 @@
     <div class="modal-overlay" (click)="closeProfileSettings()">
         <div class="modal-content" (click)="$event.stopPropagation()">
             <div class="modal-header">
-                <h2>Update Profile</h2>
+                <h2>Modifier le Profil</h2>
                 <button class="btn-close" (click)="closeProfileSettings()">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -127,11 +127,11 @@
                         <div class="patient-profile-avatar">
                             Dr
                         </div>
-                        <p class="patient-email">Update your personal information</p>
+                        <p class="patient-email">Modifier vos informations personnelles</p>
                     </div>
 
                     <div class="form-group">
-                        <label>Full Name</label>
+                        <label>Nom Complet</label>
                         <input type="text" class="form-control" [value]="doctorName()" required>
                     </div>
 
@@ -141,13 +141,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Specialization</label>
+                        <label>Spécialisation</label>
                         <input type="text" class="form-control" value="General Medicine" disabled>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn-secondary" (click)="closeProfileSettings()">Cancel</button>
-                        <button type="submit" class="btn-primary">Save Changes</button>
+                        <button type="button" class="btn-secondary" (click)="closeProfileSettings()">Annuler</button>
+                        <button type="submit" class="btn-primary">Enregistrer</button>
                     </div>
                 </form>
             </div>

@@ -40,6 +40,36 @@ export class DashboardAppointmentsComponent {
     @Output() cancel = new EventEmitter<string>();
     @Output() viewInfo = new EventEmitter<{ patientId: string, appointment?: Appointment }>();
 
+    // Status translation
+    translateStatus(status: string): string {
+        const statusMap: { [key: string]: string } = {
+            'PENDING': 'En attente',
+            'SCHEDULED': 'Planifié',
+            'ACCEPTED': 'Accepté',
+            'CONFIRMED': 'Confirmé',
+            'COMPLETED': 'Terminé',
+            'CANCELLED': 'Annulé',
+            'REJECTED': 'Refusé'
+        };
+        return statusMap[status?.toUpperCase()] || status;
+    }
+
+    // Type translation
+    translateType(type: string): string {
+        const typeMap: { [key: string]: string } = {
+            'CONSULTATION': 'Consultation',
+            'FOLLOW_UP': 'Suivi',
+            'FOLLOW-UP': 'Suivi',
+            'Follow-up': 'Suivi',
+            'EMERGENCY': 'Urgence',
+            'CHECKUP': 'Bilan de santé',
+            'CHECK_UP': 'Bilan de santé',
+            'ROUTINE': 'Routine',
+            'SPECIALIST': 'Spécialiste'
+        };
+        return typeMap[type] || type;
+    }
+
     onAccept(id: string) {
         this.accept.emit(id);
     }

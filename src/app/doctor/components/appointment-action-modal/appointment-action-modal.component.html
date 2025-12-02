@@ -13,32 +13,32 @@
 
         <div class="modal-body">
             <div class="patient-info">
-                <p><strong>Patient:</strong> {{ patientName() }}</p>
+                <p><strong>Patient :</strong> {{ patientName() }}</p>
             </div>
 
             <form (submit)="onSubmit($event)">
                 <!-- REJECT FORM -->
                 @if (actionType() === 'reject') {
                 <div class="form-group">
-                    <label>Reason for Rejection (Optional)</label>
+                    <label>Motif du Refus (Optionnel)</label>
                     <textarea class="form-control" rows="3" [(ngModel)]="reason" name="reason"
-                        placeholder="Explain why you're rejecting this appointment...">
+                        placeholder="Expliquez pourquoi vous refusez ce rendez-vous...">
                     </textarea>
                 </div>
 
                 <div class="form-group">
-                    <label>Suggest Available Hours (Optional)</label>
+                    <label>Suggérer des Disponibilités (Optionnel)</label>
                     <input type="text" class="form-control" [(ngModel)]="availableHours" name="availableHours"
-                        placeholder="e.g., Monday 2-4 PM, Wednesday 10 AM - 12 PM">
+                        placeholder="Ex: Lundi 14h-16h, Mercredi 10h-12h">
                 </div>
                 }
 
                 <!-- CANCEL FORM -->
                 @if (actionType() === 'cancel') {
                 <div class="form-group">
-                    <label>Cancellation Reason (Optional)</label>
+                    <label>Motif d'Annulation (Optionnel)</label>
                     <textarea class="form-control" rows="3" [(ngModel)]="cancellationReason" name="cancellationReason"
-                        placeholder="Explain why you're cancelling this appointment...">
+                        placeholder="Expliquez pourquoi vous annulez ce rendez-vous...">
                     </textarea>
                 </div>
                 }
@@ -46,34 +46,34 @@
                 <!-- COMPLETE FORM -->
                 @if (actionType() === 'complete') {
                 <div class="form-group">
-                    <label>Diagnosis <span class="required">*</span></label>
+                    <label>Diagnostic <span class="required">*</span></label>
                     <textarea class="form-control" rows="3" [(ngModel)]="diagnosis" name="diagnosis"
-                        placeholder="Enter the diagnosis..." required>
+                        placeholder="Entrez le diagnostic..." required>
                     </textarea>
                 </div>
 
                 <div class="form-group">
                     <label>Prescription <span class="required">*</span></label>
                     <textarea class="form-control" rows="3" [(ngModel)]="prescription" name="prescription"
-                        placeholder="Enter the prescription..." required>
+                        placeholder="Entrez la prescription..." required>
                     </textarea>
                 </div>
 
                 <div class="form-group">
-                    <label>Additional Notes (Optional)</label>
+                    <label>Notes Supplémentaires (Optionnel)</label>
                     <textarea class="form-control" rows="2" [(ngModel)]="notes" name="notes"
-                        placeholder="Any additional notes...">
+                        placeholder="Notes additionnelles...">
                     </textarea>
                 </div>
                 }
 
                 <div class="modal-footer">
                     <button type="button" class="btn-secondary" (click)="onClose()" [disabled]="isSubmitting()">
-                        Cancel
+                        Annuler
                     </button>
                     <button type="submit" class="btn-primary" [disabled]="!isValid() || isSubmitting()">
                         @if (isSubmitting()) {
-                        <span>Processing...</span>
+                        <span>Traitement...</span>
                         } @else {
                         <span>{{ getTitle() }}</span>
                         }
