@@ -12,7 +12,6 @@ import { AppointmentsComponent } from './dashboard/components/appointments/appoi
 import { authGuard } from './auth/guards/auth.guard';
 import { AdminDashboardComponent } from './admin/components/admin-dashboard/admin-dashboard.component';
 import { UserManagementComponent } from './admin/components/user-management/user-management.component';
-import { ChatbotComponent } from './chatbot/chatbot.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -25,7 +24,6 @@ export const routes: Routes = [
   { path: 'health/trends', component: TrendsComponent, canActivate: [authGuard] },
   { path: 'health/goals', component: GoalsComponent, canActivate: [authGuard] },
   { path: 'appointments', component: AppointmentsComponent, canActivate: [authGuard] },
-  { path: 'chatbot', component: ChatbotComponent },
   { path: 'admin/dashboard', component: AdminDashboardComponent },
   { path: 'admin/users', component: UserManagementComponent },
   {

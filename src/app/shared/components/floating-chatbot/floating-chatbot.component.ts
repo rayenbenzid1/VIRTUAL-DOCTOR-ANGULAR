@@ -1,9 +1,12 @@
-import { Component, signal, effect, ElementRef, ViewChild } from '@angular/core';
+import { Component, signal, effect, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { environment } from '../../environments/environment';
+import { Router, NavigationEnd } from '@angular/router';
+import { environment } from '../../../../environments/environment';
+import { FloatingChatbotService } from '../../services/floating-chatbot.service';
+import { filter } from 'rxjs/operators';
+import { log } from 'console';
 
 interface ChatMessage {
   text: string;
@@ -12,13 +15,13 @@ interface ChatMessage {
 }
 
 @Component({
-  selector: 'app-chatbot',
+  selector: 'app-floating-chatbot',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './chatbot.component.html',
-  styleUrls: ['./chatbot.component.css']
+  templateUrl: './floating-chatbot.component.html',
+  styleUrls: ['./floating-chatbot.component.css']
 })
-export class ChatbotComponent {
+export class FloatingChatbotComponent {
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
 
   messages = signal<ChatMessage[]>([]);
@@ -26,36 +29,78 @@ export class ChatbotComponent {
   loading = signal(false);
   userName = signal('');
   userEmail = signal('');
+  isVisible = signal(true);
 
   private readonly BASE_URL = `${environment.BASE_URL}/health-assistant-service`;
+  private readonly STORAGE_KEY = 'chatbot_history';
+  private readonly EXCLUDED_ROUTES = ['/', '/login', '/register', '/chatbot'];
 
+  isOpen = signal(false);
+  
   constructor(
     private http: HttpClient,
-    private router: Router
-  ) {}
+    private router: Router,
+    private chatbotService: FloatingChatbotService
+  ) {
+    this.isOpen = this.chatbotService.isOpen;
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.updateVisibility();
+    });
+  }
 
   ngOnInit() {
     this.loadUserData();
     this.addWelcomeMessage();
+    this.updateVisibility();
   }
 
-  // Auto-scroll effect
-  private scrollEffect = effect(() => {
-    this.messages(); // Track changes
-    setTimeout(() => this.scrollToBottom(), 100);
-  });
+  private updateVisibility() {
+    const currentRoute = this.router.url;
+    const shouldHide = this.EXCLUDED_ROUTES.some(route => 
+      currentRoute === route || currentRoute.startsWith(route + '?')
+    );
+    this.isVisible.set(!shouldHide);
+  }
 
   private loadUserData() {
-    const user = localStorage.getItem('user');
-    if (!user) {
-      this.router.navigate(['/login']);
-      return;
-    }
+    // On écoute les changements dans le localStorage (même si fait depuis un autre composant)
+    const checkUser = () => {
+      const userJson = localStorage.getItem('user');
+      if (!userJson) {
+        this.userEmail.set('');
+        this.userName.set('Utilisateur');
+        return;
+      }
 
-    const userData = JSON.parse(user);
-    this.userName.set(userData.firstName || userData.name || 'Utilisateur');
-    this.userEmail.set(userData.email);
+      try {
+        const userData = JSON.parse(userJson);
+
+        if (userData.email) {
+          this.userEmail.set(userData.email);
+          this.userName.set(userData.firstName || userData.name || 'Utilisateur');
+        }
+      } catch (e) {
+        console.error('Erreur parsing user', e);
+      }
+    };
+
+    // Première vérif immédiate
+    checkUser();
+
+    // Et on écoute les futurs changements (quand l'utilisateur se connecte/déconnecte)
+    window.addEventListener('storage', checkUser);
+    // Ou si tu changes le localStorage dans la même page :
+    const originalSetItem = localStorage.setItem;
+    localStorage.setItem = function(key: string, value: string) {
+      originalSetItem.apply(this, arguments as any);
+      if (key === 'user') {
+        checkUser();
+      }
+    };
   }
+
 
   private addWelcomeMessage() {
     const welcomeMessage: ChatMessage = {
@@ -70,7 +115,17 @@ export class ChatbotComponent {
     const text = this.userMessage().trim();
     if (!text || this.loading()) return;
 
-    // Add user message
+    const email = this.userEmail();
+  if (!email) {
+    this.messages.update(msgs => [...msgs, {
+      text: "Erreur : vous devez être connecté pour utiliser le chatbot.",
+      isUser: false,
+      timestamp: new Date()
+    }]);
+    this.loading.set(false);
+    return;
+  }
+
     const userMsg: ChatMessage = {
       text: text,
       isUser: true,
@@ -80,9 +135,8 @@ export class ChatbotComponent {
     this.userMessage.set('');
     this.loading.set(true);
 
-    // Prepare request
     const payload = {
-      email: this.userEmail(),
+      email: email,
       prompt: text
     };
 
@@ -91,7 +145,6 @@ export class ChatbotComponent {
       'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
     });
 
-    // Send to API
     this.http.post<{ response: string }>(`${this.BASE_URL}/chat`, payload, { headers })
       .subscribe({
         next: (response) => {
@@ -110,7 +163,7 @@ export class ChatbotComponent {
               ? `Erreur ${error.status}: ${error.error?.message || 'Impossible de contacter le serveur'}` 
               : 'Pas de connexion. Vérifiez votre réseau.',
             isUser: false,
-            timestamp: new Date()
+            timestamp: new Date(),
           };
           this.messages.update(msgs => [...msgs, errorMsg]);
           this.loading.set(false);
@@ -125,8 +178,12 @@ export class ChatbotComponent {
     }
   }
 
-  goBack() {
-    this.router.navigate(['/dashboard']);
+  closeModal() {
+    this.chatbotService.close();
+  }
+
+  openModal() {
+    this.chatbotService.open();
   }
 
   onKeyPress(event: KeyboardEvent) {
