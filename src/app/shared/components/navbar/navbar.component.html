@@ -1,0 +1,114 @@
+<!-- src/app/shared/components/navbar/navbar.component.html -->
+<header class="navbar">
+  <div class="navbar-wrapper">
+    <!-- Logo et Titre -->
+    <div class="navbar-brand">
+      <div class="brand-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+        </svg>
+      </div>
+      <span class="brand-text">Health Dashboard</span>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="nav-links">
+      <a routerLink="/dashboard" 
+         class="nav-link" 
+         [class.active]="isActive('/dashboard')">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        <span class="nav-label">Tableau de bord</span>
+      </a>
+      
+      <a routerLink="/health/analysis" 
+         class="nav-link" 
+         [class.active]="isActive('/health/analysis')">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="20" x2="12" y2="10"></line>
+          <line x1="18" y1="20" x2="18" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="16"></line>
+        </svg>
+        <span class="nav-label">Analyse</span>
+      </a>
+      
+      <a routerLink="/health/alerts" 
+         class="nav-link" 
+         [class.active]="isActive('/health/alerts')">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="nav-label">Alertes</span>
+      </a>
+      
+      <a routerLink="/health/trends" 
+         class="nav-link" 
+         [class.active]="isActive('/health/trends')">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
+        </svg>
+        <span class="nav-label">Progression</span>
+      </a>
+      
+      <a routerLink="/health/goals" 
+         class="nav-link" 
+         [class.active]="isActive('/health/goals')">
+        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="10"></circle>
+          <circle cx="12" cy="12" r="6"></circle>
+          <circle cx="12" cy="12" r="2"></circle>
+        </svg>
+        <span class="nav-label">Objectifs</span>
+      </a>
+    </nav>
+
+    <!-- Profile Dropdown -->
+    <div class="profile-dropdown">
+      <button class="profile-btn" (click)="toggleDropdown()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </button>
+      
+      <div class="dropdown-menu" [class.show]="showDropdown()">
+        <div class="dropdown-header">
+          <div class="user-info">
+            <span class="user-name">{{ userName() }}</span>
+            <span class="user-role">{{ userRole() }}</span>
+          </div>
+        </div>
+        
+        <button class="dropdown-item" (click)="editProfile()">
+          <svg class="dropdown-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          <span>Modifier le profil</span>
+        </button>
+        
+        <button class="dropdown-item logout" (click)="logout()">
+          <svg class="dropdown-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Déconnexion</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Profile Modal Component -->
+<app-profile-modal 
+  #profileModal
+  (modalClosed)="onModalClosed()"
+  (profileUpdated)="onProfileUpdated($event)">
+</app-profile-modal>

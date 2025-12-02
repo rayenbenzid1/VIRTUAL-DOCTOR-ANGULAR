@@ -10,6 +10,7 @@ import { DataSummaryComponent } from './components/data-summary/data-summary.com
 import { DailySummaryComponent } from './components/daily-summary/daily-summary.component';
 import { VitalSignsComponent } from './components/vital-signs/vital-signs.component';
 import { PhysicalActivitiesComponent } from './components/physical-activities/physical-activities.component';
+import { NavbarComponent } from '../shared/components/navbar/navbar.component';
 
 interface HealthMetric {
   id: string;
@@ -29,7 +30,7 @@ interface VitalSign {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, ProfileModalComponent, HealthAvatarComponent, DataSummaryComponent, DailySummaryComponent, VitalSignsComponent, PhysicalActivitiesComponent],
+  imports: [CommonModule, ProfileModalComponent, HealthAvatarComponent, DataSummaryComponent, DailySummaryComponent, VitalSignsComponent, PhysicalActivitiesComponent,NavbarComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })

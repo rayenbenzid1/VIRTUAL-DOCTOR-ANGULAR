@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as THREE from 'three';
-import { BiometricData } from '../../services/biometric.api';
 
 interface OrganData {
   name: string;
@@ -13,29 +12,265 @@ interface OrganData {
   metrics: { label: string; value: string }[];
 }
 
-interface OrganDataMap {
-  heart: OrganData;
-  lungs: OrganData;
-  brain: OrganData;
-  stomach: OrganData;
-  [key: string]: OrganData;
+interface BiometricData {
+  avgHeartRate?: number;
+  heartRate?: any[];
+  oxygenSaturation?: any[];
+  bodyTemperature?: any[];
+  totalSteps?: number;
+  stressScore?: number;
+  totalSleepHours?: string;
 }
 
 @Component({
-  selector: 'app-health-avatar',
+  selector: 'app-three-avatar',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './health-avatar.component.html',
-  styleUrls: ['./health-avatar.component.css'],
+  template: `
+    <div class="avatar-3d-wrapper">
+      <div class="canvas-container">
+        <canvas #canvas3d></canvas>
+        <div class="interaction-hint">
+          🖱️ Cliquez et faites glisser pour faire pivoter • Molette pour zoomer
+        </div>
+      </div>
+
+      <div class="avatar-info">
+        <div class="info-header">
+          <h2>Avatar Santé 3D</h2>
+          <p class="info-subtitle">
+            {{ activeOrgan() ? 'Détails du système sélectionné' : 'Cliquez sur un organe pour plus d\'informations' }}
+          </p>
+        </div>
+
+        <div *ngIf="activeOrgan(); else defaultMessage" class="organ-detail-card">
+          <div class="organ-card-header">
+            <span class="organ-card-icon">{{ organData()[activeOrgan()!].icon }}</span>
+            <h3>{{ organData()[activeOrgan()!].name }}</h3>
+          </div>
+
+          <div class="status-badge"
+               [style.background]="organData()[activeOrgan()!].statusColor + '15'"
+               [style.color]="organData()[activeOrgan()!].statusColor">
+            <span class="status-icon">{{ getStatusIcon(organData()[activeOrgan()!].status) }}</span>
+            {{ organData()[activeOrgan()!].status }}
+          </div>
+
+          <div class="organ-metrics">
+            <div class="metric-row" *ngFor="let metric of organData()[activeOrgan()!].metrics">
+              <span class="metric-label">{{ metric.label }}</span>
+              <span class="metric-value">{{ metric.value }}</span>
+            </div>
+          </div>
+
+          <p class="organ-details">{{ organData()[activeOrgan()!].details }}</p>
+        </div>
+
+        <ng-template #defaultMessage>
+          <div class="default-message">
+            <div class="default-message-icon">🏥</div>
+            <h3>Exploration de votre santé</h3>
+            <p>Cliquez sur les organes colorés du modèle 3D pour consulter vos données biométriques en temps réel</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .avatar-3d-wrapper {
+      display: flex;
+      gap: 32px;
+      align-items: stretch;
+      flex-wrap: wrap;
+      padding: 24px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border-radius: 24px;
+      min-height: 600px;
+    }
+
+    .canvas-container {
+      flex: 1;
+      min-width: 400px;
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 600px !important;
+      display: block;
+      cursor: grab;
+    }
+
+    canvas:active {
+      cursor: grabbing;
+    }
+
+    .interaction-hint {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      backdrop-filter: blur(10px);
+      white-space: nowrap;
+    }
+
+    .avatar-info {
+      flex: 1;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .info-header {
+      color: white;
+      text-align: center;
+      padding-bottom: 16px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .info-header h2 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .info-subtitle {
+      color: #94a3b8;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .organ-detail-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 24px;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .organ-detail-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .organ-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .organ-card-icon {
+      font-size: 32px;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+    }
+
+    .organ-card-header h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .status-icon {
+      font-size: 16px;
+    }
+
+    .organ-metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      color: #e2e8f0;
+      font-size: 14px;
+    }
+
+    .metric-label {
+      color: #cbd5e1;
+    }
+
+    .organ-details {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .default-message {
+      text-align: center;
+      color: #cbd5e1;
+      padding: 40px 20px;
+    }
+
+    .default-message-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .default-message h3 {
+      margin: 0 0 12px 0;
+      color: white;
+      font-size: 20px;
+    }
+
+    .default-message p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .avatar-3d-wrapper {
+        flex-direction: column;
+      }
+
+      .canvas-container {
+        min-width: 100%;
+      }
+
+      canvas {
+        height: 400px !important;
+      }
+    }
+  `]
 })
-export class HealthAvatarComponent implements OnInit, OnDestroy {
+export class ThreeAvatarComponent implements OnInit, OnDestroy {
   @ViewChild('canvas3d', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
   @Input() biometricData?: BiometricData | null;
 
-  hoveredOrgan = signal<string | null>(null);
   activeOrgan = signal<string | null>(null);
+  hoveredOrgan = signal<string | null>(null);
 
-  // Three.js variables
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
   private renderer!: THREE.WebGLRenderer;
@@ -65,7 +300,6 @@ export class HealthAvatarComponent implements OnInit, OnDestroy {
     this.initThreeJS();
     this.createHumanBody();
     this.setupEventListeners();
-    this.updateHealthIndicators();
     this.animate();
   }
 
@@ -276,6 +510,8 @@ export class HealthAvatarComponent implements OnInit, OnDestroy {
 
     this.humanBody.position.y = 0.5;
     this.scene.add(this.humanBody);
+
+    this.updateHealthIndicators();
   }
 
   private setupEventListeners(): void {
@@ -406,46 +642,14 @@ export class HealthAvatarComponent implements OnInit, OnDestroy {
     this.lungsMesh.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
-        const material = mesh.material as THREE.MeshPhongMaterial;
-        material.color.setHex(lungColor);
-        material.emissive.setHex(lungColor);
+        (mesh.material as THREE.MeshPhongMaterial).color.setHex(lungColor);
+        (mesh.material as THREE.MeshPhongMaterial).emissive.setHex(lungColor);
       }
     });
-
-    // Cerveau (température)
-    const temp = this.biometricData.bodyTemperature?.[0]?.temperature || 37;
-    let brainColor: number;
-    if (temp > 38 || temp < 36) {
-      brainColor = 0xff0000;
-    } else if (temp > 37.5) {
-      brainColor = 0xffa500;
-    } else {
-      brainColor = 0xc4b5fd;
-    }
-    (this.brainMesh.material as THREE.MeshPhongMaterial).color.setHex(brainColor);
-    (this.brainMesh.material as THREE.MeshPhongMaterial).emissive.setHex(brainColor);
-  }
-
-  // Fonction utilitaire
-  private getLastValue(arr: any[] | undefined | null, key: string): number | null {
-    if (!arr || arr.length === 0) return null;
-    const last = arr[arr.length - 1];
-    return last?.[key] ?? null;
-  }
-
-  private getHeartRate(): string {
-    const data = this.biometricData;
-    if (data?.avgHeartRate != null) {
-      return `${Math.round(data.avgHeartRate)} bpm`;
-    }
-    const lastRate = this.getLastValue(data?.heartRate, 'bpm') ??
-                     this.getLastValue(data?.heartRate, 'value') ??
-                     this.getLastValue(data?.heartRate, 'rate');
-    return lastRate != null ? `${Math.round(lastRate)} bpm` : '-- bpm';
   }
 
   // Données des organes
-  organData = computed<OrganDataMap>(() => {
+  organData = computed<{ [key: string]: OrganData }>(() => {
     const hr = this.biometricData?.avgHeartRate || 70;
     const o2 = this.biometricData?.oxygenSaturation?.[0]?.percentage || 98;
     const temp = this.biometricData?.bodyTemperature?.[0]?.temperature || 37;
@@ -458,9 +662,9 @@ export class HealthAvatarComponent implements OnInit, OnDestroy {
         icon: '❤️',
         color: '#fda4af',
         statusColor: hr < 60 || hr > 100 ? '#ef4444' : hr > 90 ? '#f59e0b' : '#10b981',
-        details: 'Le cœur pompe le sang dans tout le corps, fournissant oxygène et nutriments essentiels.',
+        details: 'Le cœur pompe le sang dans tout le corps, fournissant oxygène et nutriments.',
         metrics: [
-          { label: 'Fréquence', value: this.getHeartRate() },
+          { label: 'Fréquence', value: `${Math.round(hr)} bpm` },
           { label: 'État', value: hr < 60 || hr > 100 ? 'Anormal' : 'Normal' }
         ]
       },
@@ -470,7 +674,7 @@ export class HealthAvatarComponent implements OnInit, OnDestroy {
         icon: '🫁',
         color: '#7dd3fc',
         statusColor: o2 < 90 ? '#ef4444' : o2 < 95 ? '#f59e0b' : '#10b981',
-        details: 'Les poumons assurent les échanges gazeux essentiels à la vie cellulaire.',
+        details: 'Les poumons assurent les échanges gazeux essentiels à la vie.',
         metrics: [
           { label: 'SpO₂', value: `${o2}%` },
           { label: 'Capacité', value: o2 >= 95 ? 'Optimale' : 'Réduite' }
@@ -482,7 +686,7 @@ export class HealthAvatarComponent implements OnInit, OnDestroy {
         icon: '🧠',
         color: '#c4b5fd',
         statusColor: temp > 38 || temp < 36 ? '#ef4444' : temp > 37.5 ? '#f59e0b' : '#10b981',
-        details: 'Le cerveau contrôle toutes les fonctions corporelles et les processus cognitifs.',
+        details: 'Le cerveau contrôle toutes les fonctions du corps et la pensée.',
         metrics: [
           { label: 'Température', value: `${temp.toFixed(1)}°C` },
           { label: 'Stress', value: `${this.biometricData?.stressScore || 20}/100` }
@@ -494,7 +698,7 @@ export class HealthAvatarComponent implements OnInit, OnDestroy {
         icon: '🍽️',
         color: '#fde68a',
         statusColor: '#10b981',
-        details: 'Le système digestif transforme les aliments en énergie et nutriments.',
+        details: 'Le système digestif transforme les aliments en énergie.',
         metrics: [
           { label: 'Digestion', value: 'Normale' },
           { label: 'Hydratation', value: 'Bonne' }
