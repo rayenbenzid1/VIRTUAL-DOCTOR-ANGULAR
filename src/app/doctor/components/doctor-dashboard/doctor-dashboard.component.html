@@ -111,7 +111,7 @@
     <!-- Profile Settings Modal -->
     @if (showProfileModal()) {
     <div class="modal-overlay" (click)="closeProfileSettings()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-content profile-modal" (click)="$event.stopPropagation()">
             <div class="modal-header">
                 <h2>Modifier le Profil</h2>
                 <button class="btn-close" (click)="closeProfileSettings()">
@@ -122,34 +122,117 @@
                 </button>
             </div>
             <div class="modal-body">
+                <!-- Loading State -->
+                @if (isLoadingProfile()) {
+                <div class="profile-loading">
+                    <div class="spinner"></div>
+                    <p>Chargement de vos informations...</p>
+                </div>
+                } @else {
                 <form (submit)="updateProfile($event)">
                     <div class="patient-profile">
                         <div class="patient-profile-avatar">
-                            Dr
+                            {{ doctorName().charAt(0) }}
                         </div>
                         <p class="patient-email">Modifier vos informations personnelles</p>
                     </div>
 
-                    <div class="form-group">
-                        <label>Nom Complet</label>
-                        <input type="text" class="form-control" [value]="doctorName()" required>
+                    <!-- Success/Error Messages -->
+                    @if (profileUpdateMessage()) {
+                    <div class="alert alert-success">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        {{ profileUpdateMessage() }}
+                    </div>
+                    }
+                    @if (profileUpdateError()) {
+                    <div class="alert alert-error">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                        </svg>
+                        {{ profileUpdateError() }}
+                    </div>
+                    }
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Prénom</label>
+                            <input type="text" class="form-control" [ngModel]="profileFirstName()" 
+                                   (ngModelChange)="profileFirstName.set($event)" name="firstName" placeholder="Votre prénom">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nom</label>
+                            <input type="text" class="form-control" [ngModel]="profileLastName()" 
+                                   (ngModelChange)="profileLastName.set($event)" name="lastName" placeholder="Votre nom">
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Téléphone</label>
+                            <input type="tel" class="form-control" [ngModel]="profilePhoneNumber()" 
+                                   (ngModelChange)="profilePhoneNumber.set($event)" name="phoneNumber" placeholder="+33 6 12 34 56 78">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email de Contact</label>
+                            <input type="email" class="form-control" [ngModel]="profileContactEmail()" 
+                                   (ngModelChange)="profileContactEmail.set($event)" name="contactEmail" placeholder="contact@example.com">
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Spécialisation</label>
+                            <input type="text" class="form-control" [ngModel]="profileSpecialization()" 
+                                   (ngModelChange)="profileSpecialization.set($event)" name="specialization" placeholder="Cardiologie, Pédiatrie...">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Années d'Expérience</label>
+                            <input type="number" class="form-control" [ngModel]="profileYearsOfExperience()" 
+                                   (ngModelChange)="profileYearsOfExperience.set($event)" name="yearsOfExperience" placeholder="10" min="0">
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" class="form-control" value="doctor@example.com" disabled>
+                        <label>Affiliation Hospitalière</label>
+                        <input type="text" class="form-control" [ngModel]="profileHospitalAffiliation()" 
+                               (ngModelChange)="profileHospitalAffiliation.set($event)" name="hospitalAffiliation" placeholder="Hôpital Saint-Louis, Paris">
                     </div>
 
                     <div class="form-group">
-                        <label>Spécialisation</label>
-                        <input type="text" class="form-control" value="General Medicine" disabled>
+                        <label>Adresse du Cabinet</label>
+                        <input type="text" class="form-control" [ngModel]="profileOfficeAddress()" 
+                               (ngModelChange)="profileOfficeAddress.set($event)" name="officeAddress" placeholder="123 Rue de la Santé, 75014 Paris">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Horaires de Consultation</label>
+                        <input type="text" class="form-control" [ngModel]="profileConsultationHours()" 
+                               (ngModelChange)="profileConsultationHours.set($event)" name="consultationHours" placeholder="Lun-Ven: 9h-18h, Sam: 9h-12h">
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn-secondary" (click)="closeProfileSettings()">Annuler</button>
-                        <button type="submit" class="btn-primary">Enregistrer</button>
+                        <button type="button" class="btn-secondary" (click)="closeProfileSettings()" [disabled]="isUpdatingProfile()">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn-primary" [disabled]="isUpdatingProfile()">
+                            @if (isUpdatingProfile()) {
+                                <span class="spinner-small"></span>
+                                Enregistrement...
+                            } @else {
+                                Enregistrer
+                            }
+                        </button>
                     </div>
                 </form>
+                }
             </div>
         </div>
     </div>

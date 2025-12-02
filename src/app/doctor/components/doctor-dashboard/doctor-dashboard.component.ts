@@ -1,5 +1,6 @@
 import { Component, signal, computed, effect, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { DashboardStatsComponent } from '../dashboard-stats/dashboard-stats.component';
 import { DashboardAppointmentsComponent, Appointment } from '../dashboard-appointments/dashboard-appointments.component';
 import { DashboardPatientsComponent } from '../dashboard-patients/dashboard-patients.component';
@@ -11,7 +12,8 @@ import {
     AppointmentApiService,
     AppointmentResponse,
     PatientInfoResponse,
-    DoctorStatsResponse
+    DoctorStatsResponse,
+    UpdateDoctorProfileRequest
 } from '../../services/appointment.api';
 
 interface DashboardStats {
@@ -45,7 +47,7 @@ interface Patient {
 @Component({
     selector: 'app-doctor-dashboard',
     standalone: true,
-    imports: [CommonModule, DashboardStatsComponent, DashboardAppointmentsComponent, DashboardPatientsComponent, PatientDetailsModalComponent, AppointmentActionModalComponent],
+    imports: [CommonModule, FormsModule, DashboardStatsComponent, DashboardAppointmentsComponent, DashboardPatientsComponent, PatientDetailsModalComponent, AppointmentActionModalComponent],
     templateUrl: './doctor-dashboard.component.html',
     styleUrls: ['./doctor-dashboard.component.css']
 })
@@ -75,6 +77,21 @@ export class DoctorDashboardComponent implements OnDestroy {
     loadingPatientInfo = signal(false);
     currentUser = signal<any>(null);
     showProfileModal = signal(false);
+
+    // Profile form signals
+    profileFirstName = signal('');
+    profileLastName = signal('');
+    profilePhoneNumber = signal('');
+    profileContactEmail = signal('');
+    profileSpecialization = signal('');
+    profileHospitalAffiliation = signal('');
+    profileYearsOfExperience = signal<number | null>(null);
+    profileOfficeAddress = signal('');
+    profileConsultationHours = signal('');
+    isUpdatingProfile = signal(false);
+    isLoadingProfile = signal(false);
+    profileUpdateMessage = signal('');
+    profileUpdateError = signal('');
 
     // Appointment action modal
     showActionModal = signal(false);
@@ -468,27 +485,106 @@ export class DoctorDashboardComponent implements OnDestroy {
 
     // Profile Methods
     openProfileSettings() {
+        this.profileUpdateMessage.set('');
+        this.profileUpdateError.set('');
+        this.isLoadingProfile.set(true);
         this.showProfileModal.set(true);
+
+        // Fetch current profile from API
+        this.appointmentApi.getDoctorProfile().subscribe({
+            next: (profile) => {
+                console.log('📋 Profile loaded:', profile);
+                this.profileFirstName.set(profile.firstName || '');
+                this.profileLastName.set(profile.lastName || '');
+                this.profilePhoneNumber.set(profile.phoneNumber || '');
+                this.profileContactEmail.set(profile.contactEmail || profile.email || '');
+                this.profileSpecialization.set(profile.specialization || '');
+                this.profileHospitalAffiliation.set(profile.hospitalAffiliation || '');
+                this.profileYearsOfExperience.set(profile.yearsOfExperience || null);
+                this.profileOfficeAddress.set(profile.officeAddress || '');
+                this.profileConsultationHours.set(profile.consultationHours || '');
+                this.isLoadingProfile.set(false);
+            },
+            error: (error) => {
+                console.error('❌ Error loading profile:', error);
+                // Fallback to local user data
+                const user = this.currentUser();
+                if (user) {
+                    this.profileFirstName.set(user.firstName || '');
+                    this.profileLastName.set(user.lastName || '');
+                    this.profilePhoneNumber.set(user.phoneNumber || '');
+                    this.profileContactEmail.set(user.contactEmail || user.email || '');
+                    this.profileSpecialization.set(user.specialization || '');
+                    this.profileHospitalAffiliation.set(user.hospitalAffiliation || '');
+                    this.profileYearsOfExperience.set(user.yearsOfExperience || null);
+                    this.profileOfficeAddress.set(user.officeAddress || '');
+                    this.profileConsultationHours.set(user.consultationHours || '');
+                }
+                this.isLoadingProfile.set(false);
+            }
+        });
     }
 
     closeProfileSettings() {
         this.showProfileModal.set(false);
+        this.profileUpdateMessage.set('');
+        this.profileUpdateError.set('');
     }
 
     updateProfile(event: Event) {
         event.preventDefault();
-        const form = event.target as HTMLFormElement;
-        const nameInput = form.querySelector('input[type="text"]') as HTMLInputElement;
-        const newName = nameInput.value;
+        this.isUpdatingProfile.set(true);
+        this.profileUpdateMessage.set('');
+        this.profileUpdateError.set('');
 
-        if (newName) {
-            const user = this.currentUser() || {};
-            const updatedUser = { ...user, name: newName };
-            this.currentUser.set(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-            alert('Profile updated successfully!');
-            this.closeProfileSettings();
-        }
+        const profileData: UpdateDoctorProfileRequest = {
+            firstName: this.profileFirstName() || undefined,
+            lastName: this.profileLastName() || undefined,
+            phoneNumber: this.profilePhoneNumber() || undefined,
+            contactEmail: this.profileContactEmail() || undefined,
+            specialization: this.profileSpecialization() || undefined,
+            hospitalAffiliation: this.profileHospitalAffiliation() || undefined,
+            yearsOfExperience: this.profileYearsOfExperience() || undefined,
+            officeAddress: this.profileOfficeAddress() || undefined,
+            consultationHours: this.profileConsultationHours() || undefined
+        };
+
+        this.appointmentApi.updateDoctorProfile(profileData).subscribe({
+            next: (response) => {
+                console.log('✅ Profile updated:', response);
+                
+                // Update local user data
+                const updatedUser = {
+                    ...this.currentUser(),
+                    firstName: response.firstName,
+                    lastName: response.lastName,
+                    name: `${response.firstName} ${response.lastName}`,
+                    phoneNumber: response.phoneNumber,
+                    contactEmail: response.contactEmail,
+                    specialization: response.specialization,
+                    hospitalAffiliation: response.hospitalAffiliation,
+                    yearsOfExperience: response.yearsOfExperience,
+                    officeAddress: response.officeAddress,
+                    consultationHours: response.consultationHours
+                };
+                
+                this.currentUser.set(updatedUser);
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                
+                this.profileUpdateMessage.set('Profil mis à jour avec succès !');
+                this.isUpdatingProfile.set(false);
+                
+                // Close modal after 1.5 seconds
+                setTimeout(() => {
+                    this.closeProfileSettings();
+                }, 1500);
+            },
+            error: (error) => {
+                console.error('❌ Error updating profile:', error);
+                this.profileUpdateError.set('Erreur lors de la mise à jour du profil. Veuillez réessayer.');
+                this.isUpdatingProfile.set(false);
+            }
+        });
     }
 
     logout() {

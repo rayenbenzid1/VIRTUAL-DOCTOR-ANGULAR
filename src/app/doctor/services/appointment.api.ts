@@ -74,6 +74,34 @@ export interface CompleteAppointmentRequest {
     notes: string;
 }
 
+export interface UpdateDoctorProfileRequest {
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    contactEmail?: string;
+    specialization?: string;
+    hospitalAffiliation?: string;
+    yearsOfExperience?: number;
+    officeAddress?: string;
+    consultationHours?: string;
+    profilePictureUrl?: string;
+}
+
+export interface DoctorResponse {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber?: string;
+    contactEmail?: string;
+    specialization?: string;
+    hospitalAffiliation?: string;
+    yearsOfExperience?: number;
+    officeAddress?: string;
+    consultationHours?: string;
+    profilePictureUrl?: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -146,5 +174,15 @@ export class AppointmentApiService {
     // Get appointment details
     getAppointmentDetails(appointmentId: string): Observable<AppointmentResponse> {
         return this.http.get<AppointmentResponse>(`${BASE_URL}/doctor-activation-service/api/doctors/appointments/${appointmentId}`);
+    }
+
+    // Update doctor profile
+    updateDoctorProfile(profileData: UpdateDoctorProfileRequest): Observable<DoctorResponse> {
+        return this.http.put<DoctorResponse>(`${BASE_URL}/doctor-activation-service/api/doctors/profile`, profileData);
+    }
+
+    // Get doctor profile
+    getDoctorProfile(): Observable<DoctorResponse> {
+        return this.http.get<DoctorResponse>(`${BASE_URL}/doctor-activation-service/api/doctors/profile`);
     }
 }
