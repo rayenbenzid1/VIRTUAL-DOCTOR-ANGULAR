@@ -5,6 +5,8 @@ import { HealthTrendsApiService, HealthTrendsResponse } from '../../services/hea
 import { TrendsPeriodSelectorComponent } from '../trends-period-selector/trends-period-selector.component';
 import { HealthScoreChartComponent } from '../health-score-chart/health-score-chart.component';
 import { MetricCardsComponent } from '../metric-cards/metric-cards.component';
+import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
+
 
 @Component({
   selector: 'app-trends',
@@ -13,7 +15,8 @@ import { MetricCardsComponent } from '../metric-cards/metric-cards.component';
     CommonModule,
     TrendsPeriodSelectorComponent,
     HealthScoreChartComponent,
-    MetricCardsComponent
+    MetricCardsComponent,
+    NavbarComponent
   ],
   templateUrl: './trends.component.html',
   styleUrls: ['./trends.component.css']
@@ -30,9 +33,9 @@ export class TrendsComponent {
 
   // Computed values
   hasData = computed(() => this.trendsData() !== null);
-  
+
   dataPoints = computed(() => this.trendsData()?.data_points || 0);
-  
+
   // Score de santé moyen
   averageHealthScore = computed(() => {
     const stats = this.trendsData()?.statistics?.health_scores;

@@ -6,6 +6,7 @@ import { AlertsHeaderComponent } from '../alerts-header/alerts-header.component'
 import { AnalysisPeriodComponent } from '../analysis-period/analysis-period.component';
 import { RiskFactorsComponent } from '../risk-factors/risk-factors.component';
 import { ActionPrioritiesComponent } from '../action-priorities/action-priorities.component';
+import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-alerts',
@@ -15,7 +16,8 @@ import { ActionPrioritiesComponent } from '../action-priorities/action-prioritie
     AlertsHeaderComponent,
     AnalysisPeriodComponent,
     RiskFactorsComponent,
-    ActionPrioritiesComponent
+    ActionPrioritiesComponent,
+    NavbarComponent
   ],
   templateUrl: './alerts.component.html',
   styleUrls: ['./alerts.component.css']
@@ -33,16 +35,16 @@ export class AlertsComponent {
 
   // Computed values
   alertLevel = computed(() => this.alertsData()?.alert_level || 'Faible');
-  
-  criticalAlerts = computed(() => 
+
+  criticalAlerts = computed(() =>
     this.alertsData()?.alerts.filter(a => a.includes('🚨')) || []
   );
-  
-  warningAlerts = computed(() => 
+
+  warningAlerts = computed(() =>
     this.alertsData()?.alerts.filter(a => a.includes('⚠️')) || []
   );
-  
-  successAlerts = computed(() => 
+
+  successAlerts = computed(() =>
     this.alertsData()?.alerts.filter(a => a.includes('✅')) || []
   );
 

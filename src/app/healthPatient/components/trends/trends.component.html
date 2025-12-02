@@ -1,12 +1,10 @@
+ <app-navbar></app-navbar>
+<div class="dashboard-container">
 <div class="trends-container">
 
   <!-- Header -->
   <div class="page-header">
-    <button class="btn-back" (click)="goBack()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M19 12H5M12 19l-7-7 7-7"/>
-      </svg>
-    </button>
+    
     <div class="header-title">
       <h1>📈 Évolution de santé</h1>
       <p class="header-subtitle">Suivez vos progrès au fil du temps</p>
@@ -61,7 +59,7 @@
 
     <!-- Health Score Chart -->
     @if (healthScoreChartData()) {
-    <app-health-score-chart 
+    <app-health-score-chart
       [chartData]="healthScoreChartData()!"
       [trend]="healthScoreTrend()">
     </app-health-score-chart>

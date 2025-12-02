@@ -2,11 +2,11 @@
 import { Component, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { 
-  HealthAnalysisApiService, 
-  BiometricData, 
+import {
+  HealthAnalysisApiService,
+  BiometricData,
   HealthAnalysisResult,
-  TodayDataResponse 
+  TodayDataResponse
 } from '../../services/health-analysis.api';
 import { AnalysisHeaderComponent } from '../analysis-header/analysis-header.component';
 import { ScoreBreakdownComponent } from '../score-breakdown/score-breakdown.component';
@@ -14,6 +14,8 @@ import { AnomaliesListComponent } from '../anomalies-list/anomalies-list.compone
 import { RecommendationsListComponent } from '../recommendations-list/recommendations-list.component';
 import { HealthInsightsComponent } from '../health-insights/health-insights.component';
 import { AiExplanationComponent } from '../ai-explanation/ai-explanation.component';
+import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
+
 
 @Component({
   selector: 'app-analysis',
@@ -25,7 +27,8 @@ import { AiExplanationComponent } from '../ai-explanation/ai-explanation.compone
     AnomaliesListComponent,
     RecommendationsListComponent,
     HealthInsightsComponent,
-    AiExplanationComponent
+    AiExplanationComponent,
+    NavbarComponent
   ],
   templateUrl: './analysis.component.html',
   styleUrls: ['./analysis.component.css']
@@ -64,7 +67,7 @@ export class AnalysisComponent {
 
       // 1. Récupérer les données d'aujourd'hui
       const todayResponse = await this.analysisApi.getTodayData(email).toPromise();
-      
+
       if (!todayResponse) {
         this.error.set('Aucune donnée disponible pour aujourd\'hui');
         this.isLoading.set(false);
@@ -103,7 +106,7 @@ export class AnalysisComponent {
     } catch (err: any) {
       console.error('Erreur lors de l\'analyse:', err);
       this.error.set(
-        err.error?.detail || 
+        err.error?.detail ||
         'Impossible de charger l\'analyse. Assurez-vous d\'avoir des données pour aujourd\'hui.'
       );
     } finally {

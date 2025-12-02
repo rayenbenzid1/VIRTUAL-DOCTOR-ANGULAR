@@ -5,11 +5,12 @@ import { GoalsService } from '../../services/goals.service';
 import { GoalConfigComponent } from '../goal-config/goal-config.component';
 import { GoalCardComponent } from '../goal-card/goal-card.component';
 import { PersonalizedGoalsResponse, GoalPreferences } from '../../models/goals.model';
+import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-goals',
   standalone: true,
-  imports: [CommonModule, GoalConfigComponent, GoalCardComponent],
+  imports: [CommonModule, GoalConfigComponent, GoalCardComponent,NavbarComponent],
   templateUrl: './goals.component.html',
   styleUrls: ['./goals.component.css']
 })
