@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
           <span class="badge-score">{{ healthScore() }}</span>
           <span class="badge-max">/100</span>
         </div>
-        
+
         <div class="risk-badge" [style.background]="riskColor()">
           <span class="risk-icon">{{ getRiskIcon() }}</span>
           <span class="risk-label">Risque {{ riskLevel() }}</span>
@@ -23,140 +23,126 @@ import { CommonModule } from '@angular/common';
 
       <div class="date-section">
         <span class="date-label">Données du</span>
-        <span class="date-value">{{ analysisDate() | date:'dd/MM/yyyy' }}</span>
+        <span class="date-value">{{ analysisDate() | date : 'dd/MM/yyyy' }}</span>
       </div>
     </div>
   `,
-  styles: [`
-    .analysis-header-card {
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      position: relative;
-      overflow: hidden;
-    }
+  styles: [
+    `
+      .analysis-header-card {
+        background: white;
+        border-radius: 20px;
+        padding: 32px;
+        margin-bottom: 28px;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        position: relative;
+        overflow: hidden;
+        border: 2px solid #e2e8f0;
+      }
 
-    .analysis-header-card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
-      animation: pulse 4s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0.5; }
-      50% { transform: scale(1.1); opacity: 0.8; }
-    }
-
-    .score-section {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .score-badge {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px 32px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .badge-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #64748b;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-
-    .badge-score {
-      font-size: 48px;
-      font-weight: 800;
-      color: #1e293b;
-      line-height: 1;
-    }
-
-    .badge-max {
-      font-size: 16px;
-      font-weight: 600;
-      color: #94a3b8;
-    }
-
-    .risk-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 20px;
-      border-radius: 12px;
-      color: white;
-      font-weight: 700;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .risk-icon {
-      font-size: 20px;
-    }
-
-    .risk-label {
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .date-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 12px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .date-label {
-      font-size: 11px;
-      color: #64748b;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
-    }
-
-    .date-value {
-      font-size: 14px;
-      color: #1e293b;
-      font-weight: 700;
-    }
-
-    @media (max-width: 640px) {
       .score-section {
-        flex-direction: column;
-        gap: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+        gap: 24px;
       }
 
       .score-badge {
-        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 24px 40px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border: 2px solid #e2e8f0;
+      }
+
+      .badge-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 12px;
+      }
+
+      .badge-score {
+        font-size: 56px;
+        font-weight: 900;
+        color: #1e293b;
+        line-height: 1;
+        letter-spacing: -2px;
+      }
+
+      .badge-max {
+        font-size: 18px;
+        font-weight: 700;
+        color: #94a3b8;
+        margin-top: 4px;
       }
 
       .risk-badge {
-        width: 100%;
-        justify-content: center;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 24px;
+        border-radius: 12px;
+        color: white;
+        font-weight: 800;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 14px;
       }
-    }
-  `]
+
+      .date-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px 24px;
+        background: #f8fafc;
+        border-radius: 12px;
+        position: relative;
+        z-index: 1;
+        border: 2px solid #e2e8f0;
+      }
+
+      .date-label {
+        font-size: 11px;
+        color: #64748b;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+      }
+
+      .date-value {
+        font-size: 15px;
+        color: #1e293b;
+        font-weight: 800;
+      }
+      @media (max-width: 768px) {
+        .breakdown-grid,
+        .recommendations-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .score-section {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .header-content {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
+    `,
+  ],
 })
 export class AnalysisHeaderComponent {
   healthScore = input.required<number>();

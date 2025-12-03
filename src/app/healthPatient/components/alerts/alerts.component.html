@@ -1,137 +1,131 @@
- <app-navbar></app-navbar>
+<app-navbar></app-navbar>
 <div class="dashboard-container">
-<div class="alerts-container">
+  <div class="alerts-container">
 
-  <!-- Header avec bouton retour -->
-  <div class="page-header">
-   
-    <div class="header-title">
-      <h1>🚨 Alertes Médicales</h1>
-      <p class="header-subtitle">Surveillance de votre santé</p>
-    </div>
-  </div>
-
-  <!-- Loading State -->
-  @if (isLoading()) {
-  <div class="loading-section">
-    <div class="loading-spinner"></div>
-    <p>Analyse de vos données de santé...</p>
-  </div>
-  }
-
-  <!-- Error State -->
-  @if (error() && !isLoading()) {
-  <div class="error-section">
-    <div class="error-icon">⚠️</div>
-    <h3>Erreur de chargement</h3>
-    <p>{{ error() }}</p>
-    <button class="btn-retry" (click)="loadAlerts()">Réessayer</button>
-  </div>
-  }
-
-  <!-- Main Content -->
-  @if (!isLoading() && !error() && alertsData()) {
-  <div class="alerts-content">
-
-    <!-- Période d'analyse -->
-    <app-analysis-period
-      [selectedPeriod]="selectedPeriod()"
-      [selectedDate]="selectedDate()"
-      (periodChange)="onPeriodChange($event)"
-      (dateSelected)="onDateSelected($event)"
-      (analyze)="onAnalyze()">
-    </app-analysis-period>
-
-    <!-- Header des alertes -->
-    <app-alerts-header
-      [alertLevel]="alertLevel()"
-      [alertLevelColor]="alertLevelColor()"
-      [analysisPeriod]="alertsData()!.analysis_period"
-      [analysisType]="alertsData()!.analysis_type"
-      [dataPointsAnalyzed]="alertsData()!.data_points_analyzed">
-    </app-alerts-header>
-
-    <!-- Moyennes de la période -->
-    <div class="averages-section">
-      <h2 class="section-title">
-        <span class="section-icon">📊</span>
-        Moyennes de la période
-      </h2>
-      <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-icon">🚶</div>
-          <div class="metric-label">Pas</div>
-          <div class="metric-value">{{ alertsData()!.averages_computed.steps | number }} pas/jour</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-icon">💤</div>
-          <div class="metric-label">Sommeil</div>
-          <div class="metric-value">{{ alertsData()!.averages_computed.sleep_hours }}h/nuit</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-icon">❤️</div>
-          <div class="metric-label">FC moyenne</div>
-          <div class="metric-value">{{ alertsData()!.averages_computed.heart_rate }} bpm</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-icon">🧠</div>
-          <div class="metric-label">Stress</div>
-          <div class="metric-value">{{ alertsData()!.averages_computed.stress_score }}/100</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-icon">💧</div>
-          <div class="metric-label">Hydratation</div>
-          <div class="metric-value">{{ alertsData()!.averages_computed.hydration_liters }}L/jour</div>
-        </div>
+    <!-- Header avec bouton retour -->
+    <div class="page-header">
+      <div class="header-title">
+        <h1>Alertes Médicales</h1>
+        <p class="header-subtitle">Surveillance de votre santé</p>
       </div>
     </div>
 
-    <!-- Alertes actives -->
-    @if (criticalAlerts().length > 0 || warningAlerts().length > 0) {
-    <div class="active-alerts-section">
-      <h2 class="section-title">
-        <span class="section-icon">🔔</span>
-        Alertes Actives
-      </h2>
+    <!-- Loading State -->
+    @if (isLoading()) {
+    <div class="loading-section">
+      <div class="loading-spinner"></div>
+      <p>Analyse de vos données de santé...</p>
+    </div>
+    }
 
-      @for (alert of criticalAlerts(); track $index) {
-      <div class="alert-item critical">
-        <div class="alert-icon">🚨</div>
-        <div class="alert-text">{{ alert }}</div>
+    <!-- Error State -->
+    @if (error() && !isLoading()) {
+    <div class="error-section">
+      <div class="error-icon">⚠</div>
+      <h3>Erreur de chargement</h3>
+      <p>{{ error() }}</p>
+      <button class="btn-retry" (click)="loadAlerts()">Réessayer</button>
+    </div>
+    }
+
+    <!-- Main Content -->
+    @if (!isLoading() && !error() && alertsData()) {
+    <div class="alerts-content">
+
+      <!-- Période d'analyse -->
+      <app-analysis-period
+        [selectedPeriod]="selectedPeriod()"
+        [selectedDate]="selectedDate()"
+        (periodChange)="onPeriodChange($event)"
+        (dateSelected)="onDateSelected($event)"
+        (analyze)="onAnalyze()">
+      </app-analysis-period>
+
+      <!-- Header des alertes -->
+      <app-alerts-header
+        [alertLevel]="alertLevel()"
+        [alertLevelColor]="alertLevelColor()"
+        [analysisPeriod]="alertsData()!.analysis_period"
+        [analysisType]="alertsData()!.analysis_type"
+        [dataPointsAnalyzed]="alertsData()!.data_points_analyzed">
+      </app-alerts-header>
+
+      <!-- Moyennes de la période -->
+      <div class="averages-section">
+        <h2 class="section-title">Moyennes de la période</h2>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon">📊</div>
+            <div class="metric-label">Pas</div>
+            <div class="metric-value">{{ alertsData()!.averages_computed.steps | number }} pas/jour</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">🌙</div>
+            <div class="metric-label">Sommeil</div>
+            <div class="metric-value">{{ alertsData()!.averages_computed.sleep_hours }}h/nuit</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">💓</div>
+            <div class="metric-label">FC moyenne</div>
+            <div class="metric-value">{{ alertsData()!.averages_computed.heart_rate }} bpm</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">🎯</div>
+            <div class="metric-label">Stress</div>
+            <div class="metric-value">{{ alertsData()!.averages_computed.stress_score }}/100</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">💧</div>
+            <div class="metric-label">Hydratation</div>
+            <div class="metric-value">{{ alertsData()!.averages_computed.hydration_liters }}L/jour</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alertes actives -->
+      @if (criticalAlerts().length > 0 || warningAlerts().length > 0) {
+      <div class="active-alerts-section">
+        <h2 class="section-title">Alertes Actives</h2>
+
+        @for (alert of criticalAlerts(); track $index) {
+        <div class="alert-item critical">
+          <div class="alert-icon">!</div>
+          <div class="alert-text">{{ alert }}</div>
+        </div>
+        }
+
+        @for (alert of warningAlerts(); track $index) {
+        <div class="alert-item warning">
+          <div class="alert-icon">⚠</div>
+          <div class="alert-text">{{ alert }}</div>
+        </div>
+        }
       </div>
       }
 
-      @for (alert of warningAlerts(); track $index) {
-      <div class="alert-item warning">
-        <div class="alert-icon">⚠️</div>
-        <div class="alert-text">{{ alert }}</div>
-      </div>
+      <!-- Facteurs de risque -->
+      @if (alertsData()!.risk_factors.length > 0) {
+      <app-risk-factors [riskFactors]="alertsData()!.risk_factors"></app-risk-factors>
       }
-    </div>
-    }
 
-    <!-- Facteurs de risque -->
-    @if (alertsData()!.risk_factors.length > 0) {
-    <app-risk-factors [riskFactors]="alertsData()!.risk_factors"></app-risk-factors>
-    }
+      <!-- Actions prioritaires -->
+      @if (alertsData()!.action_priorities.length > 0) {
+      <app-action-priorities [actionPriorities]="alertsData()!.action_priorities"></app-action-priorities>
+      }
 
-    <!-- Actions prioritaires -->
-    @if (alertsData()!.action_priorities.length > 0) {
-    <app-action-priorities [actionPriorities]="alertsData()!.action_priorities"></app-action-priorities>
-    }
-
-    <!-- Prochain contrôle recommandé -->
-    <div class="next-checkup-section">
-      <div class="checkup-card">
-        <div class="checkup-icon">📅</div>
-        <div class="checkup-content">
-          <h3>Prochain contrôle recommandé</h3>
-          <p class="checkup-date">{{ alertsData()!.next_checkup_recommended | date:'dd/MM/yyyy' }}</p>
+      <!-- Prochain contrôle recommandé -->
+      <div class="next-checkup-section">
+        <div class="checkup-card">
+          <div class="checkup-icon">📅</div>
+          <div class="checkup-content">
+            <h3>Prochain contrôle recommandé</h3>
+            <p class="checkup-date">{{ alertsData()!.next_checkup_recommended | date:'dd/MM/yyyy' }}</p>
+          </div>
         </div>
       </div>
+
     </div>
+    }
 
   </div>
-  }
-
 </div>

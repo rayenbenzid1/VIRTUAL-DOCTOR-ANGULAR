@@ -105,7 +105,6 @@ export class LoginComponent {
 
     const email = this.form.value.email;
     const isDoctor = email.endsWith('@doctor.com');
-    const isAdmin = email.endsWith('@admin.com');
 
     // Choisir la méthode d'authentification appropriée
     const authMethod = isDoctor
@@ -156,7 +155,7 @@ export class LoginComponent {
           setTimeout(() => {
             if (isDoctor) {
               this.router.navigate(['/doctor/dashboard']);
-            } else if (isAdmin) {
+            } else if (res.user.roles.includes('ADMIN')) {
               this.router.navigate(['/admin/dashboard']);
             } else {
               this.router.navigate(['/dashboard']);

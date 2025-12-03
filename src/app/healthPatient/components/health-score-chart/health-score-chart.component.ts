@@ -25,12 +25,13 @@ interface ChartData {
       background: white;
       border-radius: 20px;
       padding: 24px;
-      margin-bottom: 24px;
+      margin: 0 auto 24px auto;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
 
     .chart-header {
       margin-bottom: 20px;
+      text-align: center;
     }
 
     .chart-header h3 {
@@ -44,10 +45,13 @@ interface ChartData {
       position: relative;
       height: 300px;
       width: 100%;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
     }
 
     canvas {
-      max-width: 100%;
+      width: 100%;
       height: 100%;
     }
   `]

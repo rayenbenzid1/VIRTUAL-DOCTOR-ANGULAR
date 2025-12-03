@@ -25,9 +25,11 @@ import { ScoreBreakdown } from '../../models/analysis.models';
             <span class="score-max">/25</span>
           </div>
           <div class="card-bar">
-            <div class="bar-fill" 
-                 [style.width.%]="getPercentage(breakdown().activity, 25)"
-                 style="background: linear-gradient(90deg, #10b981, #34d399)"></div>
+            <div
+              class="bar-fill"
+              [style.width.%]="getPercentage(breakdown().activity, 25)"
+              style="background: linear-gradient(90deg, #10b981, #34d399)"
+            ></div>
           </div>
         </div>
 
@@ -41,9 +43,11 @@ import { ScoreBreakdown } from '../../models/analysis.models';
             <span class="score-max">/25</span>
           </div>
           <div class="card-bar">
-            <div class="bar-fill" 
-                 [style.width.%]="getPercentage(breakdown().cardiovascular, 25)"
-                 style="background: linear-gradient(90deg, #ef4444, #f87171)"></div>
+            <div
+              class="bar-fill"
+              [style.width.%]="getPercentage(breakdown().cardiovascular, 25)"
+              style="background: linear-gradient(90deg, #ef4444, #f87171)"
+            ></div>
           </div>
         </div>
 
@@ -57,9 +61,11 @@ import { ScoreBreakdown } from '../../models/analysis.models';
             <span class="score-max">/20</span>
           </div>
           <div class="card-bar">
-            <div class="bar-fill" 
-                 [style.width.%]="getPercentage(breakdown().sleep, 20)"
-                 style="background: linear-gradient(90deg, #3b82f6, #60a5fa)"></div>
+            <div
+              class="bar-fill"
+              [style.width.%]="getPercentage(breakdown().sleep, 20)"
+              style="background: linear-gradient(90deg, #3b82f6, #60a5fa)"
+            ></div>
           </div>
         </div>
 
@@ -73,9 +79,11 @@ import { ScoreBreakdown } from '../../models/analysis.models';
             <span class="score-max">/10</span>
           </div>
           <div class="card-bar">
-            <div class="bar-fill" 
-                 [style.width.%]="getPercentage(breakdown().hydration, 10)"
-                 style="background: linear-gradient(90deg, #06b6d4, #22d3ee)"></div>
+            <div
+              class="bar-fill"
+              [style.width.%]="getPercentage(breakdown().hydration, 10)"
+              style="background: linear-gradient(90deg, #06b6d4, #22d3ee)"
+            ></div>
           </div>
         </div>
 
@@ -89,9 +97,11 @@ import { ScoreBreakdown } from '../../models/analysis.models';
             <span class="score-max">/10</span>
           </div>
           <div class="card-bar">
-            <div class="bar-fill" 
-                 [style.width.%]="getPercentage(breakdown().stress, 10)"
-                 style="background: linear-gradient(90deg, #f59e0b, #fbbf24)"></div>
+            <div
+              class="bar-fill"
+              [style.width.%]="getPercentage(breakdown().stress, 10)"
+              style="background: linear-gradient(90deg, #f59e0b, #fbbf24)"
+            ></div>
           </div>
         </div>
 
@@ -105,118 +115,159 @@ import { ScoreBreakdown } from '../../models/analysis.models';
             <span class="score-max">/10</span>
           </div>
           <div class="card-bar">
-            <div class="bar-fill" 
-                 [style.width.%]="getPercentage(breakdown().vitals, 10)"
-                 style="background: linear-gradient(90deg, #8b5cf6, #a78bfa)"></div>
+            <div
+              class="bar-fill"
+              [style.width.%]="getPercentage(breakdown().vitals, 10)"
+              style="background: linear-gradient(90deg, #8b5cf6, #a78bfa)"
+            ></div>
           </div>
         </div>
       </div>
     </div>
   `,
-  styles: [`
-    .breakdown-section {
-      background: white;
-      border-radius: 20px;
-      padding: 24px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 18px;
-      font-weight: 700;
-      color: #1e293b;
-      margin: 0 0 20px 0;
-    }
-
-    .section-icon {
-      font-size: 24px;
-    }
-
-    .breakdown-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-    }
-
-    .breakdown-card {
-      background: #f8fafc;
-      border-radius: 16px;
-      padding: 20px;
-      transition: all 0.3s ease;
-    }
-
-    .breakdown-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .card-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-    }
-
-    .card-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: #475569;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .card-score {
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
-      margin-bottom: 12px;
-    }
-
-    .score-value {
-      font-size: 36px;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .score-max {
-      font-size: 18px;
-      font-weight: 600;
-      color: #94a3b8;
-    }
-
-    .card-bar {
-      height: 8px;
-      background: #e2e8f0;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .bar-fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.5s ease;
-    }
-
-    @media (max-width: 640px) {
-      .breakdown-grid {
-        grid-template-columns: 1fr;
+  styles: [
+    `
+      .breakdown-section {
+        background: white;
+        border-radius: 20px;
+        padding: 32px;
+        margin-bottom: 28px;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
       }
-    }
-  `]
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 22px;
+        font-weight: 800;
+        color: #1e293b;
+        margin: 0 0 24px 0;
+        letter-spacing: -0.5px;
+      }
+
+      .section-title::before {
+        content: '';
+        width: 4px;
+        height: 28px;
+        background: linear-gradient(180deg, #6366f1, #8b5cf6);
+        border-radius: 4px;
+      }
+
+      .breakdown-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      .breakdown-card {
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        border-radius: 16px;
+        padding: 24px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid #e2e8f0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .breakdown-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+
+      .breakdown-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        border-color: #6366f1;
+      }
+
+      .breakdown-card:hover::before {
+        transform: scaleX(1);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .card-label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .card-score {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin-bottom: 16px;
+      }
+
+      .score-value {
+        font-size: 42px;
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: -1px;
+      }
+
+      .score-max {
+        font-size: 20px;
+        font-weight: 700;
+        color: #94a3b8;
+      }
+
+      .card-bar {
+        height: 10px;
+        background: #e2e8f0;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      .bar-fill {
+        height: 100%;
+        border-radius: 6px;
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      @media (max-width: 768px) {
+        .breakdown-grid,
+        .recommendations-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .score-section {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .header-content {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
+    `,
+  ],
 })
 export class ScoreBreakdownComponent {
   breakdown = input.required<ScoreBreakdown>();

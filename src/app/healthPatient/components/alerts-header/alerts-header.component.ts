@@ -55,9 +55,11 @@ import { CommonModule } from '@angular/common';
     }
 
     .alert-badge {
-      display: inline-flex;
+      display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+      width: 100%;
       padding: 20px 32px;
       border-radius: 16px;
       color: white;
