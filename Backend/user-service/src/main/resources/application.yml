@@ -1,0 +1,96 @@
+spring:
+  application:
+    name: user-service
+  main:
+    allow-bean-definition-overriding: true
+
+  web:
+    resources:
+      add-mappings: false
+
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/health_auth_db
+      database: health_auth_db
+      auto-index-creation: true
+
+  cloud:
+    config:
+      enabled: false
+
+  # 🔐 CONFIGURATION KEYCLOAK
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8080/realms/health-app-realm/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/realms/health-app-realm
+
+      client:
+        registration:
+          keycloak:
+            client-id: health-backend-services
+            client-secret: QjKkJoIsqB4rbXHqv53ofsPuw0O7Qz57
+            authorization-grant-type: client_credentials
+            scope: openid, profile, email
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/health-app-realm
+            user-name-attribute: preferred_username
+
+server:
+  port: 8085
+  error:
+    include-message: always
+    include-binding-errors: always
+
+notification:
+  service:
+    url: http://localhost:8084
+
+# ⚠️ CONFIGURATION KEYCLOAK ADMIN CLIENT
+keycloak:
+  server-url: http://localhost:8080
+  realm: health-app-realm
+  admin:
+    realm: master
+    username: amine
+    password: Password123!
+    client-id: admin-cli
+  roles:
+    user: USER
+    doctor: DOCTOR
+    admin: ADMIN
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.healthapp.user: DEBUG
+    org.springframework.data.mongodb: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.keycloak: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+eureka:
+  client:
+    enabled: true
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.value}
