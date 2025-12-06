@@ -5,6 +5,7 @@ import { DoctorAuthApiService } from '../../services/doctor-auth.api';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import {jwtDecode} from 'jwt-decode';
 
 @Component({
   selector: 'app-login',
@@ -94,88 +95,69 @@ export class LoginComponent {
   }
 
   submit() {
-    // Réinitialiser les erreurs
-    this.loginError.set('');
+  this.loginError.set('');
 
-    if (!this.validateForm()) {
-      return;
-    }
+  if (!this.validateForm()) return;
 
-    this.loading.set(true);
+  this.loading.set(true);
 
-    const email = this.form.value.email;
-    const isDoctor = email.endsWith('@doctor.com');
-
-    // Choisir la méthode d'authentification appropriée
-    const authMethod = isDoctor
-      ? this.doctorAuthApi.login(this.form.value)
-      : this.authApi.login(this.form.value);
-
-  authMethod.subscribe({
+  this.authApi.login(this.form.value).subscribe({
     next: (res) => {
-      console.log('🔍 Login response complète:', res);
-      console.log('🔍 res.user:', res.user);
+      try {
+         // Stocker le token
+        localStorage.setItem('accessToken', res.accessToken);
 
-        try {
-          // Stocker les tokens
-          localStorage.setItem('accessToken', res.accessToken);
-          localStorage.setItem('refreshToken', res.refreshToken);
+        // ---- 🔥 EXTRAIRE ROLE DEPUIS LE TOKEN ----
+        const decoded: any = jwtDecode(res.accessToken);
 
-          // Get user data - handle both nested (res.user) and flat response structures
-          const userData = res.user || res;
-          
-          // Build the name from available properties
-          let userName = 'User';
-          if (userData.fullName) {
-            userName = userData.fullName;
-          } else if (userData.name) {
-            userName = userData.name;
-          } else if (userData.firstName || userData.lastName) {
-            userName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim();
-          }
+        // Keycloak met les rôles ici :
+        const roles = decoded.realm_access?.roles || [];
+        console.log("Roles Keycloak :", roles);
 
-          // Construire l'objet utilisateur
-          const user = {
-            id: res.doctorId || res.userId || userData.id || res.id,
-            name: userName,
-            firstName: userData.firstName,
-            lastName: userData.lastName,
-            email: userData.email || this.form.value.email,
-            phoneNumber: userData.phoneNumber,
-            role: res.role
-          };
+        // Choisir un rôle principal (ADMIN, DOCTOR, PATIENT…)
+        let userRole = 'PATIENT';
 
-          console.log('Constructed user object:', user);
-          localStorage.setItem('user', JSON.stringify(user));
+        if (roles.includes('ADMIN')) userRole = 'ADMIN';
+        else if (roles.includes('DOCTOR')) userRole = 'DOCTOR';
+        else if (roles.includes('PATIENT')) userRole = 'PATIENT';
 
-          this.loading.set(false);
-          this.showToast('Connexion réussie ! Redirection...', 'success');
+        // Stockage
+        const user = {
+          email: decoded.email,
+          role: userRole,
+          name: decoded.name,
+          firstName: decoded.given_name,
+          lastName: decoded.family_name,
+        };
+        localStorage.setItem('user', JSON.stringify(user));
 
-          // Rediriger selon le rôle
-          setTimeout(() => {
-            if (isDoctor) {
-              this.router.navigate(['/doctor/dashboard']);
-            } else if (res.user.roles.includes('ADMIN')) {
-              this.router.navigate(['/admin/dashboard']);
-            } else {
-              this.router.navigate(['/dashboard']);
-            }
-          }, 1000);
-          
-        } catch (error) {
-          console.error('Error processing login response:', error);
-          this.loading.set(false);
-          this.loginError.set('Erreur lors du traitement de la réponse');
-        }
-      },
-      error: (error) => {
-        console.error('Login error:', error);
         this.loading.set(false);
-        
-        const errorMessage = this.getErrorMessage(error);
-        this.loginError.set(errorMessage);
-        this.showToast(errorMessage, 'error');
+        this.showToast('Connexion réussie !', 'success');
+
+        // ✅ REDIRECTION SELON LE RÔLE
+        setTimeout(() => {
+          if (user.role === 'ADMIN') {
+            this.router.navigate(['/admin/dashboard']);
+          } else if (user.role === 'DOCTOR') {
+            this.router.navigate(['/doctor/dashboard']);
+          } else {
+            this.router.navigate(['/dashboard']);
+          }
+        }, 800);
+
+      } catch (e) {
+        this.loading.set(false);
+        this.loginError.set('Erreur lors du traitement du token');
       }
-    });
-  }
+    },
+
+    error: (err) => {
+      this.loading.set(false);
+      const msg = this.getErrorMessage(err);
+      this.loginError.set(msg);
+      this.showToast(msg, 'error');
+    }
+  });
+}
+
 }

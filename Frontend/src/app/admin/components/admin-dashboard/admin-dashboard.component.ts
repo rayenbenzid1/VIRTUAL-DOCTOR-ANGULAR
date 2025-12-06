@@ -58,6 +58,14 @@ export class AdminDashboardComponent implements OnInit {
         console.error('Error loading statistics:', error);
       }
     });
+    this.adminDoctorService.getActivatedCount().subscribe({
+      next: (response) => {
+        this.activatedCount.set(response.count);
+      },
+      error: (error) => {
+        console.error('Error loading statistics:', error);
+      }
+    });
   }
 
   loadPendingDoctors() {
@@ -79,7 +87,6 @@ export class AdminDashboardComponent implements OnInit {
     this.adminDoctorService.getActivatedDoctors().subscribe({
       next: (doctors) => {
         this.activatedDoctors.set(doctors);
-        this.activatedCount.set(doctors.length);
         this.loading.set(false);
       },
       error: (error) => {

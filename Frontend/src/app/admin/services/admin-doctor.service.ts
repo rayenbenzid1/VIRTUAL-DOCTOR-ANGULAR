@@ -22,6 +22,9 @@ export class AdminDoctorService {
   getPendingCount(): Observable<{ count: number }> {
     return this.http.get<{ count: number }>(`${this.baseUrl}/pending/count`);
   }
+  getActivatedCount(): Observable<{ count: number }> {
+    return this.http.get<{ count: number }>(`${this.baseUrl}/activated/count`);
+  }
 
   activateDoctor(request: DoctorActivationRequest): Observable<{ status: string; message: string }> {
     return this.http.post<{ status: string; message: string }>(

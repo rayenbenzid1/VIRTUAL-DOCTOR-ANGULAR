@@ -11,6 +11,8 @@ export interface UserManagementResponse {
   isEmailVerified?: boolean;
   createdAt: string;
   lastLoginAt?: string;
+  // ✅ Ajout pour les médecins
+  activationStatus?: string; // PENDING, APPROVED, REJECTED
 }
 
 export interface UserSearchRequest {
@@ -24,7 +26,6 @@ export interface UserSearchRequest {
 
 export interface UserStatistics {
   totalUsers: number;
-  totalDoctors: number;
   totalAdmins: number;
 }
 
@@ -36,4 +37,28 @@ export interface PageResponse<T> {
   totalPages: number;
   first: boolean;
   last: boolean;
+}
+
+export interface DoctorResponse {
+  id: string;
+  doctorId: string;
+  email: string;
+  fullName: string;
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string | null;
+  roles?: string[];
+  accountStatus?: string;
+  isActivated?: boolean;
+  isEmailVerified?: boolean;
+  createdAt?: string;
+  lastLoginAt?: string | null;
+  medicalLicenseNumber: string;
+  specialization: string;
+  hospitalAffiliation: string;
+  yearsOfExperience: number;
+  registrationDate: string;
+  activationRequestDate: string;
+  // ✅ Ajout du statut d'activation
+  activationStatus?: string; // PENDING, APPROVED, REJECTED
 }

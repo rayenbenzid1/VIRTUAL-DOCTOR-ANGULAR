@@ -29,6 +29,16 @@ export class UserCardComponent {
     return 'user';
   }
 
+  // ✅ Ajout de la méthode manquante pour l'activation status
+  getActivationBadgeClass(status: string): string {
+    switch (status) {
+      case 'PENDING': return 'pending';
+      case 'APPROVED': return 'approved';
+      case 'REJECTED': return 'rejected';
+      default: return 'pending';
+    }
+  }
+
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'ACTIVE': return 'active';

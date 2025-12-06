@@ -14,7 +14,7 @@
   <div class="user-details">
     <div class="detail-item">
       <span class="detail-icon">📱</span>
-      <span class="detail-text">{{ user.phoneNumber || 'N/A' }}</span>
+      <span class="detail-text">{{ user.phoneNumber || 'Non renseigné' }}</span>
     </div>
     <div class="detail-item">
       <span class="detail-icon">📅</span>
@@ -35,10 +35,22 @@
       {{ user.roles.join(', ') }}
     </span>
 
+    <!-- ✅ Activation Status Badge (pour les médecins uniquement) -->
+    @if (user.roles.includes('DOCTOR') && user.activationStatus) {
+    <span class="badge badge-activation" [ngClass]="getActivationBadgeClass(user.activationStatus)">
+      @switch (user.activationStatus) {
+        @case ('PENDING') { ⏳ EN ATTENTE }
+        @case ('APPROVED') { ✅ APPROUVÉ }
+        @case ('REJECTED') { ❌ REJETÉ }
+        @default { {{ user.activationStatus }} }
+      }
+    </span>
+    }
+
     <!-- Status Badge -->
     <span class="badge badge-status" [ngClass]="getStatusBadgeClass(user.accountStatus)">
       @switch (user.accountStatus) {
-        @case ('ACTIVE') { ✅ {{ user.accountStatus }} }
+        @case ('ACTIVE') { ✓ {{ user.accountStatus }} }
         @case ('INACTIVE') { ❌ {{ user.accountStatus }} }
         @case ('LOCKED') { 🔒 {{ user.accountStatus }} }
         @case ('SUSPENDED') { ⏸️ {{ user.accountStatus }} }
@@ -48,10 +60,10 @@
 
     <!-- Verification Badges -->
     @if (user.isActivated) {
-    <span class="badge badge-verified">✅ Activé</span>
+    <span class="badge badge-verified">✓ ACTIVÉ</span>
     }
     @if (user.isEmailVerified) {
-    <span class="badge badge-verified">✉️ Email vérifié</span>
+    <span class="badge badge-verified">✉️ EMAIL VÉRIFIÉ</span>
     }
   </div>
 
@@ -65,6 +77,9 @@
       </svg>
       Détails
     </button>
+    
+    <!-- ✅ Bouton Supprimer : seulement pour non-DOCTOR ou DOCTOR APPROVED -->
+    @if (!user.roles.includes('DOCTOR') || user.activationStatus === 'APPROVED') {
     <button class="btn btn-delete" (click)="onDelete()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="3 6 5 6 21 6"></polyline>
@@ -74,5 +89,6 @@
       </svg>
       Supprimer
     </button>
+    }
   </div>
 </article>

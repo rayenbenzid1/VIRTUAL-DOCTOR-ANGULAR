@@ -548,3 +548,31 @@
     text-align: left;
   }
 }
+/* Ajoutez ces styles à votre user-management.component.css */
+
+.status-pending {
+  color: #f59e0b;
+  font-weight: 600;
+  background: #fef3c7;
+  padding: 4px 12px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.status-approved {
+  color: #10b981;
+  font-weight: 600;
+  background: #d1fae5;
+  padding: 4px 12px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.status-rejected {
+  color: #ef4444;
+  font-weight: 600;
+  background: #fee2e2;
+  padding: 4px 12px;
+  border-radius: 6px;
+  display: inline-block;
+}

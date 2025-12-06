@@ -230,3 +230,107 @@
     width: 100%;
   }
 }
+/* Ajoutez ces styles à votre user-card.component.css existant */
+
+/* ✅ Styles pour le badge d'activation status (médecins) */
+.badge-activation {
+  font-weight: 700;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 2px solid;
+}
+
+.badge-activation.pending {
+  background: #fef3c7;
+  color: #d97706;
+  border-color: #f59e0b;
+  animation: pulse 2s infinite;
+}
+
+.badge-activation.approved {
+  background: #d1fae5;
+  color: #059669;
+  border-color: #10b981;
+}
+
+.badge-activation.rejected {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #ef4444;
+}
+
+/* Animation pour PENDING */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* S'assurer que les badges sont bien visibles */
+.user-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+  align-items: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+/* Styles existants pour les rôles */
+.badge-role.admin {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.badge-role.doctor {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.badge-role.user {
+  background: #e5e7eb;
+  color: #6b7280;
+}
+
+/* Styles existants pour les statuts */
+.badge-status.active {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.badge-status.inactive {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.badge-status.locked {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.badge-status.suspended {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.badge-verified {
+  background: #dbeafe;
+  color: #2563eb;
+}
