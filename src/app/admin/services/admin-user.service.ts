@@ -23,7 +23,7 @@ export class AdminUserService {
 
   // ✅ Correction: L'API retourne directement un tableau DoctorResponse[]
   getAllDoctors(): Observable<DoctorResponse[]> {
-    return this.http.get<DoctorResponse[]>('http://localhost:8888/doctor-activation-service/api/admin/doctors');
+    return this.http.get<DoctorResponse[]>(`${environment.BASE_URL}/doctor-activation-service/api/admin/doctors`);
   }
 
   getUsersByRole(role: string): Observable<{ success: boolean; message: string; data: UserManagementResponse[] }> {
@@ -48,7 +48,7 @@ export class AdminUserService {
   // ✅ L'API retourne {"count": 2}
   getDoctorsStatistics(): Observable<{ count: number }> {
     return this.http.get<{ count: number }>(
-      'http://localhost:8888/doctor-activation-service/api/admin/doctors/count'
+      `${environment.BASE_URL}/doctor-activation-service/api/admin/doctors/count`
     );
   }
 
@@ -61,7 +61,7 @@ export class AdminUserService {
   // ✅ Supprimer un médecin
   deleteDoctor(doctorId: string): Observable<{ status: string; message: string }> {
     return this.http.delete<{ status: string; message: string }>(
-      `http://localhost:8888/doctor-activation-service/api/admin/doctors/${doctorId}`
+      `${environment.BASE_URL}/doctor-activation-service/api/admin/doctors/${doctorId}`
     );
   }
 }

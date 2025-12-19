@@ -134,7 +134,7 @@
         <app-user-card
           [user]="user"
           (viewDetails)="onViewDetails(user)"
-          (deleteUser)="onDeleteUser(user)">
+          (deleteUser)="!user.roles.includes('ADMIN') ? onDeleteUser(user) : null">
         </app-user-card>
         }
       </div>

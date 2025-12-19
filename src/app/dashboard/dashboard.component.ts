@@ -30,7 +30,7 @@ interface VitalSign {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, ProfileModalComponent, HealthAvatarComponent, DataSummaryComponent, DailySummaryComponent, VitalSignsComponent, PhysicalActivitiesComponent,NavbarComponent],
+  imports: [CommonModule, HealthAvatarComponent, DataSummaryComponent, DailySummaryComponent, VitalSignsComponent, PhysicalActivitiesComponent,NavbarComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })

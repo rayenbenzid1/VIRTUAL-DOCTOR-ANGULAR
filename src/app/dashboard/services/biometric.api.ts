@@ -2,6 +2,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface BiometricData {
   id: string;
@@ -118,7 +119,7 @@ export interface HydrationRecord {
 })
 export class BiometricApiService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:8080/health-server/fetch';
+  private baseUrl = `${environment.BASE_URL}/health-server/fetch`;
 
   getTodayData(userId: string): Observable<BiometricData> {
     return this.http.get<BiometricData>(`${this.baseUrl}/user/${userId}/today`);
