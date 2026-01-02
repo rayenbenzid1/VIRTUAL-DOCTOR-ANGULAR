@@ -1,0 +1,189 @@
+# ========================================
+# API GATEWAY - CONFIGURATION CENTRALISÉE
+# ========================================
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false                # ← Désactivé pour éviter les conflits
+          # lower-case-service-id: false  # supprimé car locator désactivé
+
+      routes:
+        # Auth Service
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth-service/**
+          filters:
+            - RewritePath=/auth-service/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: authServiceCircuitBreaker
+                fallbackUri: forward:/fallback/auth
+
+        # User Service
+        - id: user-service
+          uri: lb://USER-SERVICE          # ← Majuscules pour matcher Eureka
+          predicates:
+            - Path=/user-service/**
+          filters:
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: userServiceCircuitBreaker
+                fallbackUri: forward:/fallback/user
+
+        # Doctor Activation Service
+        - id: doctor-service
+          uri: lb://DOCTOR-ACTIVATION-SERVICE   # ← Majuscules
+          predicates:
+            - Path=/doctor-activation-service/**
+          filters:
+            - RewritePath=/doctor-activation-service/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: doctorServiceCircuitBreaker
+                fallbackUri: forward:/fallback/doctor
+
+        # Notification Service
+        - id: notification-service
+          uri: lb://NOTIFICATION-SERVICE       # ← Majuscules
+          predicates:
+            - Path=/notification-service/**
+          filters:
+            - RewritePath=/notification-service/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: notificationServiceCircuitBreaker
+                fallbackUri: forward:/fallback/notification
+
+        # Health Server (nouveau)
+        - id: health-server
+          uri: lb://HEALTH-SERVER               # ← À adapter selon le nom exact dans Eureka
+          predicates:
+            - Path=/health-server/**
+          filters:
+            - RewritePath=/health-server/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: healthServerCircuitBreaker
+                fallbackUri: forward:/fallback/health
+
+        # Nouvelle route pour Model AI Service
+        - id: model-ai-service
+          uri: lb://MODEL-AI-SERVICE
+          predicates:
+            - Path=/model-ai-service/**
+          filters:
+            - RewritePath=/model-ai-service/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: modelAiServiceCircuitBreaker
+                fallbackUri: forward:/fallback/model-ai
+
+        # Optionnel : route pour Health Assistant si tu en as besoin
+        - id: health-assistant-service
+          uri: lb://HEALTH-ASSISTANT-SERVICE
+          predicates:
+            - Path=/health-assistant-service/**
+          filters:
+            - RewritePath=/health-assistant-service/(?<segment>.*), /$\{segment}
+
+        # Route pour Nutrition Service
+        - id: nutrition-service
+          uri: lb://NUTRITION-SERVICE               # Nom exact tel qu'enregistré dans Eureka
+          predicates:
+            - Path=/nutrition-service/**
+          filters:
+            - RewritePath=/nutrition-service/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: nutritionServiceCircuitBreaker
+                fallbackUri: forward:/fallback/nutrition
+
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
+server:
+  port: ${API_GATEWAY_PORT:8888}
+
+# Configuration Eureka
+eureka:
+  client:
+    enabled: true
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.value}
+
+# ✅ CONFIGURATION RESILIENCE4J CIRCUIT BREAKER
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        register-health-indicator: true
+
+    instances:
+      authServiceCircuitBreaker:
+        base-config: default
+      userServiceCircuitBreaker:
+        base-config: default
+      doctorServiceCircuitBreaker:
+        base-config: default
+      notificationServiceCircuitBreaker:
+        base-config: default
+
+  # ✅ CONFIGURATION DES TIMEOUTS
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 13s
+    instances:
+      authServiceCircuitBreaker:
+        base-config: default
+      userServiceCircuitBreaker:
+        base-config: default
+      doctorServiceCircuitBreaker:
+        base-config: default
+      notificationServiceCircuitBreaker:
+        base-config: default
+
+# Logging
+logging:
+  level:
+    org.springframework.cloud.gateway: ${GATEWAY_LOG_LEVEL:DEBUG}
+    com.healthapp.gateway: ${APP_LOG_LEVEL:DEBUG}
+    io.github.resilience4j: ${RESILIENCE4J_LOG_LEVEL:DEBUG}
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# 📊 ACTUATOR CONFIGURATION
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health,info,metrics,circuitbreakers,circuitbreakerevents,prometheus
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  health:
+    circuitbreakers:
+      enabled: true
